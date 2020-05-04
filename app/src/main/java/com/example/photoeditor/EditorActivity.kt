@@ -1,12 +1,10 @@
 package com.example.photoeditor
 
-import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.os.Parcelable
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
-
 
 
 class EditorActivity : AppCompatActivity() {

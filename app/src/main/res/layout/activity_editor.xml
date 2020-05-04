@@ -9,12 +9,96 @@
 
     <ImageView
         android:id="@+id/ivPhoto"
-        android:layout_width="407dp"
-        android:layout_height="414dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:background="#282828"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_launcher_background" />
+
+    <HorizontalScrollView
+        android:id="@+id/horizontalScrollView"
+        android:layout_width="0dp"
+        android:layout_height="45dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="#080808"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/bFilters"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/ic_filters"
+                android:textColor="#FFFFFF" />
+
+            <Button
+                android:id="@+id/bRotate"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/ic_rotate"
+                android:textColor="#FFFFFF" />
+
+            <Button
+                android:id="@+id/bZoom"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/ic_zoom"
+                android:textColor="#FFFFFF" />
+
+            <Button
+                android:id="@+id/bHealing"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/ic_healing"
+                android:textColor="#FFFFFF" />
+
+            <Button
+                android:id="@+id/bUnsharpMasking"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/ic_unsharp_masking"
+                android:textColor="#FFFFFF" />
+
+            <Button
+                android:id="@+id/bDraw"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/ic_pencil"
+                android:textColor="#FFFFFF" />
+
+            <Button
+                android:id="@+id/bFiltration"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/ic_filtration"
+                android:textColor="#FFFFFF" />
+
+            <Button
+                android:id="@+id/bSegmentation"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/ic_segmentation"
+                android:textColor="#FFFFFF" />
+
+        </LinearLayout>
+    </HorizontalScrollView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

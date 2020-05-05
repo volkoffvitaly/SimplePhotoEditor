@@ -7,6 +7,8 @@ import android.os.Parcelable
 import android.widget.Button
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import kotlinx.android.synthetic.main.activity_editor.*
 
 
@@ -14,6 +16,7 @@ import kotlinx.android.synthetic.main.activity_editor.*
 class EditorActivity : AppCompatActivity() {
 
     lateinit var buttons: Array<Button>
+    lateinit var fragments: Array<Fragment>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,6 +25,8 @@ class EditorActivity : AppCompatActivity() {
 
         var ivPhoto = findViewById<ImageView>(R.id.ivPhoto)
         ivPhoto.setImageURI(intent.getParcelableExtra<Parcelable>("Image") as Uri)
+
+        bFilters.isSelected = true
 
         buttons = arrayOf(
             findViewById(R.id.bFilters),
@@ -32,6 +37,17 @@ class EditorActivity : AppCompatActivity() {
             findViewById(R.id.bDraw),
             findViewById(R.id.bFiltration),
             findViewById(R.id.bSegmentation)
+        )
+
+        fragments = arrayOf(
+            f_Filters(),
+            f_Rotate(),
+            f_Zoom(),
+            f_Healing(),
+            f_UnsharpMasking(),
+            f_Draw(),
+            f_Filtration(),
+            f_Segmentation()
         )
 
 
@@ -71,6 +87,12 @@ class EditorActivity : AppCompatActivity() {
     fun turnButtons(k: Int) {
         for (i in buttons.indices) {
             buttons[i].isSelected = i == k
+
+            if (i == k) {
+                val transaction = supportFragmentManager.beginTransaction()
+                transaction.replace(R.id.fPlace, fragments[i])
+                transaction.commit()
+            }
         }
     }
 }

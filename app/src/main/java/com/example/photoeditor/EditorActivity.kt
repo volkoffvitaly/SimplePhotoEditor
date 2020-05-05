@@ -85,14 +85,11 @@ class EditorActivity : AppCompatActivity() {
     }
 
     fun turnButtons(k: Int) {
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.fPlace, fragments[k])
+        transaction.commit()
         for (i in buttons.indices) {
             buttons[i].isSelected = i == k
-
-            if (i == k) {
-                val transaction = supportFragmentManager.beginTransaction()
-                transaction.replace(R.id.fPlace, fragments[i])
-                transaction.commit()
-            }
         }
     }
 }

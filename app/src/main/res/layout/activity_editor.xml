@@ -12,21 +12,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="#282828"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/hsvBottomBar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/vTopBar"
         app:srcCompat="@drawable/ic_launcher_background" />
 
     <HorizontalScrollView
-        android:id="@+id/horizontalScrollView"
+        android:id="@+id/hsvBottomBar"
         android:layout_width="0dp"
         android:layout_height="45dp"
+        android:background="#080808"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0">
+        app:layout_constraintStart_toStartOf="parent">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -40,6 +39,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/ic_filters"
+                android:backgroundTint="@color/color_for_buttons"
                 android:textColor="#FFFFFF" />
 
             <Button
@@ -48,6 +48,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/ic_rotate"
+                android:backgroundTint="@color/color_for_buttons"
                 android:textColor="#FFFFFF" />
 
             <Button
@@ -56,6 +57,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/ic_zoom"
+                android:backgroundTint="@color/color_for_buttons"
                 android:textColor="#FFFFFF" />
 
             <Button
@@ -64,6 +66,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/ic_healing"
+                android:backgroundTint="@color/color_for_buttons"
                 android:textColor="#FFFFFF" />
 
             <Button
@@ -72,6 +75,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/ic_unsharp_masking"
+                android:backgroundTint="@color/color_for_buttons"
                 android:textColor="#FFFFFF" />
 
             <Button
@@ -80,6 +84,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/ic_pencil"
+                android:backgroundTint="@color/color_for_buttons"
                 android:textColor="#FFFFFF" />
 
             <Button
@@ -88,6 +93,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/ic_filtration"
+                android:backgroundTint="@color/color_for_buttons"
                 android:textColor="#FFFFFF" />
 
             <Button
@@ -96,9 +102,18 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/ic_segmentation"
+                android:backgroundTint="@color/color_for_buttons"
                 android:textColor="#FFFFFF" />
 
         </LinearLayout>
     </HorizontalScrollView>
+
+    <View
+        android:id="@+id/vTopBar"
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:background="#080808"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

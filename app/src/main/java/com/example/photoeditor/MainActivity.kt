@@ -89,7 +89,7 @@ class MainActivity : AppCompatActivity() {
                 val uri = Uri.parse(currentPhotoPath)
 
                 val intent = Intent(this, EditorActivity::class.java).apply {
-                    putExtra("CameraImage", uri)
+                    putExtra("Image", uri)
                 }
 
                 startActivity(intent)
@@ -99,7 +99,7 @@ class MainActivity : AppCompatActivity() {
                 val uri = data!!.data
 
                 val intent = Intent(this, EditorActivity::class.java).apply {
-                    putExtra("GalleryImage", uri)
+                    putExtra("Image", uri)
                 }
 
                 startActivity(intent)
@@ -125,7 +125,7 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
 
         try {
-            val pathToImage: Uri = FileProvider.getUriForFile(this, "com.example.android.fileprovider", CreateImageFile())
+            val pathToImage = FileProvider.getUriForFile(this, "com.example.android.fileprovider", CreateImageFile())
             intent.putExtra(MediaStore.EXTRA_OUTPUT, pathToImage)
             startActivityForResult(intent, REQUEST_CAMERA)
         } catch (e: IOException) {
@@ -136,8 +136,8 @@ class MainActivity : AppCompatActivity() {
 
 
     fun PickFromGallery() {
-        val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        galleryIntent.type = "image/*"
-        startActivityForResult(galleryIntent, REQUEST_GALLERY)
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        intent.type = "image/*"
+        startActivityForResult(intent, REQUEST_GALLERY)
     }
 }

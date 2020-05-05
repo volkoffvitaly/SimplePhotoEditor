@@ -1,30 +1,76 @@
 package com.example.photoeditor
 
+
 import android.net.Uri
 import android.os.Bundle
 import android.os.Parcelable
+import android.widget.Button
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import kotlinx.android.synthetic.main.activity_editor.*
+
 
 
 class EditorActivity : AppCompatActivity() {
+
+    lateinit var buttons: Array<Button>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_editor)
 
 
-        val intent = intent
+        var ivPhoto = findViewById<ImageView>(R.id.ivPhoto)
+        ivPhoto.setImageURI(intent.getParcelableExtra<Parcelable>("Image") as Uri)
 
-        if (intent.hasExtra("CameraImage")) {
-            var ivPhoto = findViewById<ImageView>(R.id.ivPhoto)
-            ivPhoto.setImageURI(intent.getParcelableExtra<Parcelable>("CameraImage") as Uri)
+        buttons = arrayOf(
+            findViewById(R.id.bFilters),
+            findViewById(R.id.bRotate),
+            findViewById(R.id.bZoom),
+            findViewById(R.id.bHealing),
+            findViewById(R.id.bUnsharpMasking),
+            findViewById(R.id.bDraw),
+            findViewById(R.id.bFiltration),
+            findViewById(R.id.bSegmentation)
+        )
+
+
+        bFilters.setOnClickListener {
+            turnButtons(0)
         }
 
-        else if (intent.hasExtra("GalleryImage")){
-            var ivPhoto = findViewById<ImageView>(R.id.ivPhoto)
-            ivPhoto.setImageURI(intent.getParcelableExtra<Parcelable>("GalleryImage") as Uri)
+        bRotate.setOnClickListener {
+            turnButtons(1)
         }
 
+        bZoom.setOnClickListener {
+            turnButtons(2)
+        }
+
+        bHealing.setOnClickListener {
+            turnButtons(3)
+        }
+
+        bUnsharpMasking.setOnClickListener {
+            turnButtons(4)
+        }
+
+        bDraw.setOnClickListener {
+            turnButtons(5)
+        }
+
+        bFiltration.setOnClickListener {
+            turnButtons(6)
+        }
+
+        bSegmentation.setOnClickListener {
+            turnButtons(7)
+        }
+    }
+
+    fun turnButtons(k: Int) {
+        for (i in buttons.indices) {
+            buttons[i].isSelected = i == k
+        }
     }
 }

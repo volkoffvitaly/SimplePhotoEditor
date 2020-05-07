@@ -12,13 +12,15 @@ import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.activity_editor.*
-
+import kotlin.math.cos
+import kotlin.math.sin
 
 
 class EditorActivity : AppCompatActivity() {
 
 
-    var states: MutableList<Bitmap> = ArrayList()
+    //var states: MutableList<Bitmap> = ArrayList()
+    lateinit var oldBitmap: Bitmap
     lateinit var buttons: Array<Button>
 
 
@@ -28,7 +30,7 @@ class EditorActivity : AppCompatActivity() {
 
         bFilters.isSelected = true
         ivPhoto.setImageURI(intent.getParcelableExtra<Parcelable>("Image") as Uri)
-
+        oldBitmap = (ivPhoto.drawable as BitmapDrawable).bitmap
 
         buttons = arrayOf(
             bFilters,
@@ -100,6 +102,7 @@ class EditorActivity : AppCompatActivity() {
 
         bSegmentation.setOnClickListener {
             turnButtons(7, SegmentationFragment())
+            rotateImage(30.0)
         }
         // Bottom Bar
     }
@@ -119,33 +122,32 @@ class EditorActivity : AppCompatActivity() {
 
 
     fun onNegativeFilter() {
-        val bitmapOld = (ivPhoto.drawable as BitmapDrawable).bitmap
-        val bitmapNew = bitmapOld.copy(Bitmap.Config.ARGB_8888, true)
+        val newBitmap = oldBitmap.copy(Bitmap.Config.ARGB_8888, true)
 
-        for (y in 0 until bitmapOld.height) {
-            for (x in 0 until bitmapOld.width) {
-                val oldPixel = bitmapOld.getPixel(x, y)
+        for (y in 0 until oldBitmap.height) {
+            for (x in 0 until oldBitmap.width) {
+                val oldPixel = oldBitmap.getPixel(x, y)
 
                 val r = 255 - Color.red(oldPixel)
                 val g = 255 - Color.green(oldPixel)
                 val b = 255 - Color.blue(oldPixel)
 
-                bitmapNew.setPixel(x, y, Color.rgb(r, g ,b))
+                newBitmap.setPixel(x, y, Color.rgb(r, g ,b))
             }
         }
 
-        ivPhoto.setImageBitmap(bitmapNew)
-        states.add(bitmapOld)
+        ivPhoto.setImageBitmap(newBitmap)
+        oldBitmap = newBitmap
+        //states.add(oldBitmap)
     }
 
 
     fun onSepiaFilter() {
-        val bitmapOld = (ivPhoto.drawable as BitmapDrawable).bitmap
-        val bitmapNew = bitmapOld.copy(Bitmap.Config.ARGB_8888, true)
+        val newBitmap = oldBitmap.copy(Bitmap.Config.ARGB_8888, true)
 
-        for (y in 0 until bitmapOld.height) {
-            for (x in 0 until bitmapOld.width) {
-                val oldPixel = bitmapOld.getPixel(x, y)
+        for (y in 0 until oldBitmap.height) {
+            for (x in 0 until oldBitmap.width) {
+                val oldPixel = oldBitmap.getPixel(x, y)
 
                 val r = Color.red(oldPixel)
                 val g = Color.green(oldPixel)
@@ -159,33 +161,61 @@ class EditorActivity : AppCompatActivity() {
                 green = if (green > 255) 255 else green
                 blue = if (blue > 255) 255 else blue
 
-                bitmapNew.setPixel(x, y, Color.rgb(red, green, blue))
+                newBitmap.setPixel(x, y, Color.rgb(red, green, blue))
             }
         }
 
-        ivPhoto.setImageBitmap(bitmapNew)
-        states.add(bitmapOld)
+        ivPhoto.setImageBitmap(newBitmap)
+        oldBitmap = newBitmap
+        //states.add(oldBitmap)
     }
 
 
     fun onGrayFilter() {
-        val bitmapOld = (ivPhoto.drawable as BitmapDrawable).bitmap
-        val bitmapNew = bitmapOld.copy(Bitmap.Config.ARGB_8888, true)
+        val newBitmap = oldBitmap.copy(Bitmap.Config.ARGB_8888, true)
 
-        for (y in 0 until bitmapOld.height) {
-            for (x in 0 until bitmapOld.width) {
-                val oldPixel = bitmapOld.getPixel(x, y)
+        for (y in 0 until oldBitmap.height) {
+            for (x in 0 until oldBitmap.width) {
+                val oldPixel = oldBitmap.getPixel(x, y)
 
                 val r = Color.red(oldPixel)
                 val g = Color.green(oldPixel)
                 val b = Color.blue(oldPixel)
                 val grey = (r * 0.2126 + g * 0.7152 + b * 0.0722).toInt()
 
-                bitmapNew.setPixel(x, y, Color.rgb(grey, grey, grey))
+                newBitmap.setPixel(x, y, Color.rgb(grey, grey, grey))
             }
         }
 
-        ivPhoto.setImageBitmap(bitmapNew)
-        states.add(bitmapOld)
+        ivPhoto.setImageBitmap(newBitmap)
+        oldBitmap = newBitmap
+        //states.add(oldBitmap)
+    }
+
+
+    fun rotateImage(angle: Double) {
+        val newBitmap = Bitmap.createBitmap(oldBitmap.width, oldBitmap.height, Bitmap.Config.ARGB_8888)
+
+        val sinAngle: Double = sin(Math.toRadians(angle))
+        val cosAngle: Double = cos(Math.toRadians(angle))
+        val xCenter: Double = 0.5 * (oldBitmap.width - 1)
+        val yCenter: Double = 0.5 * (oldBitmap.height - 1)
+
+
+        for (y in 0 until oldBitmap.height) {
+            for (x in 0 until oldBitmap.width) {
+
+                val a = x - xCenter
+                val b = y - yCenter
+
+                val xNew = (a * cosAngle - b * sinAngle + xCenter).toInt()
+                val yNew = (a * sinAngle + b * cosAngle + yCenter).toInt()
+
+                if (0 <= xNew && xNew < oldBitmap.width && 0 <= yNew && yNew < oldBitmap.height)
+                    newBitmap.setPixel(x, y, oldBitmap.getPixel(xNew, yNew))
+            }
+        }
+
+        ivPhoto.setImageBitmap(newBitmap)
     }
 }

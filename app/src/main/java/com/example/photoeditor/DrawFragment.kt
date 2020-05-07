@@ -10,7 +10,7 @@ import android.view.ViewGroup
 class DrawFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.draw_f, container, false)
+        return inflater.inflate(R.layout.draw_fragment, container, false)
     }
 
 }

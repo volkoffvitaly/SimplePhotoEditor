@@ -10,7 +10,7 @@ import android.view.ViewGroup
 class FiltrationFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.filtration_f, container, false)
+        return inflater.inflate(R.layout.filtration_fragment, container, false)
     }
 
 }

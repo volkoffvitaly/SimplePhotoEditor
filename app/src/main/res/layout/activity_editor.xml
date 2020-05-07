@@ -6,17 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".EditorActivity">
 
-    <ImageView
-        android:id="@+id/ivPhoto"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="#111111"
-        app:layout_constraintBottom_toTopOf="@+id/fPlace"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/vTopBar"
-        app:srcCompat="@drawable/ic_launcher_background" />
-
     <HorizontalScrollView
         android:id="@+id/hsvBottomBar"
         android:layout_width="0dp"
@@ -107,6 +96,15 @@
         </LinearLayout>
     </HorizontalScrollView>
 
+    <fragment
+        android:id="@+id/fPlace"
+        android:name="com.example.photoeditor.FiltersFragment"
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        app:layout_constraintBottom_toTopOf="@+id/hsvBottomBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <View
         android:id="@+id/vTopBar"
         android:layout_width="wrap_content"
@@ -150,17 +148,6 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/bRedo"
-        android:layout_width="45dp"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="@drawable/ic_redo"
-        android:backgroundTint="@color/color_for_buttons"
-        app:layout_constraintBottom_toTopOf="@id/ivPhoto"
-        app:layout_constraintEnd_toStartOf="@+id/bCompare"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
         android:id="@+id/bUndo"
         android:layout_width="45dp"
         android:layout_height="0dp"
@@ -171,13 +158,26 @@
         app:layout_constraintEnd_toStartOf="@+id/bRedo"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <fragment
-        android:id="@+id/fPlace"
-        android:name="com.example.photoeditor.f_Filters"
+    <Button
+        android:id="@+id/bRedo"
+        android:layout_width="45dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@drawable/ic_redo"
+        android:backgroundTint="@color/color_for_buttons"
+        app:layout_constraintBottom_toTopOf="@id/ivPhoto"
+        app:layout_constraintEnd_toStartOf="@+id/bCompare"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/ivPhoto"
         android:layout_width="0dp"
-        android:layout_height="100dp"
-        app:layout_constraintBottom_toTopOf="@+id/hsvBottomBar"
+        android:layout_height="0dp"
+        android:background="#111111"
+        app:layout_constraintBottom_toTopOf="@+id/fPlace"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/vTopBar"
+        app:srcCompat="@drawable/ic_launcher_background" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

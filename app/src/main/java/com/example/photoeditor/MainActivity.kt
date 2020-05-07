@@ -22,6 +22,7 @@ import java.io.IOException
 class MainActivity : AppCompatActivity() {
 
     companion object {
+        val IMAGE: String = "Image"
         val REQUEST_CAMERA: Int = 1
         val REQUEST_GALLERY: Int = 2
     }
@@ -34,18 +35,19 @@ class MainActivity : AppCompatActivity() {
 
         bTakeANewPhoto.setOnClickListener {
             if (checkPermissions())
-                TakeANewPhoto()
+                takeANewPhoto()
             else
-                RequestPermissions()
+                requestPermissions()
         }
 
         bPickFromGallery.setOnClickListener {
             if (checkPermissions())
-                PickFromGallery()
+                pickFromGallery()
             else
-                RequestPermissions()
+                requestPermissions()
         }
     }
+
 
 
 
@@ -69,8 +71,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
-    fun RequestPermissions() {
+    fun requestPermissions() {
         val permissions = arrayOf(
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_EXTERNAL_STORAGE
@@ -78,7 +79,6 @@ class MainActivity : AppCompatActivity() {
 
         ActivityCompat.requestPermissions(this, permissions, 0)
     }
-
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -89,7 +89,7 @@ class MainActivity : AppCompatActivity() {
                 val uri = Uri.parse(currentPhotoPath)
 
                 val intent = Intent(this, EditorActivity::class.java).apply {
-                    putExtra("Image", uri)
+                    putExtra(IMAGE, uri)
                 }
 
                 startActivity(intent)
@@ -99,7 +99,7 @@ class MainActivity : AppCompatActivity() {
                 val uri = data!!.data
 
                 val intent = Intent(this, EditorActivity::class.java).apply {
-                    putExtra("Image", uri)
+                    putExtra(IMAGE, uri)
                 }
 
                 startActivity(intent)
@@ -108,8 +108,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
-    fun CreateImageFile(): File {
+    fun createImageFile(): File {
         val imageFileName = "JPEG_temp"
         val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         val image = File.createTempFile(imageFileName, ".jpg", storageDir)
@@ -120,12 +119,11 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
-    fun TakeANewPhoto() {
+    fun takeANewPhoto() {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
 
         try {
-            val pathToImage = FileProvider.getUriForFile(this, "com.example.android.fileprovider", CreateImageFile())
+            val pathToImage = FileProvider.getUriForFile(this, "com.example.android.fileprovider", createImageFile())
             intent.putExtra(MediaStore.EXTRA_OUTPUT, pathToImage)
             startActivityForResult(intent, REQUEST_CAMERA)
         } catch (e: IOException) {
@@ -134,8 +132,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
-    fun PickFromGallery() {
+    fun pickFromGallery() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         intent.type = "image/*"
         startActivityForResult(intent, REQUEST_GALLERY)

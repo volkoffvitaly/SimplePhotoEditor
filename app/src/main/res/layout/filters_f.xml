@@ -4,5 +4,4 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#643551"
-    tools:context=".f_Filters">
-</FrameLayout>
+    tools:context=".FiltersFragment"/>

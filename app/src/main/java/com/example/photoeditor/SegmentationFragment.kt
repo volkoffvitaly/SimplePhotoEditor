@@ -7,10 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 
 
-class f_Draw : Fragment() {
+class SegmentationFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.draw_f, container, false)
+        return inflater.inflate(R.layout.segmentation_f, container, false)
     }
 
 }

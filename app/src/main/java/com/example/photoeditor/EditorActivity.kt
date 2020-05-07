@@ -9,7 +9,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Parcelable
 import android.widget.Button
-import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.activity_editor.*
@@ -18,105 +17,108 @@ import kotlinx.android.synthetic.main.activity_editor.*
 
 class EditorActivity : AppCompatActivity() {
 
+
     var states: MutableList<Bitmap> = ArrayList()
     lateinit var buttons: Array<Button>
-    lateinit var fragments: Array<Fragment>
-    lateinit var ivPhoto: ImageView
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_editor)
 
-
-        ivPhoto = findViewById(R.id.ivPhoto)
+        bFilters.isSelected = true
         ivPhoto.setImageURI(intent.getParcelableExtra<Parcelable>("Image") as Uri)
 
-        bFilters.isSelected = true
 
         buttons = arrayOf(
-            findViewById(R.id.bFilters),
-            findViewById(R.id.bRotate),
-            findViewById(R.id.bZoom),
-            findViewById(R.id.bHealing),
-            findViewById(R.id.bUnsharpMasking),
-            findViewById(R.id.bDraw),
-            findViewById(R.id.bFiltration),
-            findViewById(R.id.bSegmentation)
-        )
-
-        fragments = arrayOf(
-            f_Filters(),
-            f_Rotate(),
-            f_Zoom(),
-            f_Healing(),
-            f_UnsharpMasking(),
-            f_Draw(),
-            f_Filtration(),
-            f_Segmentation()
+            bFilters,
+            bRotate,
+            bZoom,
+            bHealing,
+            bUnsharpMasking,
+            bDraw,
+            bFiltration,
+            bSegmentation
         )
 
 
+        // Top Bar
         bBack.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }
 
         bUndo.setOnClickListener {
-
+            //
         }
 
         bRedo.setOnClickListener {
-
+            //
         }
 
-        
+        bCompare.setOnClickListener {
+            //
+        }
+
+        bSave.setOnClickListener {
+            //
+        }
+        // Top Bar
+
+
+        // Bottom Bar
         bFilters.setOnClickListener {
-            turnButtons(0)
+            turnButtons(0, FiltersFragment())
+            onNegativeFilter()
         }
 
         bRotate.setOnClickListener {
-            turnButtons(1)
+            turnButtons(1, RotateFragment())
+            onSepiaFilter()
         }
 
         bZoom.setOnClickListener {
-            turnButtons(2)
+            turnButtons(2, ZoomFragment())
+            onGrayFilter()
         }
 
         bHealing.setOnClickListener {
-            turnButtons(3)
+            turnButtons(3, HealingFragment())
         }
 
         bUnsharpMasking.setOnClickListener {
-            turnButtons(4)
+            turnButtons(4, UnsharpMaskingFragment())
         }
 
         bDraw.setOnClickListener {
-            turnButtons(5)
+            turnButtons(5, DrawFragment())
         }
 
         bFiltration.setOnClickListener {
-            turnButtons(6)
+            turnButtons(6, FiltrationFragment())
         }
 
         bSegmentation.setOnClickListener {
-            turnButtons(7)
+            turnButtons(7, SegmentationFragment())
         }
+        // Bottom Bar
     }
 
-    fun turnButtons(k: Int) {
-        val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.fPlace, fragments[k])
-        transaction.commit()
+
+
+
+    fun turnButtons(k: Int, currentFragment: Fragment) {
         for (i in buttons.indices) {
             buttons[i].isSelected = i == k
         }
+
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.fPlace, currentFragment)
+        transaction.commit()
     }
 
 
-
-
-
-    fun onNegativeFilter () {
+    fun onNegativeFilter() {
         val bitmapOld = (ivPhoto.drawable as BitmapDrawable).bitmap
         val bitmapNew = bitmapOld.copy(Bitmap.Config.ARGB_8888, true)
 
@@ -135,7 +137,6 @@ class EditorActivity : AppCompatActivity() {
         ivPhoto.setImageBitmap(bitmapNew)
         states.add(bitmapOld)
     }
-
 
 
     fun onSepiaFilter() {
@@ -165,7 +166,6 @@ class EditorActivity : AppCompatActivity() {
         ivPhoto.setImageBitmap(bitmapNew)
         states.add(bitmapOld)
     }
-
 
 
     fun onGrayFilter() {

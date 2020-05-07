@@ -7,10 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 
 
-class f_UnsharpMasking : Fragment() {
+class DrawFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.unsharp_masking_f, container, false)
+        return inflater.inflate(R.layout.draw_f, container, false)
     }
 
 }

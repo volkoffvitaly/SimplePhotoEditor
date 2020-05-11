@@ -118,8 +118,6 @@ class EditorActivity : AppCompatActivity() {
         val startX: Int = (bitmapOld.width - (bitmapOld.width * procent / 100)) / 2
         val startY: Int = (bitmapOld.height - (bitmapOld.height * procent / 100)) / 2
 
-        //Toast.makeText(getApplicationContext(), "${bitmapOld.width} ${bitmapOld.height}", Toast.LENGTH_SHORT).show()
-
         for (y in 0 until bitmapNew.height){
             for (x in 0 until bitmapNew.width){
                 val oldPixel = bitmapOld.getPixel(startX + x, startY + y)

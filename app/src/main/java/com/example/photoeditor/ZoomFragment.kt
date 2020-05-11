@@ -18,13 +18,13 @@ class ZoomFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        textView.text = "Procent : 99"
-        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+        textViewZoom.text = "Procent : 99"
+        seekZoom.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
 
             override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
                 // Display the current progress of SeekBar
                 val temp = 100 - i
-                textView.text = "Procent : $temp"
+                textViewZoom.text = "Procent : $temp"
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar) {

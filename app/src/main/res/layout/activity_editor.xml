@@ -98,7 +98,7 @@
 
     <fragment
         android:id="@+id/fPlace"
-        android:name="com.example.photoeditor.FiltersFragment"
+        android:name="com.example.photoeditor.StartFragment"
         android:layout_width="0dp"
         android:layout_height="100dp"
         app:layout_constraintBottom_toTopOf="@+id/hsvBottomBar"

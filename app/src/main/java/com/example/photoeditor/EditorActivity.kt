@@ -9,10 +9,11 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Parcelable
 import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.activity_editor.*
-
+import kotlinx.android.synthetic.main.filters_fragment.*
 
 
 class EditorActivity : AppCompatActivity() {
@@ -27,8 +28,11 @@ class EditorActivity : AppCompatActivity() {
         setContentView(R.layout.activity_editor)
 
         bFilters.isSelected = true
-        ivPhoto.setImageURI(intent.getParcelableExtra<Parcelable>("Image") as Uri)
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.fPlace, FiltersFragment())
+        transaction.commit()
 
+        ivPhoto.setImageURI(intent.getParcelableExtra<Parcelable>("Image") as Uri)
 
         buttons = arrayOf(
             bFilters,
@@ -40,7 +44,6 @@ class EditorActivity : AppCompatActivity() {
             bFiltration,
             bSegmentation
         )
-
 
         // Top Bar
         bBack.setOnClickListener {
@@ -69,17 +72,15 @@ class EditorActivity : AppCompatActivity() {
         // Bottom Bar
         bFilters.setOnClickListener {
             turnButtons(0, FiltersFragment())
-            onNegativeFilter()
         }
 
         bRotate.setOnClickListener {
             turnButtons(1, RotateFragment())
-            onSepiaFilter()
         }
 
         bZoom.setOnClickListener {
             turnButtons(2, ZoomFragment())
-            onGrayFilter()
+            fZoom(50)
         }
 
         bHealing.setOnClickListener {
@@ -104,9 +105,6 @@ class EditorActivity : AppCompatActivity() {
         // Bottom Bar
     }
 
-
-
-
     fun turnButtons(k: Int, currentFragment: Fragment) {
         for (i in buttons.indices) {
             buttons[i].isSelected = i == k
@@ -117,75 +115,21 @@ class EditorActivity : AppCompatActivity() {
         transaction.commit()
     }
 
-
-    fun onNegativeFilter() {
+    fun fZoom(procent: Int){
         val bitmapOld = (ivPhoto.drawable as BitmapDrawable).bitmap
-        val bitmapNew = bitmapOld.copy(Bitmap.Config.ARGB_8888, true)
+        val bitmapNew = Bitmap.createBitmap((bitmapOld.width * procent / 100), (bitmapOld.height * procent / 100), Bitmap.Config.ARGB_8888)
 
-        for (y in 0 until bitmapOld.height) {
-            for (x in 0 until bitmapOld.width) {
-                val oldPixel = bitmapOld.getPixel(x, y)
+        val startX: Int = (bitmapOld.width - (bitmapOld.width * procent / 100)) / 2
+        val startY: Int = (bitmapOld.height - (bitmapOld.height * procent / 100)) / 2
 
-                val r = 255 - Color.red(oldPixel)
-                val g = 255 - Color.green(oldPixel)
-                val b = 255 - Color.blue(oldPixel)
+        //Toast.makeText(getApplicationContext(), "${bitmapOld.width} ${bitmapOld.height}", Toast.LENGTH_SHORT).show()
 
-                bitmapNew.setPixel(x, y, Color.rgb(r, g ,b))
+        for (y in 0 until bitmapNew.height){
+            for (x in 0 until bitmapNew.width){
+                val oldPixel = bitmapOld.getPixel(startX + x, startY + y)
+                bitmapNew.setPixel(x, y, oldPixel)
             }
         }
-
         ivPhoto.setImageBitmap(bitmapNew)
-        states.add(bitmapOld)
-    }
-
-
-    fun onSepiaFilter() {
-        val bitmapOld = (ivPhoto.drawable as BitmapDrawable).bitmap
-        val bitmapNew = bitmapOld.copy(Bitmap.Config.ARGB_8888, true)
-
-        for (y in 0 until bitmapOld.height) {
-            for (x in 0 until bitmapOld.width) {
-                val oldPixel = bitmapOld.getPixel(x, y)
-
-                val r = Color.red(oldPixel)
-                val g = Color.green(oldPixel)
-                val b = Color.blue(oldPixel)
-
-                var red = (r * 0.393 + g * 0.769 + b * 0.189).toInt()
-                var green = (r * 0.349 + g * 0.686 + b * 0.168).toInt()
-                var blue = (r * 0.272 + g * 0.534 + b * 0.131).toInt()
-
-                red = if (red > 255) 255 else red
-                green = if (green > 255) 255 else green
-                blue = if (blue > 255) 255 else blue
-
-                bitmapNew.setPixel(x, y, Color.rgb(red, green, blue))
-            }
-        }
-
-        ivPhoto.setImageBitmap(bitmapNew)
-        states.add(bitmapOld)
-    }
-
-
-    fun onGrayFilter() {
-        val bitmapOld = (ivPhoto.drawable as BitmapDrawable).bitmap
-        val bitmapNew = bitmapOld.copy(Bitmap.Config.ARGB_8888, true)
-
-        for (y in 0 until bitmapOld.height) {
-            for (x in 0 until bitmapOld.width) {
-                val oldPixel = bitmapOld.getPixel(x, y)
-
-                val r = Color.red(oldPixel)
-                val g = Color.green(oldPixel)
-                val b = Color.blue(oldPixel)
-                val grey = (r * 0.2126 + g * 0.7152 + b * 0.0722).toInt()
-
-                bitmapNew.setPixel(x, y, Color.rgb(grey, grey, grey))
-            }
-        }
-
-        ivPhoto.setImageBitmap(bitmapNew)
-        states.add(bitmapOld)
     }
 }

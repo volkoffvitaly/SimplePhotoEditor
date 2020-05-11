@@ -5,8 +5,8 @@
     android:id="@+id/frameLayout3"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#640531"
-    tools:context=".RotateFragment" >
+    android:background="#191919"
+    tools:context=".RotateFragment">
 
     <SeekBar
         android:id="@+id/seekAngle"
@@ -24,7 +24,10 @@
         android:id="@+id/textViewAngles"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="#191919"
+        android:fontFamily="sans-serif-medium"
         android:text="TextView"
+        android:textColor="#FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/seekAngle" />

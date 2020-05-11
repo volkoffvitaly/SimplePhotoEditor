@@ -15,7 +15,7 @@ import kotlinx.android.synthetic.main.activity_editor.*
 class EditorActivity : AppCompatActivity() {
 
 
-    var states: MutableList<Bitmap> = ArrayList()
+    //var states: MutableList<Bitmap> = ArrayList()
     lateinit var buttons: Array<Button>
 
 

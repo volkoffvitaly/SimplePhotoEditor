@@ -11,7 +11,6 @@ import android.widget.ImageView
 import android.widget.SeekBar
 import kotlinx.android.synthetic.main.activity_editor.*
 import kotlinx.android.synthetic.main.rotate_fragment.*
-import kotlinx.android.synthetic.main.zoom_fragment.*
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -29,13 +28,13 @@ class RotateFragment : Fragment() {
         ivPhoto = activity!!.ivPhoto
 
         seekAngle.progress = 180
-        textViewAngles.text = "0 degrees"
+        textViewAngles.text = "0°"
 
         seekAngle.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
 
             override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
                 val temp = i - 180
-                textViewAngles.text = "$temp degrees"
+                textViewAngles.text = "$temp°"
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar) {
@@ -49,7 +48,6 @@ class RotateFragment : Fragment() {
     }
 
     fun rotateImage(angle: Double) {
-
         val oldBitmap = (ivPhoto.drawable as BitmapDrawable).bitmap
         val newBitmap = Bitmap.createBitmap(oldBitmap.width, oldBitmap.height, Bitmap.Config.ARGB_8888)
 

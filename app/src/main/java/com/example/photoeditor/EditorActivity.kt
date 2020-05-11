@@ -75,7 +75,6 @@ class EditorActivity : AppCompatActivity() {
 
         bZoom.setOnClickListener {
             turnButtons(2, ZoomFragment())
-            fZoom(50)
         }
 
         bHealing.setOnClickListener {
@@ -108,21 +107,5 @@ class EditorActivity : AppCompatActivity() {
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.fPlace, currentFragment)
         transaction.commit()
-    }
-
-    fun fZoom(procent: Int){
-        val bitmapOld = (ivPhoto.drawable as BitmapDrawable).bitmap
-        val bitmapNew = Bitmap.createBitmap((bitmapOld.width * procent / 100), (bitmapOld.height * procent / 100), Bitmap.Config.ARGB_8888)
-
-        val startX: Int = (bitmapOld.width - (bitmapOld.width * procent / 100)) / 2
-        val startY: Int = (bitmapOld.height - (bitmapOld.height * procent / 100)) / 2
-
-        for (y in 0 until bitmapNew.height){
-            for (x in 0 until bitmapNew.width){
-                val oldPixel = bitmapOld.getPixel(startX + x, startY + y)
-                bitmapNew.setPixel(x, y, oldPixel)
-            }
-        }
-        ivPhoto.setImageBitmap(bitmapNew)
     }
 }

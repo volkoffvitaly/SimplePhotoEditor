@@ -19,7 +19,7 @@ import kotlinx.android.synthetic.main.filters_fragment.*
 
 class FiltersFragment : Fragment() {
 
-    lateinit var ivPhoto: ImageView
+    var ivPhoto: Bitmap? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.filters_fragment, container, false)
@@ -28,7 +28,8 @@ class FiltersFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        ivPhoto = activity!!.ivPhoto
+        if (ivPhoto == null)
+            ivPhoto = (activity!!.ivPhoto.drawable as BitmapDrawable).bitmap
 
         bNegative.setOnClickListener(){
             onNegativeFilter()
@@ -44,12 +45,12 @@ class FiltersFragment : Fragment() {
     }
 
     fun onNegativeFilter() {
-        val bitmapOld = (ivPhoto.drawable as BitmapDrawable).bitmap
-        val bitmapNew = bitmapOld.copy(Bitmap.Config.ARGB_8888, true)
 
-        for (y in 0 until bitmapOld.height) {
-            for (x in 0 until bitmapOld.width) {
-                val oldPixel = bitmapOld.getPixel(x, y)
+        val bitmapNew = ivPhoto!!.copy(Bitmap.Config.ARGB_8888, true)
+
+        for (y in 0 until ivPhoto!!.height) {
+            for (x in 0 until ivPhoto!!.width) {
+                val oldPixel = ivPhoto!!.getPixel(x, y)
 
                 val r = 255 - Color.red(oldPixel)
                 val g = 255 - Color.green(oldPixel)
@@ -58,16 +59,16 @@ class FiltersFragment : Fragment() {
                 bitmapNew.setPixel(x, y, Color.rgb(r, g ,b))
             }
         }
-        ivPhoto.setImageBitmap(bitmapNew)
+        activity!!.ivPhoto!!.setImageBitmap(bitmapNew)
     }
 
     fun onSepiaFilter() {
-        val bitmapOld = (ivPhoto.drawable as BitmapDrawable).bitmap
-        val bitmapNew = bitmapOld.copy(Bitmap.Config.ARGB_8888, true)
+        
+        val bitmapNew = ivPhoto!!.copy(Bitmap.Config.ARGB_8888, true)
 
-        for (y in 0 until bitmapOld.height) {
-            for (x in 0 until bitmapOld.width) {
-                val oldPixel = bitmapOld.getPixel(x, y)
+        for (y in 0 until ivPhoto!!.height) {
+            for (x in 0 until ivPhoto!!.width) {
+                val oldPixel = ivPhoto!!.getPixel(x, y)
 
                 val r = Color.red(oldPixel)
                 val g = Color.green(oldPixel)
@@ -85,16 +86,16 @@ class FiltersFragment : Fragment() {
             }
         }
 
-        ivPhoto.setImageBitmap(bitmapNew)
+        activity!!.ivPhoto!!.setImageBitmap(bitmapNew)
     }
 
     fun onGrayFilter() {
-        val bitmapOld = (ivPhoto.drawable as BitmapDrawable).bitmap
-        val bitmapNew = bitmapOld.copy(Bitmap.Config.ARGB_8888, true)
 
-        for (y in 0 until bitmapOld.height) {
-            for (x in 0 until bitmapOld.width) {
-                val oldPixel = bitmapOld.getPixel(x, y)
+        val bitmapNew = ivPhoto!!.copy(Bitmap.Config.ARGB_8888, true)
+
+        for (y in 0 until ivPhoto!!.height) {
+            for (x in 0 until ivPhoto!!.width) {
+                val oldPixel = ivPhoto!!.getPixel(x, y)
 
                 val r = Color.red(oldPixel)
                 val g = Color.green(oldPixel)
@@ -105,6 +106,6 @@ class FiltersFragment : Fragment() {
             }
         }
 
-        ivPhoto.setImageBitmap(bitmapNew)
+        activity!!.ivPhoto!!.setImageBitmap(bitmapNew)
     }
 }

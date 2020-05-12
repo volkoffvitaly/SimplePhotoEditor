@@ -28,18 +28,33 @@ class FiltersFragment : Fragment() {
 
         bNegative.setOnClickListener() {
             onNegativeFilter()
+            showConfirmBar()
         }
 
         bSepia.setOnClickListener() {
             onSepiaFilter()
+            showConfirmBar()
         }
 
         bGray.setOnClickListener() {
             onGrayFilter()
+            showConfirmBar()
+        }
+
+        activity!!.bConfirm!!.setOnClickListener(){
+            ivPhoto = (activity!!.ivPhoto.drawable as BitmapDrawable).bitmap
+            activity!!.confirmBar!!.visibility = View.INVISIBLE
+        }
+
+        activity!!.bCancel!!.setOnClickListener(){
+            activity!!.ivPhoto!!.setImageBitmap(ivPhoto)
+            activity!!.confirmBar!!.visibility = View.INVISIBLE
         }
     }
 
-
+    private fun showConfirmBar() {
+        activity!!.confirmBar!!.visibility = View.VISIBLE
+    }
 
     private fun onNegativeFilter() {
 

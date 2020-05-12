@@ -6,8 +6,11 @@ import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Parcelable
+import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.activity_editor.*
 
@@ -29,6 +32,8 @@ class EditorActivity : AppCompatActivity() {
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.fPlace, FiltersFragment())
         transaction.commit()
+
+        confirmBar.visibility = View.INVISIBLE
 
         ivPhoto.setImageURI(intent.getParcelableExtra<Parcelable>("Image") as Uri)
         //States.states.add((ivPhoto.drawable as BitmapDrawable).bitmap)

@@ -3,15 +3,10 @@ package com.example.photoeditor
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
-import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import androidx.core.net.toFile
-import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.activity_editor.*
 import kotlinx.android.synthetic.main.filters_fragment.*
@@ -31,20 +26,22 @@ class FiltersFragment : Fragment() {
         if (ivPhoto == null)
             ivPhoto = (activity!!.ivPhoto.drawable as BitmapDrawable).bitmap
 
-        bNegative.setOnClickListener(){
+        bNegative.setOnClickListener() {
             onNegativeFilter()
         }
 
-        bSepia.setOnClickListener(){
+        bSepia.setOnClickListener() {
             onSepiaFilter()
         }
 
-        bGray.setOnClickListener(){
+        bGray.setOnClickListener() {
             onGrayFilter()
         }
     }
 
-    fun onNegativeFilter() {
+
+
+    private fun onNegativeFilter() {
 
         val bitmapNew = ivPhoto!!.copy(Bitmap.Config.ARGB_8888, true)
 
@@ -59,10 +56,13 @@ class FiltersFragment : Fragment() {
                 bitmapNew.setPixel(x, y, Color.rgb(r, g ,b))
             }
         }
+
         activity!!.ivPhoto!!.setImageBitmap(bitmapNew)
     }
 
-    fun onSepiaFilter() {
+
+
+    private fun onSepiaFilter() {
         
         val bitmapNew = ivPhoto!!.copy(Bitmap.Config.ARGB_8888, true)
 
@@ -89,7 +89,9 @@ class FiltersFragment : Fragment() {
         activity!!.ivPhoto!!.setImageBitmap(bitmapNew)
     }
 
-    fun onGrayFilter() {
+
+
+    private fun onGrayFilter() {
 
         val bitmapNew = ivPhoto!!.copy(Bitmap.Config.ARGB_8888, true)
 

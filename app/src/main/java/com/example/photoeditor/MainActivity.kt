@@ -1,6 +1,5 @@
 package com.example.photoeditor
 
-
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
@@ -50,8 +49,7 @@ class MainActivity : AppCompatActivity() {
 
 
 
-
-    fun checkPermissions(): Boolean {
+    private fun checkPermissions(): Boolean {
         var writeAccess = false
         var readAccess = false
 
@@ -71,7 +69,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    fun requestPermissions() {
+    private fun requestPermissions() {
         val permissions = arrayOf(
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_EXTERNAL_STORAGE
@@ -108,7 +106,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    fun createImageFile(): File {
+    private fun createImageFile(): File {
         val imageFileName = "JPEG_temp"
         val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         val image = File.createTempFile(imageFileName, ".jpg", storageDir)
@@ -119,7 +117,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    fun takeANewPhoto() {
+    private fun takeANewPhoto() {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
 
         try {
@@ -132,7 +130,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    fun pickFromGallery() {
+    private fun pickFromGallery() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         intent.type = "image/*"
         startActivityForResult(intent, REQUEST_GALLERY)

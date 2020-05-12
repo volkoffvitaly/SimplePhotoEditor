@@ -1,6 +1,5 @@
 package com.example.photoeditor
 
-
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
@@ -12,9 +11,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.activity_editor.*
 
+
 class EditorActivity : AppCompatActivity() {
 
-    //var states: MutableList<Bitmap> = ArrayList()
+    //object States {
+    //    var states: MutableList<Bitmap> = ArrayList()
+    //}
+
     lateinit var buttons: Array<Button>
 
 
@@ -28,6 +31,7 @@ class EditorActivity : AppCompatActivity() {
         transaction.commit()
 
         ivPhoto.setImageURI(intent.getParcelableExtra<Parcelable>("Image") as Uri)
+        //States.states.add((ivPhoto.drawable as BitmapDrawable).bitmap)
 
         buttons = arrayOf(
             bFilters,
@@ -47,7 +51,10 @@ class EditorActivity : AppCompatActivity() {
         }
 
         bUndo.setOnClickListener {
-            //
+            //if (1 < States.states.size) {
+            //    States.states.removeAt(States.states.size - 1)
+            //    ivPhoto.setImageBitmap(States.states[States.states.size - 1])
+            //}
         }
 
         bRedo.setOnClickListener {
@@ -99,7 +106,7 @@ class EditorActivity : AppCompatActivity() {
         // Bottom Bar
     }
 
-    fun turnButtons(k: Int, currentFragment: Fragment) {
+    private fun turnButtons(k: Int, currentFragment: Fragment) {
         for (i in buttons.indices) {
             buttons[i].isSelected = i == k
         }

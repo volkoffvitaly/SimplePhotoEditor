@@ -23,16 +23,17 @@ class ZoomFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (ivPhoto == null)
+        if (ivPhoto == null) {
             ivPhoto = (activity!!.ivPhoto.drawable as BitmapDrawable).bitmap
+            //EditorActivity.States.states.add(ivPhoto!!)
+        }
+        textViewZoom.text = "100% of the original"
 
-        textViewZoom.text = "100%"
         seekZoom.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
 
             override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
-                // Display the current progress of SeekBar
                 val temp = 100 - i
-                textViewZoom.text = "$temp%"
+                textViewZoom.text = "$temp% of the original"
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar) {
@@ -45,11 +46,13 @@ class ZoomFragment : Fragment() {
         })
     }
 
-    fun fZoom(procent: Int){
-        val bitmapNew = Bitmap.createBitmap((ivPhoto!!.width * procent / 100), (ivPhoto!!.height * procent / 100), Bitmap.Config.ARGB_8888)
 
-        val startX: Int = (ivPhoto!!.width - (ivPhoto!!.width * procent / 100)) / 2
-        val startY: Int = (ivPhoto!!.height - (ivPhoto!!.height * procent / 100)) / 2
+
+    private fun fZoom(percentage: Int){
+        val bitmapNew = Bitmap.createBitmap((ivPhoto!!.width * percentage / 100), (ivPhoto!!.height * percentage / 100), Bitmap.Config.ARGB_8888)
+
+        val startX: Int = (ivPhoto!!.width - (ivPhoto!!.width * percentage / 100)) / 2
+        val startY: Int = (ivPhoto!!.height - (ivPhoto!!.height * percentage / 100)) / 2
 
         for (y in 0 until bitmapNew.height){
             for (x in 0 until bitmapNew.width){
@@ -57,6 +60,7 @@ class ZoomFragment : Fragment() {
                 bitmapNew.setPixel(x, y, oldPixel)
             }
         }
+
         activity!!.ivPhoto!!.setImageBitmap(bitmapNew)
     }
 }

@@ -13,9 +13,10 @@ import kotlinx.android.synthetic.main.rotate_fragment.*
 import kotlin.math.cos
 import kotlin.math.sin
 
+
 class RotateFragment : Fragment() {
 
-    var ivPhoto: Bitmap? = null
+    private var ivPhoto: Bitmap? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.rotate_fragment, container, false)
@@ -24,8 +25,10 @@ class RotateFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (ivPhoto == null)
+        if (ivPhoto == null) {
             ivPhoto = (activity!!.ivPhoto.drawable as BitmapDrawable).bitmap
+            //EditorActivity.States.states.add(ivPhoto!!)
+        }
 
         seekAngle.progress = 180
         textViewAngles.text = "0°"
@@ -47,7 +50,9 @@ class RotateFragment : Fragment() {
         })
     }
 
-    fun rotateImage(angle: Double) {
+
+
+    private fun rotateImage(angle: Double) {
 
         val xCenter: Double = 0.5 * (ivPhoto!!.width - 1)
         val yCenter: Double = 0.5 * (ivPhoto!!.height - 1)

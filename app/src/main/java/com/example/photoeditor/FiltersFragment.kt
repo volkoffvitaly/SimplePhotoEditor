@@ -26,18 +26,20 @@ class FiltersFragment : Fragment() {
         if (ivPhoto == null)
             ivPhoto = (activity!!.ivPhoto.drawable as BitmapDrawable).bitmap
 
+        setPreview()
+
         bNegative.setOnClickListener() {
-            onNegativeFilter()
+            activity!!.ivPhoto!!.setImageBitmap(onNegativeFilter(ivPhoto!!))
             showConfirmBar()
         }
 
         bSepia.setOnClickListener() {
-            onSepiaFilter()
+            activity!!.ivPhoto!!.setImageBitmap(onSepiaFilter(ivPhoto!!))
             showConfirmBar()
         }
 
         bGray.setOnClickListener() {
-            onGrayFilter()
+            activity!!.ivPhoto!!.setImageBitmap(onGrayFilter(ivPhoto!!))
             showConfirmBar()
         }
 
@@ -52,17 +54,64 @@ class FiltersFragment : Fragment() {
         }
     }
 
-    private fun showConfirmBar() {
-        activity!!.confirmBar!!.visibility = View.VISIBLE
+    private fun setPreview(){
+        val yStart : Int
+        val xStart : Int
+        val step : Int
+        val prevBitmap : Bitmap
+        val sizeOfSide : Int
+
+        if (ivPhoto!!.width <= 150 || ivPhoto!!.height <= 150){
+            if (ivPhoto!!.width > ivPhoto!!.height){
+                yStart = (ivPhoto!!.width - ivPhoto!!.height) / 2
+                sizeOfSide = ivPhoto!!.height
+                xStart = 0
+            } else {
+                xStart = (ivPhoto!!.height - ivPhoto!!.width) / 2
+                sizeOfSide = ivPhoto!!.width
+                yStart = 0
+            }
+            step = 1
+
+        } else {
+            if (ivPhoto!!.width > ivPhoto!!.height){
+                yStart = (ivPhoto!!.width - ivPhoto!!.height) / 2
+                step = ivPhoto!!.height / 150
+                xStart = 0
+            } else {
+                xStart = (ivPhoto!!.height - ivPhoto!!.width) / 2
+                step = ivPhoto!!.width / 150
+                yStart = 0
+            }
+            sizeOfSide = 150
+        }
+
+        prevBitmap = Bitmap.createBitmap(sizeOfSide, sizeOfSide, Bitmap.Config.ARGB_8888)
+
+        for (x in 0 until prevBitmap.height){
+            for (y in 0 until prevBitmap.width){
+                prevBitmap.setPixel(y, x, ivPhoto!!.getPixel(y * step + yStart, x * step + xStart))
+            }
+        }
+
+        bNegative.setImageBitmap(onNegativeFilter(prevBitmap))
+        bSepia.setImageBitmap(onSepiaFilter(prevBitmap))
+        bGray.setImageBitmap(onGrayFilter(prevBitmap))
     }
 
-    private fun onNegativeFilter() {
+    private fun showConfirmBar() {
+        if (activity!!.confirmBar!!.visibility == View.INVISIBLE){
+            activity!!.confirmBar!!.visibility = View.VISIBLE
+        }
+    }
 
-        val bitmapNew = ivPhoto!!.copy(Bitmap.Config.ARGB_8888, true)
+    private fun onNegativeFilter(bitmap: Bitmap) : Bitmap {
 
-        for (y in 0 until ivPhoto!!.height) {
-            for (x in 0 until ivPhoto!!.width) {
-                val oldPixel = ivPhoto!!.getPixel(x, y)
+        val bitmapNew = bitmap.copy(Bitmap.Config.ARGB_8888, true)
+
+        for (y in 0 until bitmap.height) {
+            for (x in 0 until bitmap.width) {
+                val oldPixel = bitmap.getPixel(x, y)
 
                 val r = 255 - Color.red(oldPixel)
                 val g = 255 - Color.green(oldPixel)
@@ -72,18 +121,18 @@ class FiltersFragment : Fragment() {
             }
         }
 
-        activity!!.ivPhoto!!.setImageBitmap(bitmapNew)
+        return bitmapNew
     }
 
 
 
-    private fun onSepiaFilter() {
+    private fun onSepiaFilter(bitmap: Bitmap) : Bitmap {
         
-        val bitmapNew = ivPhoto!!.copy(Bitmap.Config.ARGB_8888, true)
+        val bitmapNew = bitmap.copy(Bitmap.Config.ARGB_8888, true)
 
-        for (y in 0 until ivPhoto!!.height) {
-            for (x in 0 until ivPhoto!!.width) {
-                val oldPixel = ivPhoto!!.getPixel(x, y)
+        for (y in 0 until bitmap.height) {
+            for (x in 0 until bitmap.width) {
+                val oldPixel = bitmap.getPixel(x, y)
 
                 val r = Color.red(oldPixel)
                 val g = Color.green(oldPixel)
@@ -101,18 +150,18 @@ class FiltersFragment : Fragment() {
             }
         }
 
-        activity!!.ivPhoto!!.setImageBitmap(bitmapNew)
+        return bitmapNew
     }
 
 
 
-    private fun onGrayFilter() {
+    private fun onGrayFilter(bitmap: Bitmap) : Bitmap {
 
-        val bitmapNew = ivPhoto!!.copy(Bitmap.Config.ARGB_8888, true)
+        val bitmapNew = bitmap.copy(Bitmap.Config.ARGB_8888, true)
 
-        for (y in 0 until ivPhoto!!.height) {
-            for (x in 0 until ivPhoto!!.width) {
-                val oldPixel = ivPhoto!!.getPixel(x, y)
+        for (y in 0 until bitmap.height) {
+            for (x in 0 until bitmap.width) {
+                val oldPixel = bitmap.getPixel(x, y)
 
                 val r = Color.red(oldPixel)
                 val g = Color.green(oldPixel)
@@ -123,6 +172,6 @@ class FiltersFragment : Fragment() {
             }
         }
 
-        activity!!.ivPhoto!!.setImageBitmap(bitmapNew)
+        return bitmapNew
     }
 }

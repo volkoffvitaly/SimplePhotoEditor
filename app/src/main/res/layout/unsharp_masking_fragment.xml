@@ -30,7 +30,7 @@
         android:min="1"
         android:progressBackgroundTint="#FFFFFF"
         app:layout_constraintBottom_toTopOf="@+id/seekThreshold"
-        app:layout_constraintEnd_toStartOf="@+id/bAply"
+        app:layout_constraintEnd_toStartOf="@+id/bApply"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/seekRadius" />
@@ -50,11 +50,11 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/bAply"
+        android:id="@+id/bApply"
         android:layout_width="80dp"
         android:layout_height="0dp"
         android:backgroundTint="#191919"
-        android:text="Aply"
+        android:text="Apply"
         android:textColor="@color/color_for_buttons"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

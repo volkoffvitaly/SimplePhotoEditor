@@ -92,14 +92,20 @@ class UnsharpMaskingFragment : Fragment() {
             }
         })
 
-        bAply.setOnClickListener(){
+        bApply.setOnClickListener(){
             unsharp()
             showConfirmBar()
+
+            bApply.isEnabled = false
+            seekThreshold.isEnabled = false
+            seekAmount.isEnabled = false
+            seekRadius.isEnabled = false
         }
 
         activity!!.bConfirm!!.setOnClickListener(){
             ivPhoto = (activity!!.ivPhoto.drawable as BitmapDrawable).bitmap
             activity!!.confirmBar!!.visibility = View.INVISIBLE
+
             seekAmount.progress = seekAmount.min
             seekRadius.progress = seekRadius.min
             seekThreshold.progress = seekThreshold.min
@@ -107,11 +113,21 @@ class UnsharpMaskingFragment : Fragment() {
             tAmount.isSelected = false
             tRadius.isSelected = false
             tThreshold.isSelected = false
+
+            bApply.isEnabled = true
+            seekThreshold.isEnabled = true
+            seekAmount.isEnabled = true
+            seekRadius.isEnabled = true
         }
 
         activity!!.bCancel!!.setOnClickListener(){
             activity!!.ivPhoto!!.setImageBitmap(ivPhoto)
             activity!!.confirmBar!!.visibility = View.INVISIBLE
+
+            bApply.isEnabled = true
+            seekThreshold.isEnabled = true
+            seekAmount.isEnabled = true
+            seekRadius.isEnabled = true
         }
     }
 

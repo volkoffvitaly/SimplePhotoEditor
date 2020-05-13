@@ -7,14 +7,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.activity_editor.*
 import kotlinx.android.synthetic.main.filters_fragment.*
+import org.w3c.dom.Text
 
 
 class FiltersFragment : Fragment() {
 
     var ivPhoto: Bitmap? = null
+
+    lateinit var names: Array<TextView>
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.filters_fragment, container, false)
@@ -28,30 +32,50 @@ class FiltersFragment : Fragment() {
 
         setPreview()
 
+        names = arrayOf(
+            tNegative,
+            tSepia,
+            tGray
+        )
+
+
         bNegative.setOnClickListener() {
             activity!!.ivPhoto!!.setImageBitmap(onNegativeFilter(ivPhoto!!))
+            textSelectedOff()
+            tNegative.isSelected = true
             showConfirmBar()
         }
 
         bSepia.setOnClickListener() {
             activity!!.ivPhoto!!.setImageBitmap(onSepiaFilter(ivPhoto!!))
+            textSelectedOff()
+            tSepia.isSelected = true
             showConfirmBar()
         }
 
         bGray.setOnClickListener() {
             activity!!.ivPhoto!!.setImageBitmap(onGrayFilter(ivPhoto!!))
+            textSelectedOff()
+            tGray.isSelected = true
             showConfirmBar()
         }
 
         activity!!.bConfirm!!.setOnClickListener(){
             ivPhoto = (activity!!.ivPhoto.drawable as BitmapDrawable).bitmap
             activity!!.confirmBar!!.visibility = View.INVISIBLE
+            setPreview()
+            textSelectedOff()
         }
 
         activity!!.bCancel!!.setOnClickListener(){
             activity!!.ivPhoto!!.setImageBitmap(ivPhoto)
             activity!!.confirmBar!!.visibility = View.INVISIBLE
+            textSelectedOff()
         }
+    }
+
+    private fun textSelectedOff(){
+        for (i in names.indices) names[i].isSelected = false
     }
 
     private fun setPreview(){
@@ -63,34 +87,34 @@ class FiltersFragment : Fragment() {
 
         if (ivPhoto!!.width <= 150 || ivPhoto!!.height <= 150){
             if (ivPhoto!!.width > ivPhoto!!.height){
-                yStart = (ivPhoto!!.width - ivPhoto!!.height) / 2
+                xStart = (ivPhoto!!.width - ivPhoto!!.height) / 2
                 sizeOfSide = ivPhoto!!.height
-                xStart = 0
-            } else {
-                xStart = (ivPhoto!!.height - ivPhoto!!.width) / 2
-                sizeOfSide = ivPhoto!!.width
                 yStart = 0
+            } else {
+                yStart = (ivPhoto!!.height - ivPhoto!!.width) / 2
+                sizeOfSide = ivPhoto!!.width
+                xStart = 0
             }
             step = 1
 
         } else {
             if (ivPhoto!!.width > ivPhoto!!.height){
-                yStart = (ivPhoto!!.width - ivPhoto!!.height) / 2
+                xStart = (ivPhoto!!.width - ivPhoto!!.height) / 2
                 step = ivPhoto!!.height / 150
-                xStart = 0
-            } else {
-                xStart = (ivPhoto!!.height - ivPhoto!!.width) / 2
-                step = ivPhoto!!.width / 150
                 yStart = 0
+            } else {
+                yStart = (ivPhoto!!.height - ivPhoto!!.width) / 2
+                step = ivPhoto!!.width / 150
+                xStart = 0
             }
             sizeOfSide = 150
         }
 
         prevBitmap = Bitmap.createBitmap(sizeOfSide, sizeOfSide, Bitmap.Config.ARGB_8888)
 
-        for (x in 0 until prevBitmap.height){
-            for (y in 0 until prevBitmap.width){
-                prevBitmap.setPixel(y, x, ivPhoto!!.getPixel(y * step + yStart, x * step + xStart))
+        for (y in 0 until prevBitmap.height){
+            for (x in 0 until prevBitmap.width){
+                prevBitmap.setPixel(x, y, ivPhoto!!.getPixel(x * step + xStart, y * step + yStart))
             }
         }
 

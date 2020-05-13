@@ -46,11 +46,30 @@ class RotateFragment : Fragment() {
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
                 rotateImage(seekAngle.progress.toDouble() - 180)
+                if (seekAngle.progress != 180) {
+                    showConfirmBar()
+                } else activity!!.confirmBar!!.visibility = View.INVISIBLE
             }
         })
+
+        activity!!.bConfirm!!.setOnClickListener(){
+            ivPhoto = (activity!!.ivPhoto.drawable as BitmapDrawable).bitmap
+            activity!!.confirmBar!!.visibility = View.INVISIBLE
+            seekAngle.progress = 180
+        }
+
+        activity!!.bCancel!!.setOnClickListener(){
+            activity!!.ivPhoto!!.setImageBitmap(ivPhoto)
+            activity!!.confirmBar!!.visibility = View.INVISIBLE
+            seekAngle.progress = 180
+        }
     }
 
-
+    private fun showConfirmBar() {
+        if (activity!!.confirmBar!!.visibility == View.INVISIBLE){
+            activity!!.confirmBar!!.visibility = View.VISIBLE
+        }
+    }
 
     private fun rotateImage(angle: Double) {
 
@@ -59,9 +78,7 @@ class RotateFragment : Fragment() {
         val sinAngle: Double = sin(Math.toRadians(angle))
         val cosAngle: Double = cos(Math.toRadians(angle))
 
-
         val newBitmap = Bitmap.createBitmap(ivPhoto!!.width, ivPhoto!!.height, Bitmap.Config.ARGB_8888)
-
 
         for (y in 0 until ivPhoto!!.height) {
             for (x in 0 until ivPhoto!!.width) {

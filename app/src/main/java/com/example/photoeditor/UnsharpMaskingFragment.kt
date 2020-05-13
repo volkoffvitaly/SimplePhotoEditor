@@ -8,8 +8,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SeekBar
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.activity_editor.*
+import kotlinx.android.synthetic.main.unsharp_masking_fragment.*
 import kotlin.math.abs
 
 
@@ -19,9 +21,9 @@ class UnsharpMaskingFragment : Fragment() {
     private var blurredPhoto: Bitmap? = null
 
     //Parameters (Seek'и нужны на эти 3 параметра)
-    private var radius = 20
-    private var amount = 0.6f //float
-    private var threshold = 3
+    private var radius = 1
+    private var amount = 0.1f //float
+    private var threshold = 0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.unsharp_masking_fragment, container, false)
@@ -35,6 +37,85 @@ class UnsharpMaskingFragment : Fragment() {
             //EditorActivity.States.states.add(ivPhoto!!)
         }
 
+        tThreshold.text = "Threshold: 0"
+        tAmount.text = "Amount: 0.1"
+        tRadius.text = "Radius: 1"
+
+        seekRadius.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+
+            override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
+                tRadius.text = "Radius: ${seekRadius.progress}"
+                tRadius.isSelected = true
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar) {
+
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                radius = seekRadius.progress
+                tRadius.isSelected = false
+            }
+        })
+
+        seekThreshold.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+
+            override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
+                tThreshold.text = "Threshold: ${seekThreshold.progress}"
+                tThreshold.isSelected = true
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar) {
+
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                threshold = seekThreshold.progress
+                tThreshold.isSelected = false
+            }
+        })
+
+        seekAmount.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+
+            override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
+                tAmount.text = "Amount: ${(seekAmount.progress.toFloat() / 10)}"
+                tAmount.isSelected = true
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar) {
+
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                amount = (seekAmount.progress.toFloat() / 10)
+                tAmount.isSelected = false
+            }
+        })
+
+        bAply.setOnClickListener(){
+            unsharp()
+            showConfirmBar()
+        }
+
+        activity!!.bConfirm!!.setOnClickListener(){
+            ivPhoto = (activity!!.ivPhoto.drawable as BitmapDrawable).bitmap
+            activity!!.confirmBar!!.visibility = View.INVISIBLE
+            seekAmount.progress = seekAmount.min
+            seekRadius.progress = seekRadius.min
+            seekThreshold.progress = seekThreshold.min
+
+            tAmount.isSelected = false
+            tRadius.isSelected = false
+            tThreshold.isSelected = false
+        }
+
+        activity!!.bCancel!!.setOnClickListener(){
+            activity!!.ivPhoto!!.setImageBitmap(ivPhoto)
+            activity!!.confirmBar!!.visibility = View.INVISIBLE
+        }
+    }
+
+    private fun unsharp(){
         blurredPhoto = boxBlur(ivPhoto!!, radius)
 
         val originalPixels =  Array(ivPhoto!!.width, {IntArray(ivPhoto!!.height)})
@@ -49,8 +130,6 @@ class UnsharpMaskingFragment : Fragment() {
 
         unsharpMask(originalPixels, blurredPixels, amount, threshold)
     }
-
-
 
     private fun boxBlur(bitmap: Bitmap, range: Int): Bitmap? {
         assert(range and 1 == 0) { "Range must be odd." }
@@ -207,5 +286,11 @@ class UnsharpMaskingFragment : Fragment() {
         }
 
         activity!!.ivPhoto!!.setImageBitmap(newBitmap)
+    }
+
+    private fun showConfirmBar() {
+        if (activity!!.confirmBar!!.visibility == View.INVISIBLE){
+            activity!!.confirmBar!!.visibility = View.VISIBLE
+        }
     }
 }

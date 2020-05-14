@@ -12,6 +12,8 @@ import android.widget.SeekBar
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.activity_editor.*
 import kotlinx.android.synthetic.main.unsharp_masking_fragment.*
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 import kotlin.math.abs
 
 
@@ -93,13 +95,19 @@ class UnsharpMaskingFragment : Fragment() {
         })
 
         bApply.setOnClickListener(){
-            unsharp()
-            showConfirmBar()
-
-            bApply.isEnabled = false
-            seekThreshold.isEnabled = false
-            seekAmount.isEnabled = false
-            seekRadius.isEnabled = false
+            doAsync {
+                uiThread {
+                    showConfirmBar()
+                    seekThreshold.isEnabled = false
+                    seekAmount.isEnabled = false
+                    seekRadius.isEnabled = false
+                    activity!!.progressLoading!!.visibility = View.VISIBLE
+                }
+                unsharp()
+                uiThread {
+                    activity!!.progressLoading!!.visibility = View.INVISIBLE
+                }
+            }
         }
 
         activity!!.bConfirm!!.setOnClickListener(){

@@ -10,6 +10,8 @@ import android.view.ViewGroup
 import android.widget.SeekBar
 import kotlinx.android.synthetic.main.activity_editor.*
 import kotlinx.android.synthetic.main.rotate_fragment.*
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -45,10 +47,18 @@ class RotateFragment : Fragment() {
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
-                rotateImage(seekAngle.progress.toDouble() - 180)
-                if (seekAngle.progress != 180) {
-                    showConfirmBar()
-                } else activity!!.confirmBar!!.visibility = View.INVISIBLE
+                doAsync {
+                    uiThread {
+                        if (seekAngle.progress != 180) {
+                            showConfirmBar()
+                        } else activity!!.confirmBar!!.visibility = View.INVISIBLE
+                        activity!!.progressLoading!!.visibility = View.VISIBLE
+                    }
+                    rotateImage(seekAngle.progress.toDouble() - 180)
+                    uiThread {
+                        activity!!.progressLoading!!.visibility = View.INVISIBLE
+                    }
+                }
             }
         })
 

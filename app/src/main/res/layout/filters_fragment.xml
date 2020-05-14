@@ -14,8 +14,10 @@
         android:layout_height="70dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="48dp"
         android:src="@mipmap/ic_launcher"
         app:layout_constraintBottom_toTopOf="@+id/tNegative"
+        app:layout_constraintEnd_toStartOf="@+id/bSepia"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -26,32 +28,34 @@
         android:layout_marginTop="8dp"
         android:src="@mipmap/ic_launcher"
         app:layout_constraintBottom_toTopOf="@+id/tSepia"
-        app:layout_constraintEnd_toStartOf="@+id/bGray"
-        app:layout_constraintStart_toEndOf="@+id/bNegative"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/bGray"
         android:layout_width="70dp"
         android:layout_height="70dp"
+        android:layout_marginStart="48dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="24dp"
         android:src="@mipmap/ic_launcher"
         app:layout_constraintBottom_toTopOf="@+id/tGray"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/bSepia"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tNegative"
         android:layout_width="70dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
         android:layout_marginBottom="4dp"
         android:gravity="center"
         android:text="Negative"
         android:textColor="@color/color_for_buttons"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toEndOf="@+id/bNegative"
+        app:layout_constraintStart_toStartOf="@+id/bNegative" />
 
     <TextView
         android:id="@+id/tSepia"
@@ -62,18 +66,18 @@
         android:text="Sepia"
         android:textColor="@color/color_for_buttons"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/tGray"
-        app:layout_constraintStart_toEndOf="@+id/tNegative" />
+        app:layout_constraintEnd_toEndOf="@+id/bSepia"
+        app:layout_constraintStart_toStartOf="@+id/bSepia" />
 
     <TextView
         android:id="@+id/tGray"
         android:layout_width="70dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="24dp"
         android:layout_marginBottom="4dp"
         android:gravity="center"
         android:text="Gray"
         android:textColor="@color/color_for_buttons"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="@+id/bGray"
+        app:layout_constraintStart_toStartOf="@+id/bGray" />
 </androidx.constraintlayout.widget.ConstraintLayout>

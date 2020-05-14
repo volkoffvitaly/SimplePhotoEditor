@@ -11,6 +11,8 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.activity_editor.*
 import kotlinx.android.synthetic.main.filters_fragment.*
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 import org.w3c.dom.Text
 
 
@@ -40,24 +42,54 @@ class FiltersFragment : Fragment() {
 
 
         bNegative.setOnClickListener() {
-            activity!!.ivPhoto!!.setImageBitmap(onNegativeFilter(ivPhoto!!))
-            textSelectedOff()
-            tNegative.isSelected = true
-            showConfirmBar()
+            doAsync {
+                uiThread {
+                    textSelectedOff()
+                    tNegative.isSelected = true
+                    showConfirmBar()
+                    activity!!.progressLoading!!.visibility = View.VISIBLE
+                }
+
+                activity!!.ivPhoto!!.setImageBitmap(onNegativeFilter(ivPhoto!!))
+
+                uiThread {
+                    activity!!.progressLoading!!.visibility = View.INVISIBLE
+                }
+            }
         }
 
         bSepia.setOnClickListener() {
-            activity!!.ivPhoto!!.setImageBitmap(onSepiaFilter(ivPhoto!!))
-            textSelectedOff()
-            tSepia.isSelected = true
-            showConfirmBar()
+            doAsync {
+                uiThread {
+                    textSelectedOff()
+                    tSepia.isSelected = true
+                    showConfirmBar()
+                    activity!!.progressLoading!!.visibility = View.VISIBLE
+                }
+
+                activity!!.ivPhoto!!.setImageBitmap(onSepiaFilter(ivPhoto!!))
+
+                uiThread {
+                    activity!!.progressLoading!!.visibility = View.INVISIBLE
+                }
+            }
         }
 
         bGray.setOnClickListener() {
-            activity!!.ivPhoto!!.setImageBitmap(onGrayFilter(ivPhoto!!))
-            textSelectedOff()
-            tGray.isSelected = true
-            showConfirmBar()
+            doAsync {
+                uiThread {
+                    textSelectedOff()
+                    tGray.isSelected = true
+                    showConfirmBar()
+                    activity!!.progressLoading!!.visibility = View.VISIBLE
+                }
+
+                activity!!.ivPhoto!!.setImageBitmap(onGrayFilter(ivPhoto!!))
+
+                uiThread {
+                    activity!!.progressLoading!!.visibility = View.INVISIBLE
+                }
+            }
         }
 
         activity!!.bConfirm!!.setOnClickListener(){

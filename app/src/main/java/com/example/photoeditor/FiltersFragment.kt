@@ -8,12 +8,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.widget.ButtonBarLayout
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.activity_editor.*
 import kotlinx.android.synthetic.main.filters_fragment.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
-import org.w3c.dom.Text
 
 
 class FiltersFragment : Fragment() {
@@ -40,6 +40,7 @@ class FiltersFragment : Fragment() {
             tGray
         )
 
+        var tempBitmap : Bitmap
 
         bNegative.setOnClickListener() {
             doAsync {
@@ -48,12 +49,17 @@ class FiltersFragment : Fragment() {
                     tNegative.isSelected = true
                     showConfirmBar()
                     activity!!.progressLoading!!.visibility = View.VISIBLE
+
+                    enabledButtoms(false)
                 }
 
-                activity!!.ivPhoto!!.setImageBitmap(onNegativeFilter(ivPhoto!!))
+                tempBitmap = onNegativeFilter(ivPhoto!!)
 
                 uiThread {
+                    activity!!.ivPhoto!!.setImageBitmap(tempBitmap)
                     activity!!.progressLoading!!.visibility = View.INVISIBLE
+
+                    enabledButtoms(true)
                 }
             }
         }
@@ -65,12 +71,17 @@ class FiltersFragment : Fragment() {
                     tSepia.isSelected = true
                     showConfirmBar()
                     activity!!.progressLoading!!.visibility = View.VISIBLE
+
+                    enabledButtoms(false)
                 }
 
-                activity!!.ivPhoto!!.setImageBitmap(onSepiaFilter(ivPhoto!!))
+                tempBitmap =  onSepiaFilter(ivPhoto!!)
 
                 uiThread {
+                    activity!!.ivPhoto!!.setImageBitmap(tempBitmap)
                     activity!!.progressLoading!!.visibility = View.INVISIBLE
+
+                    enabledButtoms(true)
                 }
             }
         }
@@ -82,12 +93,17 @@ class FiltersFragment : Fragment() {
                     tGray.isSelected = true
                     showConfirmBar()
                     activity!!.progressLoading!!.visibility = View.VISIBLE
+
+                    enabledButtoms(false)
                 }
 
-                activity!!.ivPhoto!!.setImageBitmap(onGrayFilter(ivPhoto!!))
+                tempBitmap = onGrayFilter(ivPhoto!!)
 
                 uiThread {
+                    activity!!.ivPhoto!!.setImageBitmap(tempBitmap)
                     activity!!.progressLoading!!.visibility = View.INVISIBLE
+
+                    enabledButtoms(true)
                 }
             }
         }
@@ -103,6 +119,17 @@ class FiltersFragment : Fragment() {
             activity!!.ivPhoto!!.setImageBitmap(ivPhoto)
             activity!!.confirmBar!!.visibility = View.INVISIBLE
             textSelectedOff()
+        }
+    }
+
+    private fun enabledButtoms(boolean: Boolean){
+        // Блокируем/разблокируем кнопки фильтров
+        for (i in 0 until frameLayout.getChildCount()) {
+            frameLayout.getChildAt(i).isEnabled = boolean
+        }
+        // Блокируем/разблокируем кнопки подтверждений
+        for (i in 0 until activity!!.confirmBar!!.childCount){
+            activity!!.confirmBar!!.getChildAt(i).isEnabled = boolean
         }
     }
 

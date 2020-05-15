@@ -75,7 +75,7 @@ class FiltersFragment : Fragment() {
                     enabledButtoms(false)
                 }
 
-                tempBitmap =  onSepiaFilter(ivPhoto!!)
+                tempBitmap = onSepiaFilter(ivPhoto!!)
 
                 uiThread {
                     activity!!.ivPhoto!!.setImageBitmap(tempBitmap)

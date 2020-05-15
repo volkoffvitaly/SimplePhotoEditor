@@ -2,6 +2,7 @@ package com.example.photoeditor
 
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.graphics.PixelFormat
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,6 +14,7 @@ import kotlinx.android.synthetic.main.activity_editor.*
 import kotlinx.android.synthetic.main.filters_fragment.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
+import kotlin.math.min
 
 
 class FiltersFragment : Fragment() {
@@ -34,12 +36,35 @@ class FiltersFragment : Fragment() {
         setPreview()
 
         names = arrayOf(
+            tBright,
             tNegative,
             tSepia,
             tGray
         )
 
         var tempBitmap : Bitmap
+
+        llBright.setOnClickListener() {
+            doAsync {
+                uiThread {
+                    textSelectedOff()
+                    showConfirmBar()
+                    activity!!.progressLoading!!.visibility = View.VISIBLE
+
+                    enabledButtoms(false)
+                    tBright.isSelected = true
+                }
+
+                tempBitmap = onBrightFilter(ivPhoto!!)
+
+                uiThread {
+                    activity!!.ivPhoto!!.setImageBitmap(tempBitmap)
+                    activity!!.progressLoading!!.visibility = View.INVISIBLE
+
+                    enabledButtoms(true)
+                }
+            }
+        }
 
         llNegative.setOnClickListener() {
             doAsync {
@@ -180,6 +205,7 @@ class FiltersFragment : Fragment() {
             }
         }
 
+        bBright.setImageBitmap(onBrightFilter(prevBitmap))
         bNegative.setImageBitmap(onNegativeFilter(prevBitmap))
         bSepia.setImageBitmap(onSepiaFilter(prevBitmap))
         bGray.setImageBitmap(onGrayFilter(prevBitmap))
@@ -195,13 +221,18 @@ class FiltersFragment : Fragment() {
 
         val bitmapNew = bitmap.copy(Bitmap.Config.ARGB_8888, true)
 
+        var oldPixel : Int
+        var r : Int
+        var g : Int
+        var b : Int
+
         for (y in 0 until bitmap.height) {
             for (x in 0 until bitmap.width) {
-                val oldPixel = bitmap.getPixel(x, y)
+                oldPixel = bitmap.getPixel(x, y)
 
-                val r = 255 - Color.red(oldPixel)
-                val g = 255 - Color.green(oldPixel)
-                val b = 255 - Color.blue(oldPixel)
+                r = 255 - Color.red(oldPixel)
+                g = 255 - Color.green(oldPixel)
+                b = 255 - Color.blue(oldPixel)
 
                 bitmapNew.setPixel(x, y, Color.rgb(r, g ,b))
             }
@@ -216,17 +247,26 @@ class FiltersFragment : Fragment() {
         
         val bitmapNew = bitmap.copy(Bitmap.Config.ARGB_8888, true)
 
+        var oldPixel : Int
+        var r : Int
+        var g : Int
+        var b : Int
+
+        var red : Int
+        var green : Int
+        var blue : Int
+
         for (y in 0 until bitmap.height) {
             for (x in 0 until bitmap.width) {
-                val oldPixel = bitmap.getPixel(x, y)
+                oldPixel = bitmap.getPixel(x, y)
 
-                val r = Color.red(oldPixel)
-                val g = Color.green(oldPixel)
-                val b = Color.blue(oldPixel)
+                r = Color.red(oldPixel)
+                g = Color.green(oldPixel)
+                b = Color.blue(oldPixel)
 
-                var red = (r * 0.393 + g * 0.769 + b * 0.189).toInt()
-                var green = (r * 0.349 + g * 0.686 + b * 0.168).toInt()
-                var blue = (r * 0.272 + g * 0.534 + b * 0.131).toInt()
+                red = (r * 0.393 + g * 0.769 + b * 0.189).toInt()
+                green = (r * 0.349 + g * 0.686 + b * 0.168).toInt()
+                blue = (r * 0.272 + g * 0.534 + b * 0.131).toInt()
 
                 red = if (red > 255) 255 else red
                 green = if (green > 255) 255 else green
@@ -245,16 +285,51 @@ class FiltersFragment : Fragment() {
 
         val bitmapNew = bitmap.copy(Bitmap.Config.ARGB_8888, true)
 
+        var oldPixel : Int
+        var r : Int
+        var g : Int
+        var b : Int
+
+        var grey : Int
+
         for (y in 0 until bitmap.height) {
             for (x in 0 until bitmap.width) {
-                val oldPixel = bitmap.getPixel(x, y)
+                oldPixel = bitmap.getPixel(x, y)
 
-                val r = Color.red(oldPixel)
-                val g = Color.green(oldPixel)
-                val b = Color.blue(oldPixel)
-                val grey = (r * 0.2126 + g * 0.7152 + b * 0.0722).toInt()
+                r = Color.red(oldPixel)
+                g = Color.green(oldPixel)
+                b = Color.blue(oldPixel)
+                grey = (r * 0.2126 + g * 0.7152 + b * 0.0722).toInt()
 
                 bitmapNew.setPixel(x, y, Color.rgb(grey, grey, grey))
+            }
+        }
+
+        return bitmapNew
+    }
+
+
+
+    private fun onBrightFilter(bitmap: Bitmap) : Bitmap {
+
+        val bitmapNew = bitmap.copy(Bitmap.Config.ARGB_8888, true)
+
+        var oldPixel : Int
+        var r : Int
+        var g : Int
+        var b : Int
+
+        val k : Double = 1.5
+
+        for (y in 0 until bitmap.height) {
+            for (x in 0 until bitmap.width) {
+                oldPixel = bitmap.getPixel(x, y)
+
+                r = min(255, (Color.red(oldPixel) * k).toInt())
+                g = min(255, (Color.green(oldPixel) * k).toInt())
+                b = min(255, (Color.blue(oldPixel) * k).toInt())
+
+                bitmapNew.setPixel(x, y, Color.rgb(r, g ,b))
             }
         }
 

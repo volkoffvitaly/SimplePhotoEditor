@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.appcompat.widget.ButtonBarLayout
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.activity_editor.*
 import kotlinx.android.synthetic.main.filters_fragment.*
@@ -42,15 +41,15 @@ class FiltersFragment : Fragment() {
 
         var tempBitmap : Bitmap
 
-        bNegative.setOnClickListener() {
+        llNegative.setOnClickListener() {
             doAsync {
                 uiThread {
                     textSelectedOff()
-                    tNegative.isSelected = true
                     showConfirmBar()
                     activity!!.progressLoading!!.visibility = View.VISIBLE
 
                     enabledButtoms(false)
+                    tNegative.isSelected = true
                 }
 
                 tempBitmap = onNegativeFilter(ivPhoto!!)
@@ -64,15 +63,15 @@ class FiltersFragment : Fragment() {
             }
         }
 
-        bSepia.setOnClickListener() {
+        llSepia.setOnClickListener() {
             doAsync {
                 uiThread {
                     textSelectedOff()
-                    tSepia.isSelected = true
                     showConfirmBar()
                     activity!!.progressLoading!!.visibility = View.VISIBLE
 
                     enabledButtoms(false)
+                    tSepia.isSelected = true
                 }
 
                 tempBitmap = onSepiaFilter(ivPhoto!!)
@@ -86,15 +85,15 @@ class FiltersFragment : Fragment() {
             }
         }
 
-        bGray.setOnClickListener() {
+        llGray.setOnClickListener() {
             doAsync {
                 uiThread {
                     textSelectedOff()
-                    tGray.isSelected = true
                     showConfirmBar()
                     activity!!.progressLoading!!.visibility = View.VISIBLE
 
                     enabledButtoms(false)
+                    tGray.isSelected = true
                 }
 
                 tempBitmap = onGrayFilter(ivPhoto!!)
@@ -123,14 +122,18 @@ class FiltersFragment : Fragment() {
     }
 
     private fun enabledButtoms(boolean: Boolean){
-        // Блокируем/разблокируем кнопки фильтров
-        for (i in 0 until frameLayout.getChildCount()) {
-            frameLayout.getChildAt(i).isEnabled = boolean
+        // Блокируем/разблокируем фильтров
+        for (i in 0 until llSelectFilters.getChildCount()) {
+            llSelectFilters.getChildAt(i).isEnabled = boolean
         }
+
         // Блокируем/разблокируем кнопки подтверждений
         for (i in 0 until activity!!.confirmBar!!.childCount){
             activity!!.confirmBar!!.getChildAt(i).isEnabled = boolean
         }
+
+        // Смена цвета надписей
+        for (i in names.indices) names[i].isEnabled = boolean
     }
 
     private fun textSelectedOff(){

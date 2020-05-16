@@ -24,6 +24,56 @@
             android:orientation="horizontal">
 
             <LinearLayout
+                android:id="@+id/llBright"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="4dp"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/bBright"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:src="@mipmap/ic_launcher" />
+
+                <TextView
+                    android:id="@+id/tBright"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Bright"
+                    android:textColor="@color/color_for_buttons" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llContrast"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="4dp"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/bContrast"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:src="@mipmap/ic_launcher" />
+
+                <TextView
+                    android:id="@+id/tContrast"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Contrast"
+                    android:textColor="@color/color_for_buttons" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/llSepia"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -70,31 +120,6 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="Gray"
-                    android:textColor="@color/color_for_buttons" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/llBright"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginBottom="4dp"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:id="@+id/bBright"
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:src="@mipmap/ic_launcher" />
-
-                <TextView
-                    android:id="@+id/tBright"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="Bright"
                     android:textColor="@color/color_for_buttons" />
             </LinearLayout>
 

@@ -14,6 +14,7 @@ import kotlinx.android.synthetic.main.activity_editor.*
 import kotlinx.android.synthetic.main.filters_fragment.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
+import kotlin.math.max
 import kotlin.math.min
 
 
@@ -36,6 +37,7 @@ class FiltersFragment : Fragment() {
         setPreview()
 
         names = arrayOf(
+            tContrast,
             tBright,
             tNegative,
             tSepia,
@@ -56,6 +58,28 @@ class FiltersFragment : Fragment() {
                 }
 
                 tempBitmap = onBrightFilter(ivPhoto!!)
+
+                uiThread {
+                    activity!!.ivPhoto!!.setImageBitmap(tempBitmap)
+                    activity!!.progressLoading!!.visibility = View.INVISIBLE
+
+                    enabledButtoms(true)
+                }
+            }
+        }
+
+        llContrast.setOnClickListener() {
+            doAsync {
+                uiThread {
+                    textSelectedOff()
+                    showConfirmBar()
+                    activity!!.progressLoading!!.visibility = View.VISIBLE
+
+                    enabledButtoms(false)
+                    tContrast.isSelected = true
+                }
+
+                tempBitmap = onContrastFilter(ivPhoto!!)
 
                 uiThread {
                     activity!!.ivPhoto!!.setImageBitmap(tempBitmap)
@@ -205,6 +229,7 @@ class FiltersFragment : Fragment() {
             }
         }
 
+        bContrast.setImageBitmap(onContrastFilter(prevBitmap))
         bBright.setImageBitmap(onBrightFilter(prevBitmap))
         bNegative.setImageBitmap(onNegativeFilter(prevBitmap))
         bSepia.setImageBitmap(onSepiaFilter(prevBitmap))
@@ -328,6 +353,42 @@ class FiltersFragment : Fragment() {
                 r = min(255, (Color.red(oldPixel) * k).toInt())
                 g = min(255, (Color.green(oldPixel) * k).toInt())
                 b = min(255, (Color.blue(oldPixel) * k).toInt())
+
+                bitmapNew.setPixel(x, y, Color.rgb(r, g ,b))
+            }
+        }
+
+        return bitmapNew
+    }
+
+    private fun onContrastFilter(bitmap: Bitmap) : Bitmap {
+
+        val bitmapNew = bitmap.copy(Bitmap.Config.ARGB_8888, true)
+
+        var oldPixel : Int
+        var r : Int
+        var g : Int
+        var b : Int
+
+        val k = 1.5
+
+        var avg = 0.0
+
+        for (y in 0 until bitmap.height) {
+            for (x in 0 until bitmap.width) {
+                oldPixel = bitmap.getPixel(x, y)
+                avg += Color.red(oldPixel) * 0.299 + Color.green(oldPixel) * 0.587 + Color.blue(oldPixel) * 0.114
+            }
+        }
+        avg /= bitmap.width * bitmap.height
+
+        for (y in 0 until bitmap.height) {
+            for (x in 0 until bitmap.width) {
+                oldPixel = bitmap.getPixel(x, y)
+
+                r = min(255, max(0, (avg + k * (Color.red(oldPixel) - avg)).toInt()))
+                g = min(255, max(0, (avg + k * (Color.green(oldPixel) - avg)).toInt()))
+                b = min(255, max(0, (avg + k * (Color.blue(oldPixel) - avg)).toInt()))
 
                 bitmapNew.setPixel(x, y, Color.rgb(r, g ,b))
             }

@@ -53,7 +53,7 @@ class FiltersFragment : Fragment() {
                     showConfirmBar()
                     activity!!.progressLoading!!.visibility = View.VISIBLE
 
-                    enabledButtoms(false)
+                    enabledButtons(false)
                     tBright.isSelected = true
                 }
 
@@ -63,7 +63,7 @@ class FiltersFragment : Fragment() {
                     activity!!.ivPhoto!!.setImageBitmap(tempBitmap)
                     activity!!.progressLoading!!.visibility = View.INVISIBLE
 
-                    enabledButtoms(true)
+                    enabledButtons(true)
                 }
             }
         }
@@ -75,7 +75,7 @@ class FiltersFragment : Fragment() {
                     showConfirmBar()
                     activity!!.progressLoading!!.visibility = View.VISIBLE
 
-                    enabledButtoms(false)
+                    enabledButtons(false)
                     tContrast.isSelected = true
                 }
 
@@ -85,7 +85,7 @@ class FiltersFragment : Fragment() {
                     activity!!.ivPhoto!!.setImageBitmap(tempBitmap)
                     activity!!.progressLoading!!.visibility = View.INVISIBLE
 
-                    enabledButtoms(true)
+                    enabledButtons(true)
                 }
             }
         }
@@ -97,7 +97,7 @@ class FiltersFragment : Fragment() {
                     showConfirmBar()
                     activity!!.progressLoading!!.visibility = View.VISIBLE
 
-                    enabledButtoms(false)
+                    enabledButtons(false)
                     tNegative.isSelected = true
                 }
 
@@ -107,7 +107,7 @@ class FiltersFragment : Fragment() {
                     activity!!.ivPhoto!!.setImageBitmap(tempBitmap)
                     activity!!.progressLoading!!.visibility = View.INVISIBLE
 
-                    enabledButtoms(true)
+                    enabledButtons(true)
                 }
             }
         }
@@ -119,7 +119,7 @@ class FiltersFragment : Fragment() {
                     showConfirmBar()
                     activity!!.progressLoading!!.visibility = View.VISIBLE
 
-                    enabledButtoms(false)
+                    enabledButtons(false)
                     tSepia.isSelected = true
                 }
 
@@ -129,7 +129,7 @@ class FiltersFragment : Fragment() {
                     activity!!.ivPhoto!!.setImageBitmap(tempBitmap)
                     activity!!.progressLoading!!.visibility = View.INVISIBLE
 
-                    enabledButtoms(true)
+                    enabledButtons(true)
                 }
             }
         }
@@ -141,7 +141,7 @@ class FiltersFragment : Fragment() {
                     showConfirmBar()
                     activity!!.progressLoading!!.visibility = View.VISIBLE
 
-                    enabledButtoms(false)
+                    enabledButtons(false)
                     tGray.isSelected = true
                 }
 
@@ -151,7 +151,7 @@ class FiltersFragment : Fragment() {
                     activity!!.ivPhoto!!.setImageBitmap(tempBitmap)
                     activity!!.progressLoading!!.visibility = View.INVISIBLE
 
-                    enabledButtoms(true)
+                    enabledButtons(true)
                 }
             }
         }
@@ -170,9 +170,9 @@ class FiltersFragment : Fragment() {
         }
     }
 
-    private fun enabledButtoms(boolean: Boolean){
+    private fun enabledButtons(boolean: Boolean){
         // Блокируем/разблокируем фильтров
-        for (i in 0 until llSelectFilters.getChildCount()) {
+        for (i in 0 until llSelectFilters.childCount) {
             llSelectFilters.getChildAt(i).isEnabled = boolean
         }
 
@@ -196,30 +196,39 @@ class FiltersFragment : Fragment() {
         val prevBitmap : Bitmap
         val sizeOfSide : Int
 
-        if (ivPhoto!!.width <= 150 || ivPhoto!!.height <= 150){
-            if (ivPhoto!!.width > ivPhoto!!.height){
+
+        if (ivPhoto!!.width <= 150 || ivPhoto!!.height <= 150) {
+            if (ivPhoto!!.width > ivPhoto!!.height) {
                 xStart = (ivPhoto!!.width - ivPhoto!!.height) / 2
                 sizeOfSide = ivPhoto!!.height
                 yStart = 0
-            } else {
+            }
+
+            else {
                 yStart = (ivPhoto!!.height - ivPhoto!!.width) / 2
                 sizeOfSide = ivPhoto!!.width
                 xStart = 0
             }
-            step = 1
 
-        } else {
-            if (ivPhoto!!.width > ivPhoto!!.height){
+            step = 1
+        }
+
+        else {
+            if (ivPhoto!!.width > ivPhoto!!.height) {
                 xStart = (ivPhoto!!.width - ivPhoto!!.height) / 2
                 step = ivPhoto!!.height / 150
                 yStart = 0
-            } else {
+            }
+
+            else {
                 yStart = (ivPhoto!!.height - ivPhoto!!.width) / 2
                 step = ivPhoto!!.width / 150
                 xStart = 0
             }
+
             sizeOfSide = 150
         }
+
 
         prevBitmap = Bitmap.createBitmap(sizeOfSide, sizeOfSide, Bitmap.Config.ARGB_8888)
 
@@ -242,6 +251,8 @@ class FiltersFragment : Fragment() {
         }
     }
 
+
+    // FILTERS //
     private fun onNegativeFilter(bitmap: Bitmap) : Bitmap {
 
         val bitmapNew = bitmap.copy(Bitmap.Config.ARGB_8888, true)
@@ -265,7 +276,6 @@ class FiltersFragment : Fragment() {
 
         return bitmapNew
     }
-
 
 
     private fun onSepiaFilter(bitmap: Bitmap) : Bitmap {
@@ -305,7 +315,6 @@ class FiltersFragment : Fragment() {
     }
 
 
-
     private fun onGrayFilter(bitmap: Bitmap) : Bitmap {
 
         val bitmapNew = bitmap.copy(Bitmap.Config.ARGB_8888, true)
@@ -334,7 +343,6 @@ class FiltersFragment : Fragment() {
     }
 
 
-
     private fun onBrightFilter(bitmap: Bitmap) : Bitmap {
 
         val bitmapNew = bitmap.copy(Bitmap.Config.ARGB_8888, true)
@@ -361,6 +369,7 @@ class FiltersFragment : Fragment() {
         return bitmapNew
     }
 
+
     private fun onContrastFilter(bitmap: Bitmap) : Bitmap {
 
         val bitmapNew = bitmap.copy(Bitmap.Config.ARGB_8888, true)
@@ -371,7 +380,6 @@ class FiltersFragment : Fragment() {
         var b : Int
 
         val k = 1.5
-
         var avg = 0.0
 
         for (y in 0 until bitmap.height) {
@@ -380,6 +388,7 @@ class FiltersFragment : Fragment() {
                 avg += Color.red(oldPixel) * 0.299 + Color.green(oldPixel) * 0.587 + Color.blue(oldPixel) * 0.114
             }
         }
+
         avg /= bitmap.width * bitmap.height
 
         for (y in 0 until bitmap.height) {
@@ -396,4 +405,5 @@ class FiltersFragment : Fragment() {
 
         return bitmapNew
     }
+    // FILTERS //
 }

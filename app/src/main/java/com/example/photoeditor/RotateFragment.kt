@@ -92,13 +92,18 @@ class RotateFragment : Fragment() {
         val rotatedMatrix = Matrix()
 
         val rotateArr: FloatArray = floatArrayOf(
+            // First stroke //
             cos(radians).toFloat(),
             -sin(radians).toFloat(),
             ivPhoto!!.width.toFloat() / 2,
+            // Second stroke //
             sin(radians).toFloat(),
             cos(radians).toFloat(),
             ivPhoto!!.height.toFloat() / 2,
-            0.0f, 0.0f, 1.0f
+            // Third stroke //
+            0.0f,
+            0.0f,
+            1.0f
         )
 
         rotatedMatrix.setValues(rotateArr)
@@ -111,4 +116,34 @@ class RotateFragment : Fragment() {
             rotatedMatrix, false
         )
     }
+
+
+    // Deprecated //
+   /* private fun rotateImage(angle: Double) {
+
+        val xCenter: Double = 0.5 * (ivPhoto!!.width - 1)
+        val yCenter: Double = 0.5 * (ivPhoto!!.height - 1)
+        val sinAngle: Double = sin(Math.toRadians(angle))
+        val cosAngle: Double = cos(Math.toRadians(angle))
+
+
+        val newBitmap = Bitmap.createBitmap(ivPhoto!!.width, ivPhoto!!.height, Bitmap.Config.ARGB_8888)
+
+
+        for (y in 0 until ivPhoto!!.height) {
+            for (x in 0 until ivPhoto!!.width) {
+
+                val a = x - xCenter
+                val b = y - yCenter
+
+                val xNew = (a * cosAngle - b * sinAngle + xCenter).toInt()
+                val yNew = (a * sinAngle + b * cosAngle + yCenter).toInt()
+
+                if (0 <= xNew && xNew < ivPhoto!!.width && 0 <= yNew && yNew < ivPhoto!!.height)
+                    newBitmap.setPixel(x, y, ivPhoto!!.getPixel(xNew, yNew))
+            }
+        }
+
+        activity!!.ivPhoto!!.setImageBitmap(newBitmap)
+    }*/
 }

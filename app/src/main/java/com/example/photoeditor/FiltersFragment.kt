@@ -255,7 +255,9 @@ class FiltersFragment : Fragment() {
     // FILTERS //
     private fun onNegativeFilter(bitmap: Bitmap) : Bitmap {
 
-        val bitmapNew = bitmap.copy(Bitmap.Config.ARGB_8888, true)
+        val bitmapNew = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
+        val pixels = IntArray(bitmap.width * bitmap.height)
+        bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
 
         var oldPixel : Int
         var r : Int
@@ -264,7 +266,7 @@ class FiltersFragment : Fragment() {
 
         for (y in 0 until bitmap.height) {
             for (x in 0 until bitmap.width) {
-                oldPixel = bitmap.getPixel(x, y)
+                oldPixel = pixels[bitmap.width * y + x]
 
                 r = 255 - Color.red(oldPixel)
                 g = 255 - Color.green(oldPixel)
@@ -279,8 +281,10 @@ class FiltersFragment : Fragment() {
 
 
     private fun onSepiaFilter(bitmap: Bitmap) : Bitmap {
-        
-        val bitmapNew = bitmap.copy(Bitmap.Config.ARGB_8888, true)
+
+        val bitmapNew = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
+        val pixels = IntArray(bitmap.width * bitmap.height)
+        bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
 
         var oldPixel : Int
         var r : Int
@@ -293,7 +297,7 @@ class FiltersFragment : Fragment() {
 
         for (y in 0 until bitmap.height) {
             for (x in 0 until bitmap.width) {
-                oldPixel = bitmap.getPixel(x, y)
+                oldPixel = pixels[bitmap.width * y + x]
 
                 r = Color.red(oldPixel)
                 g = Color.green(oldPixel)
@@ -317,7 +321,9 @@ class FiltersFragment : Fragment() {
 
     private fun onGrayFilter(bitmap: Bitmap) : Bitmap {
 
-        val bitmapNew = bitmap.copy(Bitmap.Config.ARGB_8888, true)
+        val bitmapNew = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
+        val pixels = IntArray(bitmap.width * bitmap.height)
+        bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
 
         var oldPixel : Int
         var r : Int
@@ -328,7 +334,7 @@ class FiltersFragment : Fragment() {
 
         for (y in 0 until bitmap.height) {
             for (x in 0 until bitmap.width) {
-                oldPixel = bitmap.getPixel(x, y)
+                oldPixel = pixels[bitmap.width * y + x]
 
                 r = Color.red(oldPixel)
                 g = Color.green(oldPixel)
@@ -345,7 +351,9 @@ class FiltersFragment : Fragment() {
 
     private fun onBrightFilter(bitmap: Bitmap) : Bitmap {
 
-        val bitmapNew = bitmap.copy(Bitmap.Config.ARGB_8888, true)
+        val bitmapNew = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
+        val pixels = IntArray(bitmap.width * bitmap.height)
+        bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
 
         var oldPixel : Int
         var r : Int
@@ -356,7 +364,7 @@ class FiltersFragment : Fragment() {
 
         for (y in 0 until bitmap.height) {
             for (x in 0 until bitmap.width) {
-                oldPixel = bitmap.getPixel(x, y)
+                oldPixel = pixels[bitmap.width * y + x]
 
                 r = min(255, (Color.red(oldPixel) * k).toInt())
                 g = min(255, (Color.green(oldPixel) * k).toInt())
@@ -372,7 +380,9 @@ class FiltersFragment : Fragment() {
 
     private fun onContrastFilter(bitmap: Bitmap) : Bitmap {
 
-        val bitmapNew = bitmap.copy(Bitmap.Config.ARGB_8888, true)
+        val bitmapNew = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
+        val pixels = IntArray(bitmap.width * bitmap.height)
+        bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
 
         var oldPixel : Int
         var r : Int
@@ -384,7 +394,7 @@ class FiltersFragment : Fragment() {
 
         for (y in 0 until bitmap.height) {
             for (x in 0 until bitmap.width) {
-                oldPixel = bitmap.getPixel(x, y)
+                oldPixel = pixels[bitmap.width * y + x]
                 avg += Color.red(oldPixel) * 0.299 + Color.green(oldPixel) * 0.587 + Color.blue(oldPixel) * 0.114
             }
         }
@@ -393,7 +403,7 @@ class FiltersFragment : Fragment() {
 
         for (y in 0 until bitmap.height) {
             for (x in 0 until bitmap.width) {
-                oldPixel = bitmap.getPixel(x, y)
+                oldPixel = pixels[bitmap.width * y + x]
 
                 r = min(255, max(0, (avg + k * (Color.red(oldPixel) - avg)).toInt()))
                 g = min(255, max(0, (avg + k * (Color.green(oldPixel) - avg)).toInt()))

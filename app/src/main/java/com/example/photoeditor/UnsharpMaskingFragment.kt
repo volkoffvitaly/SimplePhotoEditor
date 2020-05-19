@@ -22,15 +22,21 @@ class UnsharpMaskingFragment : Fragment() {
     private var ivPhoto: Bitmap? = null
     private var blurredPhoto: Bitmap? = null
 
+
     //Parameters for Unsharp Masking
     private var radius = 1
     private var amount = 0.1f //float
     private var threshold = 0
 
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.unsharp_masking_fragment, container, false)
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -46,7 +52,7 @@ class UnsharpMaskingFragment : Fragment() {
         tThreshold.text = "Threshold: 0"
 
 
-        // RADIUS
+        // seek bar of RADIUS
         seekRadius.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
                 tRadius.text = "Radius: ${seekRadius.progress}"
@@ -60,10 +66,10 @@ class UnsharpMaskingFragment : Fragment() {
                 tRadius.isSelected = false
             }
         })
-        // RADIUS
+        // seek bar of RADIUS
 
 
-        // AMOUNT
+        // seek bar of AMOUNT
         seekAmount.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
                 tAmount.text = "Amount: ${(seekAmount.progress.toFloat() / 10)}"
@@ -77,10 +83,10 @@ class UnsharpMaskingFragment : Fragment() {
                 tAmount.isSelected = false
             }
         })
-        // AMOUNT
+        // seek bar of AMOUNT
 
 
-        // THRESHOLD
+        // seek bar of THRESHOLD
         seekThreshold.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
                 tThreshold.text = "Threshold: ${seekThreshold.progress}"
@@ -94,10 +100,10 @@ class UnsharpMaskingFragment : Fragment() {
                 tThreshold.isSelected = false
             }
         })
-        // THRESHOLD
+        // seek bar of THRESHOLD
 
 
-        bApply.setOnClickListener(){
+        bApply.setOnClickListener() {
             doAsync {
                 uiThread {
                     showConfirmBar()
@@ -113,7 +119,8 @@ class UnsharpMaskingFragment : Fragment() {
             }
         }
 
-        activity!!.bConfirm!!.setOnClickListener(){
+        // Confirmation of changes
+        activity!!.bConfirm!!.setOnClickListener() {
             ivPhoto = (activity!!.ivPhoto.drawable as BitmapDrawable).bitmap
             activity!!.confirmBar!!.visibility = View.INVISIBLE
 
@@ -130,8 +137,11 @@ class UnsharpMaskingFragment : Fragment() {
             seekAmount.isEnabled = true
             seekRadius.isEnabled = true
         }
+        // Confirmation of changes
 
-        activity!!.bCancel!!.setOnClickListener(){
+
+        // Revert changes
+        activity!!.bCancel!!.setOnClickListener() {
             activity!!.ivPhoto!!.setImageBitmap(ivPhoto)
             activity!!.confirmBar!!.visibility = View.INVISIBLE
 
@@ -140,16 +150,17 @@ class UnsharpMaskingFragment : Fragment() {
             seekAmount.isEnabled = true
             seekRadius.isEnabled = true
         }
+        // Revert changes
     }
+
 
 
 
     private fun showConfirmBar() {
-        if (activity!!.confirmBar!!.visibility == View.INVISIBLE){
+        if (activity!!.confirmBar!!.visibility == View.INVISIBLE) {
             activity!!.confirmBar!!.visibility = View.VISIBLE
         }
     }
-
 
 
     private fun boxBlur(bitmap: Bitmap, range: Int): Bitmap? {
@@ -226,7 +237,11 @@ class UnsharpMaskingFragment : Fragment() {
                 }
 
                 if (x >= 0) {
-                    newColors[x] = Color.rgb((red / hits).toInt(), (green / hits).toInt(), (blue / hits).toInt())
+                    newColors[x] = Color.rgb(
+                        (red / hits).toInt(),
+                        (green / hits).toInt(),
+                        (blue / hits).toInt()
+                    )
                 }
             }
 
@@ -294,7 +309,11 @@ class UnsharpMaskingFragment : Fragment() {
                 }
 
                 if (y >= 0) {
-                    newColors[y] = Color.rgb((red / hits).toInt(), (green / hits).toInt(), (blue / hits).toInt())
+                    newColors[y] = Color.rgb(
+                        (red / hits).toInt(),
+                        (green / hits).toInt(),
+                        (blue / hits).toInt()
+                    )
                 }
 
                 index += width
@@ -311,7 +330,8 @@ class UnsharpMaskingFragment : Fragment() {
 
         blurredPhoto = boxBlur(ivPhoto!!, radius)
 
-        val newBitmap = Bitmap.createBitmap(ivPhoto!!.width, ivPhoto!!.height, Bitmap.Config.ARGB_8888)
+        val newBitmap =
+            Bitmap.createBitmap(ivPhoto!!.width, ivPhoto!!.height, Bitmap.Config.ARGB_8888)
 
         var red: Int
         var green: Int

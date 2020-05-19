@@ -1,18 +1,22 @@
 package com.example.photoeditor
 
+
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Parcelable
+import android.provider.MediaStore
 import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isInvisible
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.activity_editor.*
+import org.jetbrains.anko.toast
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class EditorActivity : AppCompatActivity() {
@@ -21,6 +25,7 @@ class EditorActivity : AppCompatActivity() {
     //    var states: MutableList<Bitmap> = ArrayList()
     //}
 
+    //lateinit var originalPhoto: Bitmap
     lateinit var buttons: Array<Button>
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,6 +40,7 @@ class EditorActivity : AppCompatActivity() {
         confirmBar.visibility = View.INVISIBLE
 
         ivPhoto.setImageURI(intent.getParcelableExtra<Parcelable>("Image") as Uri)
+        //originalPhoto = (ivPhoto.drawable as BitmapDrawable).bitmap
         //States.states.add((ivPhoto.drawable as BitmapDrawable).bitmap)
 
         buttons = arrayOf(
@@ -66,57 +72,75 @@ class EditorActivity : AppCompatActivity() {
         }
 
         bCompare.setOnClickListener {
-            //
+            //ivPhoto.setImageBitmap(originalPhoto)
         }
 
         bSave.setOnClickListener {
-            //
+            saveImageToGallery((ivPhoto.drawable as BitmapDrawable).bitmap)
         }
         // Top Bar
 
 
         // Bottom Bar
         bFilters.setOnClickListener {
-            turnButtons(0, FiltersFragment())
+            change(0, FiltersFragment())
         }
 
         bRotate.setOnClickListener {
-            turnButtons(1, RotateFragment())
+            change(1, RotateFragment())
         }
 
         bZoom.setOnClickListener {
-            turnButtons(2, ZoomFragment())
+            change(2, ZoomFragment())
         }
 
         bHealing.setOnClickListener {
-            turnButtons(3, HealingFragment())
+            change(3, HealingFragment())
         }
 
         bUnsharpMasking.setOnClickListener {
-            turnButtons(4, UnsharpMaskingFragment())
+            change(4, UnsharpMaskingFragment())
         }
 
         bDraw.setOnClickListener {
-            turnButtons(5, DrawFragment())
+            change(5, DrawFragment())
         }
 
         bFiltration.setOnClickListener {
-            turnButtons(6, FiltrationFragment())
+            change(6, FiltrationFragment())
         }
 
         bSegmentation.setOnClickListener {
-            turnButtons(7, SegmentationFragment())
+            change(7, SegmentationFragment())
         }
         // Bottom Bar
     }
 
-    private fun turnButtons(k: Int, currentFragment: Fragment) {
+
+
+    private fun change(k: Int, currentFragment: Fragment) {
+        // Changing buttons
         for (i in buttons.indices) {
             buttons[i].isSelected = i == k
         }
 
+        // Changing fragments
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.fPlace, currentFragment)
         transaction.commit()
+    }
+
+
+    private fun saveImageToGallery(bitmap:Bitmap) {
+        // Classic title of the file with timestamp
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val imageFileName = "IMG_$timeStamp"
+
+        try {
+            MediaStore.Images.Media.insertImage(contentResolver, bitmap, imageFileName, "Image of $title")
+            toast("Successful")
+        } catch (e: IOException) {
+            toast("Error...")
+        }
     }
 }

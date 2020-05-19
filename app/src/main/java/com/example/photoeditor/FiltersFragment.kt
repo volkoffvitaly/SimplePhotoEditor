@@ -2,7 +2,6 @@ package com.example.photoeditor
 
 import android.graphics.Bitmap
 import android.graphics.Color
-import android.graphics.PixelFormat
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -21,12 +20,13 @@ import kotlin.math.min
 class FiltersFragment : Fragment() {
 
     var ivPhoto: Bitmap? = null
-
     lateinit var names: Array<TextView>
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.filters_fragment, container, false)
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -170,14 +170,23 @@ class FiltersFragment : Fragment() {
         }
     }
 
+
+
+    private fun showConfirmBar() {
+        if (activity!!.confirmBar!!.visibility == View.INVISIBLE) {
+            activity!!.confirmBar!!.visibility = View.VISIBLE
+        }
+    }
+
+
     private fun enabledButtons(boolean: Boolean){
-        // Блокируем/разблокируем фильтров
+        // Блокируем/разблокируем кнопки фильтров
         for (i in 0 until llSelectFilters.childCount) {
             llSelectFilters.getChildAt(i).isEnabled = boolean
         }
 
         // Блокируем/разблокируем кнопки подтверждений
-        for (i in 0 until activity!!.confirmBar!!.childCount){
+        for (i in 0 until activity!!.confirmBar!!.childCount) {
             activity!!.confirmBar!!.getChildAt(i).isEnabled = boolean
         }
 
@@ -185,9 +194,13 @@ class FiltersFragment : Fragment() {
         for (i in names.indices) names[i].isEnabled = boolean
     }
 
-    private fun textSelectedOff(){
-        for (i in names.indices) names[i].isSelected = false
+
+    private fun textSelectedOff() {
+        for (i in names.indices) {
+            names[i].isSelected = false
+        }
     }
+
 
     private fun setPreview(){
         val yStart : Int
@@ -245,13 +258,8 @@ class FiltersFragment : Fragment() {
         bGray.setImageBitmap(onGrayFilter(prevBitmap))
     }
 
-    private fun showConfirmBar() {
-        if (activity!!.confirmBar!!.visibility == View.INVISIBLE){
-            activity!!.confirmBar!!.visibility = View.VISIBLE
-        }
-    }
 
-
+    //
     // FILTERS //
     private fun onNegativeFilter(bitmap: Bitmap) : Bitmap {
 
@@ -416,4 +424,5 @@ class FiltersFragment : Fragment() {
         return bitmapNew
     }
     // FILTERS //
+    //
 }

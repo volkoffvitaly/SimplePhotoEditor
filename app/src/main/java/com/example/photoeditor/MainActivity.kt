@@ -8,14 +8,16 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import kotlinx.android.synthetic.main.activity_main.*
+import org.jetbrains.anko.toast
 import java.io.File
 import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -106,11 +108,17 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+
     private fun createImageFile(): File {
-        val imageFileName = "JPEG_temp"
+        // Classic title of the file with timestamp
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val imageFileName = "IMG_$timeStamp"
+
+        // Picking a directory to save and creating the file
         val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         val image = File.createTempFile(imageFileName, ".jpg", storageDir)
 
+        // Saving a path to the file
         currentPhotoPath = image.absolutePath
 
         return image
@@ -125,7 +133,7 @@ class MainActivity : AppCompatActivity() {
             intent.putExtra(MediaStore.EXTRA_OUTPUT, pathToImage)
             startActivityForResult(intent, REQUEST_CAMERA)
         } catch (e: IOException) {
-            Toast.makeText(getApplicationContext(), "Error! " + e, Toast.LENGTH_LONG).show()
+            toast("Error...")
         }
     }
 

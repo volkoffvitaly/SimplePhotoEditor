@@ -41,38 +41,45 @@ class ZoomFragment : Fragment() {
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
-                val scaledBitmap = resizeBilinear((100 + seekZoom.progress).toDouble() / 100)
-                zoomScaled(scaledBitmap)
+                val zoomedBitmap = zoom(100 - seekZoom.progress)
+                val resizedBitmap = bilinearResize(zoomedBitmap, 100.0 / (100 - seekZoom.progress))
+                activity!!.ivPhoto!!.setImageBitmap(resizedBitmap)
             }
         })
     }
 
 
 
-    private fun zoomScaled(bitmap: Bitmap) {
-        val bitmapNew = Bitmap.createBitmap((ivPhoto!!.width), (ivPhoto!!.height), Bitmap.Config.ARGB_8888)
+    private fun zoom(percentage: Int): Bitmap {
+        val newWidth = (ivPhoto!!.width * percentage / 100)
+        val newHeight = (ivPhoto!!.height * percentage / 100)
 
-        val startX: Int = (bitmap.width - ivPhoto!!.width) / 2
-        val startY: Int = (bitmap.height - ivPhoto!!.height) / 2
+        val oldPixels = IntArray(ivPhoto!!.width * ivPhoto!!.height)
+        ivPhoto!!.getPixels(oldPixels, 0, ivPhoto!!.width, 0, 0, ivPhoto!!.width, ivPhoto!!.height)
 
-        for (y in 0 until bitmapNew.height) {
-            for (x in 0 until bitmapNew.width) {
-                val oldPixel = bitmap.getPixel(startX + x, startY + y)
-                bitmapNew.setPixel(x, y, oldPixel)
+        var offset = 0
+        val newPixels = IntArray(newWidth * newHeight)
+
+        val startX: Int = (ivPhoto!!.width - newWidth) / 2
+        val startY: Int = (ivPhoto!!.height - newHeight) / 2
+
+        for (y in 0 until newHeight){
+            for (x in 0 until newWidth){
+                newPixels[offset++] = oldPixels[ivPhoto!!.width * (startY + y) + (startX + x)]
             }
         }
 
-        activity!!.ivPhoto!!.setImageBitmap(bitmapNew)
+        return Bitmap.createBitmap(newPixels, newWidth, newHeight, Bitmap.Config.ARGB_8888)
     }
 
 
-    fun resizeBilinear(k: Double): Bitmap {
-        val pixels = IntArray(ivPhoto!!.width * ivPhoto!!.height)
-        ivPhoto!!.getPixels(pixels, 0, ivPhoto!!.width, 0, 0, ivPhoto!!.width, ivPhoto!!.height)
+    fun bilinearResize(bitmap: Bitmap, k: Double): Bitmap {
+        val pixels = IntArray(bitmap.width * bitmap.height)
+        bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
 
 
-        val w2 = (ivPhoto!!.width * k).toInt()
-        val h2 = (ivPhoto!!.height * k).toInt()
+        val w2 = (bitmap.width * k).toInt()
+        val h2 = (bitmap.height * k).toInt()
         val temp = IntArray(w2 * h2)
 
 
@@ -83,8 +90,8 @@ class ZoomFragment : Fragment() {
         var x: Int
         var y: Int
         var index: Int
-        val x_ratio = (ivPhoto!!.width - 1).toFloat() / w2
-        val y_ratio = (ivPhoto!!.height - 1).toFloat() / h2
+        val x_ratio = (bitmap.width - 1).toFloat() / w2
+        val y_ratio = (bitmap.height - 1).toFloat() / h2
         var x_diff: Float
         var y_diff: Float
         var blue: Float
@@ -98,11 +105,11 @@ class ZoomFragment : Fragment() {
                 y = (y_ratio * i).toInt()
                 x_diff = x_ratio * j - x
                 y_diff = y_ratio * i - y
-                index = y * ivPhoto!!.width + x
+                index = y * bitmap.width + x
                 a = pixels[index]
                 b = pixels[index + 1]
-                c = pixels[index + ivPhoto!!.width]
-                d = pixels[index + ivPhoto!!.width + 1]
+                c = pixels[index + bitmap.width]
+                d = pixels[index + bitmap.width + 1]
 
                 blue = (a and 0xff) * (1 - x_diff) * (1 - y_diff) + (b and 0xff) * x_diff * (1 - y_diff) + (c and 0xff) * y_diff * (1 - x_diff) + (d and 0xff) * (x_diff * y_diff)
                 green = (a shr 8 and 0xff) * (1 - x_diff) * (1 - y_diff) + (b shr 8 and 0xff) * x_diff * (1 - y_diff) + (c shr 8 and 0xff) * y_diff * (1 - x_diff) + (d shr 8 and 0xff) * (x_diff * y_diff)

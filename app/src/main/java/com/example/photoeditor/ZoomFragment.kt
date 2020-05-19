@@ -27,13 +27,13 @@ class ZoomFragment : Fragment() {
             ivPhoto = (activity!!.ivPhoto.drawable as BitmapDrawable).bitmap
             //EditorActivity.States.states.add(ivPhoto!!)
         }
-        textViewZoom.text = "100% of the original"
+        textViewZoom.text = "100% of image"
 
         seekZoom.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
 
             override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
                 val temp = 100 + i
-                textViewZoom.text = "$temp% of the original"
+                textViewZoom.text = "$temp% of image"
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar) {

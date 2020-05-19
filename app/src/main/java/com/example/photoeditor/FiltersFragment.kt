@@ -263,7 +263,6 @@ class FiltersFragment : Fragment() {
     // FILTERS //
     private fun onNegativeFilter(bitmap: Bitmap) : Bitmap {
 
-        val bitmapNew = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
         val pixels = IntArray(bitmap.width * bitmap.height)
         bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
 
@@ -280,17 +279,17 @@ class FiltersFragment : Fragment() {
                 g = 255 - Color.green(oldPixel)
                 b = 255 - Color.blue(oldPixel)
 
-                bitmapNew.setPixel(x, y, Color.rgb(r, g ,b))
+                pixels[bitmap.width * y + x] = Color.rgb(r, g ,b)
             }
         }
 
-        return bitmapNew
+
+        return Bitmap.createBitmap(pixels, bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
     }
 
 
     private fun onSepiaFilter(bitmap: Bitmap) : Bitmap {
 
-        val bitmapNew = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
         val pixels = IntArray(bitmap.width * bitmap.height)
         bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
 
@@ -319,17 +318,16 @@ class FiltersFragment : Fragment() {
                 green = if (green > 255) 255 else green
                 blue = if (blue > 255) 255 else blue
 
-                bitmapNew.setPixel(x, y, Color.rgb(red, green, blue))
+                pixels[bitmap.width * y + x] = Color.rgb(red, green ,blue)
             }
         }
 
-        return bitmapNew
+        return Bitmap.createBitmap(pixels, bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
     }
 
 
     private fun onGrayFilter(bitmap: Bitmap) : Bitmap {
 
-        val bitmapNew = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
         val pixels = IntArray(bitmap.width * bitmap.height)
         bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
 
@@ -349,17 +347,16 @@ class FiltersFragment : Fragment() {
                 b = Color.blue(oldPixel)
                 grey = (r * 0.2126 + g * 0.7152 + b * 0.0722).toInt()
 
-                bitmapNew.setPixel(x, y, Color.rgb(grey, grey, grey))
+                pixels[bitmap.width * y + x] = Color.rgb(grey, grey ,grey)
             }
         }
 
-        return bitmapNew
+        return Bitmap.createBitmap(pixels, bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
     }
 
 
     private fun onBrightFilter(bitmap: Bitmap) : Bitmap {
 
-        val bitmapNew = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
         val pixels = IntArray(bitmap.width * bitmap.height)
         bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
 
@@ -378,17 +375,16 @@ class FiltersFragment : Fragment() {
                 g = min(255, (Color.green(oldPixel) * k).toInt())
                 b = min(255, (Color.blue(oldPixel) * k).toInt())
 
-                bitmapNew.setPixel(x, y, Color.rgb(r, g ,b))
+                pixels[bitmap.width * y + x] = Color.rgb(r, g ,b)
             }
         }
 
-        return bitmapNew
+        return Bitmap.createBitmap(pixels, bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
     }
 
 
     private fun onContrastFilter(bitmap: Bitmap) : Bitmap {
 
-        val bitmapNew = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
         val pixels = IntArray(bitmap.width * bitmap.height)
         bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
 
@@ -417,11 +413,11 @@ class FiltersFragment : Fragment() {
                 g = min(255, max(0, (avg + k * (Color.green(oldPixel) - avg)).toInt()))
                 b = min(255, max(0, (avg + k * (Color.blue(oldPixel) - avg)).toInt()))
 
-                bitmapNew.setPixel(x, y, Color.rgb(r, g ,b))
+                pixels[bitmap.width * y + x] = Color.rgb(r, g ,b)
             }
         }
 
-        return bitmapNew
+        return Bitmap.createBitmap(pixels, bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
     }
     // FILTERS //
     //

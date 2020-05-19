@@ -10,6 +10,7 @@ import android.os.Parcelable
 import android.provider.MediaStore
 import android.view.View
 import android.widget.Button
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.activity_editor.*
@@ -56,8 +57,24 @@ class EditorActivity : AppCompatActivity() {
 
         // Top Bar
         bBack.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
+            val builder: android.app.AlertDialog.Builder = android.app.AlertDialog.Builder(this)
+            builder.setTitle("Exit the edit window?")
+                    .setMessage("Сurrent result will be lost")
+                    .setCancelable(true)
+
+            builder.setPositiveButton(
+                "ok"
+            ) { dialog, which ->
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+            }
+            builder.setNegativeButton(
+                "cancel"
+            ) { dialog, which ->
+                dialog.dismiss() // Отпускает диалоговое окно
+            }
+
+            builder.create().show()
         }
 
         bUndo.setOnClickListener {
@@ -76,7 +93,22 @@ class EditorActivity : AppCompatActivity() {
         }
 
         bSave.setOnClickListener {
-            saveImageToGallery((ivPhoto.drawable as BitmapDrawable).bitmap)
+            val builder: android.app.AlertDialog.Builder = android.app.AlertDialog.Builder(this)
+            builder.setTitle("Save image?")
+                .setCancelable(true)
+
+            builder.setPositiveButton(
+                "ok"
+            ) { dialog, which ->
+                saveImageToGallery((ivPhoto.drawable as BitmapDrawable).bitmap)
+            }
+            builder.setNegativeButton(
+                "cancel"
+            ) { dialog, which ->
+                dialog.dismiss() // Отпускает диалоговое окно
+            }
+
+            builder.create().show()
         }
         // Top Bar
 

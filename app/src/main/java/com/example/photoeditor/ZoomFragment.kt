@@ -9,7 +9,10 @@ import android.view.ViewGroup
 import android.widget.SeekBar
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.activity_editor.*
+import kotlinx.android.synthetic.main.rotate_fragment.*
 import kotlinx.android.synthetic.main.zoom_fragment.*
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 
 
 class ZoomFragment : Fragment() {
@@ -25,7 +28,6 @@ class ZoomFragment : Fragment() {
 
         if (ivPhoto == null) {
             ivPhoto = (activity!!.ivPhoto.drawable as BitmapDrawable).bitmap
-            //EditorActivity.States.states.add(ivPhoto!!)
         }
         textViewZoom.text = "100% of image"
 
@@ -41,11 +43,56 @@ class ZoomFragment : Fragment() {
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
-                val zoomedBitmap = zoom(100 - seekZoom.progress)
-                val resizedBitmap = bilinearResize(zoomedBitmap, 100.0 / (100 - seekZoom.progress))
-                activity!!.ivPhoto!!.setImageBitmap(resizedBitmap)
+
+                if (seekZoom.progress != 0) {
+                    doAsync {
+                        uiThread {
+                            (activity as stateChangesInterface).stateOfConfirmBar(true)
+                            (activity as stateChangesInterface).stateOfConfirmBarButtons(false)
+                            (activity as stateChangesInterface).stateOfTopBar(false)
+                            (activity as stateChangesInterface).stateOfProgressLoading(true)
+
+                            seekZoom.isEnabled = false
+                        }
+
+                        val zoomedBitmap = zoom(100 - seekZoom.progress)
+                        val resizedBitmap = bilinearResize(zoomedBitmap, 100.0 / (100 - seekZoom.progress))
+
+                        uiThread {
+                            activity!!.ivPhoto!!.setImageBitmap(resizedBitmap)
+
+                            (activity as stateChangesInterface).stateOfConfirmBarButtons(true)
+                            (activity as stateChangesInterface).stateOfProgressLoading(false)
+
+                            seekZoom.isEnabled = true
+                        }
+                    }
+                } else {
+                    activity!!.ivPhoto!!.setImageBitmap(ivPhoto)
+
+                    (activity as stateChangesInterface).stateOfConfirmBar(false)
+                    (activity as stateChangesInterface).stateOfTopBar(true)
+                }
             }
         })
+
+        activity!!.bConfirm!!.setOnClickListener(){
+            ivPhoto = (activity!!.ivPhoto.drawable as BitmapDrawable).bitmap
+
+            (activity as stateChangesInterface).stateOfConfirmBar(false)
+            (activity as stateChangesInterface).stateOfTopBar(true)
+
+            seekZoom.progress = 0
+        }
+
+        activity!!.bCancel!!.setOnClickListener(){
+            (activity as stateChangesInterface).changeIvPhoto(ivPhoto!!)
+
+            (activity as stateChangesInterface).stateOfConfirmBar(false)
+            (activity as stateChangesInterface).stateOfTopBar(true)
+
+            seekZoom.progress = 0
+        }
     }
 
 

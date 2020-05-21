@@ -102,15 +102,20 @@ class UnsharpMaskingFragment : Fragment() {
         bApply.setOnClickListener() {
             doAsync {
                 uiThread {
-                    showConfirmBar()
                     seekThreshold.isEnabled = false
                     seekAmount.isEnabled = false
                     seekRadius.isEnabled = false
-                    activity!!.progressLoading!!.visibility = View.VISIBLE
+                    (activity as stateChangesInterface).stateOfProgressLoading(true)
+                    (activity as stateChangesInterface).stateOfConfirmBar(true)
+                    (activity as stateChangesInterface).stateOfConfirmBarButtons(false)
+                    (activity as stateChangesInterface).stateOfTopBar(false)
                 }
-                unsharpMasking(amount, threshold)
+                val tempBitmap = unsharpMasking(amount, threshold)
                 uiThread {
-                    activity!!.progressLoading!!.visibility = View.INVISIBLE
+                    (activity as stateChangesInterface).changeIvPhoto(tempBitmap)
+
+                    (activity as stateChangesInterface).stateOfProgressLoading(false)
+                    (activity as stateChangesInterface).stateOfConfirmBarButtons(true)
                 }
             }
         }
@@ -118,7 +123,9 @@ class UnsharpMaskingFragment : Fragment() {
         // Confirmation of changes
         activity!!.bConfirm!!.setOnClickListener() {
             ivPhoto = (activity!!.ivPhoto.drawable as BitmapDrawable).bitmap
-            activity!!.confirmBar!!.visibility = View.INVISIBLE
+
+            (activity as stateChangesInterface).stateOfConfirmBar(false)
+            (activity as stateChangesInterface).stateOfTopBar(true)
 
             seekAmount.progress = seekAmount.min
             seekRadius.progress = seekRadius.min
@@ -138,8 +145,10 @@ class UnsharpMaskingFragment : Fragment() {
 
         // Revert changes
         activity!!.bCancel!!.setOnClickListener() {
-            activity!!.ivPhoto!!.setImageBitmap(ivPhoto)
-            activity!!.confirmBar!!.visibility = View.INVISIBLE
+            (activity as stateChangesInterface).changeIvPhoto(ivPhoto!!)
+
+            (activity as stateChangesInterface).stateOfConfirmBar(false)
+            (activity as stateChangesInterface).stateOfTopBar(true)
 
             bApply.isEnabled = true
             seekThreshold.isEnabled = true
@@ -149,14 +158,6 @@ class UnsharpMaskingFragment : Fragment() {
         // Revert changes
     }
 
-
-
-
-    private fun showConfirmBar() {
-        if (activity!!.confirmBar!!.visibility == View.INVISIBLE) {
-            activity!!.confirmBar!!.visibility = View.VISIBLE
-        }
-    }
 
 
     private fun boxBlur(bitmap: Bitmap, range: Int): Bitmap? {
@@ -322,7 +323,7 @@ class UnsharpMaskingFragment : Fragment() {
     }
 
 
-    private fun unsharpMasking(amount: Float, threshold: Int) {
+    private fun unsharpMasking (amount: Float, threshold: Int) : Bitmap {
 
         blurredPhoto = boxBlur(ivPhoto!!, radius)
 
@@ -390,6 +391,6 @@ class UnsharpMaskingFragment : Fragment() {
             }
         }
 
-        activity!!.ivPhoto!!.setImageBitmap(newBitmap)
+        return newBitmap
     }
 }

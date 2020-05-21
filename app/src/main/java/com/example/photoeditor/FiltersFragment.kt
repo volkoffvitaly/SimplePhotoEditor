@@ -16,7 +16,6 @@ import org.jetbrains.anko.uiThread
 import kotlin.math.max
 import kotlin.math.min
 
-
 class FiltersFragment : Fragment() {
 
     var ivPhoto: Bitmap? = null
@@ -50,18 +49,17 @@ class FiltersFragment : Fragment() {
             doAsync {
                 uiThread {
                     textSelectedOff()
-                    showConfirmBar()
-                    activity!!.progressLoading!!.visibility = View.VISIBLE
+                    tBright.isSelected = true
+
+                    showConfirmBar(true)
 
                     enabledButtons(false)
-                    tBright.isSelected = true
                 }
 
                 tempBitmap = onBrightFilter(ivPhoto!!)
 
                 uiThread {
                     activity!!.ivPhoto!!.setImageBitmap(tempBitmap)
-                    activity!!.progressLoading!!.visibility = View.INVISIBLE
 
                     enabledButtons(true)
                 }
@@ -72,18 +70,17 @@ class FiltersFragment : Fragment() {
             doAsync {
                 uiThread {
                     textSelectedOff()
-                    showConfirmBar()
-                    activity!!.progressLoading!!.visibility = View.VISIBLE
+                    tContrast.isSelected = true
+
+                    showConfirmBar(true)
 
                     enabledButtons(false)
-                    tContrast.isSelected = true
                 }
 
                 tempBitmap = onContrastFilter(ivPhoto!!)
 
                 uiThread {
                     activity!!.ivPhoto!!.setImageBitmap(tempBitmap)
-                    activity!!.progressLoading!!.visibility = View.INVISIBLE
 
                     enabledButtons(true)
                 }
@@ -94,18 +91,17 @@ class FiltersFragment : Fragment() {
             doAsync {
                 uiThread {
                     textSelectedOff()
-                    showConfirmBar()
-                    activity!!.progressLoading!!.visibility = View.VISIBLE
+                    tNegative.isSelected = true
+
+                    showConfirmBar(true)
 
                     enabledButtons(false)
-                    tNegative.isSelected = true
                 }
 
                 tempBitmap = onNegativeFilter(ivPhoto!!)
 
                 uiThread {
                     activity!!.ivPhoto!!.setImageBitmap(tempBitmap)
-                    activity!!.progressLoading!!.visibility = View.INVISIBLE
 
                     enabledButtons(true)
                 }
@@ -116,18 +112,17 @@ class FiltersFragment : Fragment() {
             doAsync {
                 uiThread {
                     textSelectedOff()
-                    showConfirmBar()
-                    activity!!.progressLoading!!.visibility = View.VISIBLE
+                    tSepia.isSelected = true
+
+                    showConfirmBar(true)
 
                     enabledButtons(false)
-                    tSepia.isSelected = true
                 }
 
                 tempBitmap = onSepiaFilter(ivPhoto!!)
 
                 uiThread {
                     activity!!.ivPhoto!!.setImageBitmap(tempBitmap)
-                    activity!!.progressLoading!!.visibility = View.INVISIBLE
 
                     enabledButtons(true)
                 }
@@ -138,18 +133,17 @@ class FiltersFragment : Fragment() {
             doAsync {
                 uiThread {
                     textSelectedOff()
-                    showConfirmBar()
-                    activity!!.progressLoading!!.visibility = View.VISIBLE
+                    tGray.isSelected = true
+
+                    showConfirmBar(true)
 
                     enabledButtons(false)
-                    tGray.isSelected = true
                 }
 
                 tempBitmap = onGrayFilter(ivPhoto!!)
 
                 uiThread {
                     activity!!.ivPhoto!!.setImageBitmap(tempBitmap)
-                    activity!!.progressLoading!!.visibility = View.INVISIBLE
 
                     enabledButtons(true)
                 }
@@ -158,39 +152,48 @@ class FiltersFragment : Fragment() {
 
         activity!!.bConfirm!!.setOnClickListener(){
             ivPhoto = (activity!!.ivPhoto.drawable as BitmapDrawable).bitmap
-            activity!!.confirmBar!!.visibility = View.INVISIBLE
+
+            (activity as stateChangesInterface).stateOfConfirmBar(false)
+            (activity as stateChangesInterface).stateOfTopBar(true)
+
             setPreview()
             textSelectedOff()
         }
 
         activity!!.bCancel!!.setOnClickListener(){
-            activity!!.ivPhoto!!.setImageBitmap(ivPhoto)
-            activity!!.confirmBar!!.visibility = View.INVISIBLE
+            (activity as stateChangesInterface).changeIvPhoto(ivPhoto!!)
+
+            (activity as stateChangesInterface).stateOfConfirmBar(false)
+            (activity as stateChangesInterface).stateOfTopBar(true)
+
             textSelectedOff()
         }
     }
 
 
 
-    private fun showConfirmBar() {
-        if (activity!!.confirmBar!!.visibility == View.INVISIBLE) {
-            activity!!.confirmBar!!.visibility = View.VISIBLE
-        }
+    private fun showConfirmBar(boolean: Boolean) {
+        (activity as stateChangesInterface).stateOfConfirmBar(boolean)
     }
 
 
     private fun enabledButtons(boolean: Boolean){
+
         // Блокируем/разблокируем кнопки фильтров
         for (i in 0 until llSelectFilters.childCount) {
             llSelectFilters.getChildAt(i).isEnabled = boolean
         }
 
         // Блокируем/разблокируем кнопки подтверждений
-        for (i in 0 until activity!!.confirmBar!!.childCount) {
-            activity!!.confirmBar!!.getChildAt(i).isEnabled = boolean
-        }
+        (activity as stateChangesInterface).stateOfConfirmBarButtons(boolean)
 
-        // Смена цвета надписей
+        // Блок верхнего бара (разблокировка только после подтверждения или отклонения)
+        (activity as stateChangesInterface).stateOfTopBar(false)
+
+        // Показ анимации загрузки
+        (activity as stateChangesInterface).stateOfProgressLoading(!boolean)
+
+        // Смена цвета надписей для фильтров
         for (i in names.indices) names[i].isEnabled = boolean
     }
 

@@ -10,7 +10,6 @@ import android.os.Parcelable
 import android.provider.MediaStore
 import android.view.View
 import android.widget.Button
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.activity_editor.*
@@ -19,8 +18,16 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
+interface stateChangesInterface {
+    fun stateOfTopBar(boolean: Boolean)
+    fun stateOfConfirmBar(boolean: Boolean)
+    fun stateOfConfirmBarButtons(boolean: Boolean)
+    fun stateOfProgressLoading(boolean: Boolean)
+    fun changeIvPhoto(bitmap: Bitmap)
+}
 
-class EditorActivity : AppCompatActivity() {
+
+class EditorActivity : AppCompatActivity(), stateChangesInterface {
 
     //object States {
     //    var states: MutableList<Bitmap> = ArrayList()
@@ -174,5 +181,49 @@ class EditorActivity : AppCompatActivity() {
         } catch (e: IOException) {
             toast("Error...")
         }
+    }
+
+    override fun stateOfTopBar(boolean: Boolean) {
+
+        // кнопки верхнего бара
+        bBack.isEnabled = boolean
+        bUndo.isEnabled = boolean
+        bRedo.isEnabled = boolean
+        bCompare.isEnabled = boolean
+        bSave.isEnabled = boolean
+
+    }
+
+    override fun stateOfConfirmBarButtons(boolean: Boolean) {
+
+        // кнопки confirmBar'а
+        for (i in 0 until confirmBar.childCount) {
+            confirmBar.getChildAt(i).isEnabled = boolean
+        }
+    }
+
+    override fun stateOfConfirmBar(boolean: Boolean) {
+
+        // показ confirmBar'а
+        if (boolean){
+            confirmBar.visibility = View.VISIBLE
+        } else {
+            confirmBar.visibility = View.INVISIBLE
+        }
+    }
+
+    override fun stateOfProgressLoading(boolean: Boolean) {
+
+        // состояние анимации загрузки
+        if (boolean){
+            progressLoading.visibility = View.VISIBLE
+        } else {
+            progressLoading.visibility = View.INVISIBLE
+        }
+
+    }
+
+    override fun changeIvPhoto(bitmap: Bitmap) {
+        ivPhoto.setImageBitmap(bitmap)
     }
 }

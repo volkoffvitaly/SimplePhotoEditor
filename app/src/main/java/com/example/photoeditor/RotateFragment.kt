@@ -16,7 +16,6 @@ import org.jetbrains.anko.uiThread
 import kotlin.math.cos
 import kotlin.math.sin
 
-
 class RotateFragment : Fragment() {
 
     private var ivPhoto: Bitmap? = null
@@ -30,7 +29,6 @@ class RotateFragment : Fragment() {
 
         if (ivPhoto == null) {
             ivPhoto = (activity!!.ivPhoto.drawable as BitmapDrawable).bitmap
-            //EditorActivity.States.states.add(ivPhoto!!)
         }
 
         seekAngle.progress = 180
@@ -48,46 +46,59 @@ class RotateFragment : Fragment() {
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
-                doAsync {
-                    uiThread {
-                        if (seekAngle.progress != 180) {
-                            showConfirmBar()
+                if (seekAngle.progress != 180) {
+                    doAsync {
+                        uiThread {
+                            (activity as stateChangesInterface).stateOfConfirmBar(true)
+                            (activity as stateChangesInterface).stateOfConfirmBarButtons(false)
+                            (activity as stateChangesInterface).stateOfTopBar(false)
+                            (activity as stateChangesInterface).stateOfProgressLoading(true)
+
+                            seekAngle.isEnabled = false
                         }
-                        else activity!!.confirmBar!!.visibility = View.INVISIBLE
-                        activity!!.progressLoading!!.visibility = View.VISIBLE
-                    }
 
-                    val tempBitmap = rotateImage(seekAngle.progress.toDouble() - 180)
+                        val tempBitmap = rotateImage(seekAngle.progress.toDouble() - 180)
 
-                    uiThread {
-                        activity!!.ivPhoto!!.setImageBitmap(tempBitmap)
-                        activity!!.progressLoading!!.visibility = View.INVISIBLE
+                        uiThread {
+                            activity!!.ivPhoto!!.setImageBitmap(tempBitmap)
+
+                            (activity as stateChangesInterface).stateOfConfirmBarButtons(true)
+                            (activity as stateChangesInterface).stateOfProgressLoading(false)
+
+                            seekAngle.isEnabled = true
+                        }
                     }
+                } else {
+                    activity!!.ivPhoto!!.setImageBitmap(ivPhoto)
+
+                    (activity as stateChangesInterface).stateOfConfirmBar(false)
+                    (activity as stateChangesInterface).stateOfTopBar(true)
                 }
             }
         })
 
         activity!!.bConfirm!!.setOnClickListener(){
             ivPhoto = (activity!!.ivPhoto.drawable as BitmapDrawable).bitmap
-            activity!!.confirmBar!!.visibility = View.INVISIBLE
+
+            (activity as stateChangesInterface).stateOfConfirmBar(false)
+            (activity as stateChangesInterface).stateOfTopBar(true)
+
             seekAngle.progress = 180
         }
 
         activity!!.bCancel!!.setOnClickListener(){
-            activity!!.ivPhoto!!.setImageBitmap(ivPhoto)
-            activity!!.confirmBar!!.visibility = View.INVISIBLE
+            (activity as stateChangesInterface).changeIvPhoto(ivPhoto!!)
+
+            (activity as stateChangesInterface).stateOfConfirmBar(false)
+            (activity as stateChangesInterface).stateOfTopBar(true)
+
             seekAngle.progress = 180
         }
     }
 
 
-    private fun showConfirmBar() {
-        if (activity!!.confirmBar!!.visibility == View.INVISIBLE)
-            activity!!.confirmBar!!.visibility = View.VISIBLE
-    }
-
-
     private fun rotateImage(degrees: Double): Bitmap {
+
         val radians = (degrees  * Math.PI) / 180.0
         val rotatedMatrix = Matrix()
 

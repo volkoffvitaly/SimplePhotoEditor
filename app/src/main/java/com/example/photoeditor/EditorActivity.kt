@@ -72,8 +72,7 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
             builder.setPositiveButton(
                 "ok"
             ) { dialog, which ->
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
+                finish() // Закрываем активиити
             }
             builder.setNegativeButton(
                 "cancel"
@@ -155,7 +154,25 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
         // Bottom Bar
     }
 
+    override fun onBackPressed(){
+        val builder: android.app.AlertDialog.Builder = android.app.AlertDialog.Builder(this)
+        builder.setTitle("Exit the edit window?")
+            .setMessage("Сurrent result will be lost")
+            .setCancelable(true)
 
+        builder.setPositiveButton(
+            "ok"
+        ) { dialog, which ->
+            finish() // Закрываем активиити
+        }
+        builder.setNegativeButton(
+            "cancel"
+        ) { dialog, which ->
+            dialog.dismiss() // Отпускает диалоговое окно
+        }
+
+        builder.create().show()
+    }
 
     private fun change(k: Int, currentFragment: Fragment) {
         // Changing buttons

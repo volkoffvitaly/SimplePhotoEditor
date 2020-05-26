@@ -343,15 +343,21 @@ class FiltersFragment : Fragment() {
         bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
 
         var oldPixel: Int
+
         var r: Int
+        var g: Int
+        var b: Int
 
         for (y in 0 until bitmap.height) {
             for (x in 0 until bitmap.width) {
                 oldPixel = pixels[bitmap.width * y + x]
 
-                r = 255 - oldPixel shr 16 and 0xff
+                r = (oldPixel shr 16 and 0xff) + 10
+                r = if (r > 255) 255 else r
+                g = oldPixel shr 8 and 0xff
+                b = oldPixel and 0xff
 
-                pixels[bitmap.width * y + x] = alpha or (r shl 16)
+                pixels[bitmap.width * y + x] = alpha or (r shl 16) or (g shl 8) or b
             }
         }
 
@@ -366,15 +372,21 @@ class FiltersFragment : Fragment() {
         bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
 
         var oldPixel: Int
+
+        var r: Int
         var g: Int
+        var b: Int
 
         for (y in 0 until bitmap.height) {
             for (x in 0 until bitmap.width) {
                 oldPixel = pixels[bitmap.width * y + x]
 
-                g = 255 - oldPixel shr 8 and 0xff
+                r = oldPixel shr 16 and 0xff
+                g = (oldPixel shr 8 and 0xff) + 10
+                g = if (g > 255) 255 else g
+                b = oldPixel and 0xff
 
-                pixels[bitmap.width * y + x] = alpha or (g shl 8)
+                pixels[bitmap.width * y + x] = alpha or (r shl 16) or (g shl 8) or b
             }
         }
 
@@ -389,21 +401,117 @@ class FiltersFragment : Fragment() {
         bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
 
         var oldPixel: Int
+
+        var r: Int
+        var g: Int
         var b: Int
 
         for (y in 0 until bitmap.height) {
             for (x in 0 until bitmap.width) {
                 oldPixel = pixels[bitmap.width * y + x]
 
-                b = 255 - oldPixel and 0xff
+                r = oldPixel shr 16 and 0xff
+                g = oldPixel shr 8 and 0xff
+                b = (oldPixel and 0xff) + 10
+                b = if (b > 255) 255 else b
 
-                pixels[bitmap.width * y + x] = alpha or b
+                pixels[bitmap.width * y + x] = alpha or (r shl 16) or (g shl 8) or b
             }
         }
 
 
         return Bitmap.createBitmap(pixels, bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
     }
+
+
+    /*private fun onYellowFilter(bitmap: Bitmap) : Bitmap {
+
+        val pixels = IntArray(bitmap.width * bitmap.height)
+        bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
+
+        var oldPixel: Int
+
+        var r: Int
+        var g: Int
+        var b: Int
+
+        for (y in 0 until bitmap.height) {
+            for (x in 0 until bitmap.width) {
+                oldPixel = pixels[bitmap.width * y + x]
+
+                r = (oldPixel shr 16 and 0xff) + 10
+                r = if (r > 255) 255 else r
+                g = (oldPixel shr 8 and 0xff) + 10
+                g = if (g > 255) 255 else g
+                b = oldPixel and 0xff
+
+                pixels[bitmap.width * y + x] = alpha or (r shl 16) or (g shl 8) or b
+            }
+        }
+
+
+        return Bitmap.createBitmap(pixels, bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
+    }
+
+
+    private fun onMagentaFilter(bitmap: Bitmap) : Bitmap {
+
+        val pixels = IntArray(bitmap.width * bitmap.height)
+        bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
+
+        var oldPixel: Int
+
+        var r: Int
+        var g: Int
+        var b: Int
+
+        for (y in 0 until bitmap.height) {
+            for (x in 0 until bitmap.width) {
+                oldPixel = pixels[bitmap.width * y + x]
+
+                r = (oldPixel shr 16 and 0xff) + 10
+                r = if (r > 255) 255 else r
+                g = oldPixel shr 8 and 0xff
+                b = (oldPixel and 0xff) + 10
+                b = if (b > 255) 255 else b
+
+                pixels[bitmap.width * y + x] = alpha or (r shl 16) or (g shl 8) or b
+            }
+        }
+
+
+        return Bitmap.createBitmap(pixels, bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
+    }
+
+
+    private fun onCyanFilter(bitmap: Bitmap) : Bitmap {
+
+        val pixels = IntArray(bitmap.width * bitmap.height)
+        bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
+
+        var oldPixel: Int
+
+        var r: Int
+        var g: Int
+        var b: Int
+
+        for (y in 0 until bitmap.height) {
+            for (x in 0 until bitmap.width) {
+                oldPixel = pixels[bitmap.width * y + x]
+
+                r = oldPixel shr 16 and 0xff
+                g = (oldPixel shr 8 and 0xff) + 10
+                g = if (g > 255) 255 else g
+                b = (oldPixel and 0xff) + 10
+                b = if (b > 255) 255 else b
+
+                pixels[bitmap.width * y + x] = alpha or (r shl 16) or (g shl 8) or b
+            }
+        }
+
+
+        return Bitmap.createBitmap(pixels, bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
+    }*/
 
 
     private fun onNegativeFilter(bitmap: Bitmap) : Bitmap {

@@ -22,10 +22,11 @@ class UnsharpMaskingFragment : Fragment() {
     private var ivPhoto: Bitmap? = null
     private var blurredPhoto: Bitmap? = null
 
+    val alpha = -0x1000000
 
-    //Parameters for Unsharp Masking
+    //Parameters
     private var radius = 1
-    private var amount = 0.1f //float
+    private var amount = 0.1f
     private var threshold = 0
 
 
@@ -110,7 +111,9 @@ class UnsharpMaskingFragment : Fragment() {
                     (activity as stateChangesInterface).stateOfConfirmBarButtons(false)
                     (activity as stateChangesInterface).stateOfTopBar(false)
                 }
-                val tempBitmap = unsharpMasking(amount, threshold)
+
+                val tempBitmap = unsharpMasking()
+
                 uiThread {
                     (activity as stateChangesInterface).changeIvPhoto(tempBitmap)
 
@@ -160,8 +163,8 @@ class UnsharpMaskingFragment : Fragment() {
 
 
 
-    private fun boxBlur(bitmap: Bitmap, range: Int): Bitmap? {
-        assert(range and 1 == 0) { "Range must be odd." }
+    private fun boxBlur(bitmap: Bitmap): Bitmap? {
+        assert(radius and 1 == 0) { "Range must be odd." }
 
         val width = bitmap.width
         val height = bitmap.height
@@ -172,8 +175,8 @@ class UnsharpMaskingFragment : Fragment() {
         val pixels = IntArray(width * height)
         bitmap.getPixels(pixels, 0, width, 0, 0, width, height)
 
-        boxBlurHorizontal(pixels, width, height, range / 2)
-        boxBlurVertical(pixels, width, height, range / 2)
+        boxBlurHorizontal(pixels, width, height, radius / 2)
+        boxBlurVertical(pixels, width, height, radius / 2)
 
         canvas.drawBitmap(pixels, 0, width, 0.0f, 0.0f, width, height, true, null)
 
@@ -211,9 +214,9 @@ class UnsharpMaskingFragment : Fragment() {
                     oldColor = pixels[index + oldPixel]
 
                     if (oldColor != 0) {
-                        red -= Color.red(oldColor)
-                        green -= Color.green(oldColor)
-                        blue -= Color.blue(oldColor)
+                        red -= oldColor shr 16 and 0xff
+                        green -= oldColor shr 8 and 0xff
+                        blue -= oldColor and 0xff
                     }
 
                     hits--
@@ -225,20 +228,16 @@ class UnsharpMaskingFragment : Fragment() {
                     newColor = pixels[index + newPixel]
 
                     if (newColor != 0) {
-                        red += Color.red(newColor)
-                        green += Color.green(newColor)
-                        blue += Color.blue(newColor)
+                        red += newColor shr 16 and 0xff
+                        green += newColor shr 8 and 0xff
+                        blue += newColor and 0xff
                     }
 
                     hits++
                 }
 
                 if (x >= 0) {
-                    newColors[x] = Color.rgb(
-                        (red / hits).toInt(),
-                        (green / hits).toInt(),
-                        (blue / hits).toInt()
-                    )
+                    newColors[x] = alpha or ((red / hits).toInt() shl 16) or ((green / hits).toInt() shl 8) or (blue / hits).toInt()
                 }
             }
 
@@ -283,9 +282,9 @@ class UnsharpMaskingFragment : Fragment() {
                     oldColor = pixels[index + oldPixelOffset]
 
                     if (oldColor != 0) {
-                        red -= Color.red(oldColor)
-                        green -= Color.green(oldColor)
-                        blue -= Color.blue(oldColor)
+                        red -= oldColor shr 16 and 0xff
+                        green -= oldColor shr 8 and 0xff
+                        blue -= oldColor and 0xff
                     }
 
                     hits--
@@ -297,20 +296,16 @@ class UnsharpMaskingFragment : Fragment() {
                     newColor = pixels[index + newPixelOffset]
 
                     if (newColor != 0) {
-                        red += Color.red(newColor)
-                        green += Color.green(newColor)
-                        blue += Color.blue(newColor)
+                        red += newColor shr 16 and 0xff
+                        green += newColor shr 8 and 0xff
+                        blue += newColor and 0xff
                     }
 
                     hits++
                 }
 
                 if (y >= 0) {
-                    newColors[y] = Color.rgb(
-                        (red / hits).toInt(),
-                        (green / hits).toInt(),
-                        (blue / hits).toInt()
-                    )
+                    newColors[y] = alpha or ((red / hits).toInt() shl 16) or ((green / hits).toInt() shl 8) or (blue / hits).toInt()
                 }
 
                 index += width
@@ -323,12 +318,9 @@ class UnsharpMaskingFragment : Fragment() {
     }
 
 
-    private fun unsharpMasking (amount: Float, threshold: Int) : Bitmap {
+    private fun unsharpMasking(): Bitmap {
 
-        blurredPhoto = boxBlur(ivPhoto!!, radius)
-
-        val newBitmap =
-            Bitmap.createBitmap(ivPhoto!!.width, ivPhoto!!.height, Bitmap.Config.ARGB_8888)
+        blurredPhoto = boxBlur(ivPhoto!!)
 
         var red: Int
         var green: Int
@@ -336,25 +328,31 @@ class UnsharpMaskingFragment : Fragment() {
         var blurredRed: Int
         var blurredGreen: Int
         var blurredBlue: Int
-        var unsharpPixel: Int
-        val alpha = -0x1000000
+
 
         var originalPixel: Int
+        val originalPixels = IntArray(ivPhoto!!.width * ivPhoto!!.height)
+        ivPhoto!!.getPixels(originalPixels, 0, ivPhoto!!.width, 0, 0, ivPhoto!!.width, ivPhoto!!.height)
+
+
         var blurredPixel: Int
+        val blurredPixels = IntArray(blurredPhoto!!.width * blurredPhoto!!.height)
+        blurredPhoto!!.getPixels(blurredPixels, 0, blurredPhoto!!.width, 0, 0, blurredPhoto!!.width, blurredPhoto!!.height)
 
-        for (j in 0 until newBitmap.height) {
-            for (i in 0 until newBitmap.width) {
 
-                // Get Pixels
-                originalPixel = ivPhoto!!.getPixel(i, j)
-                blurredPixel = blurredPhoto!!.getPixel(i, j)
+        for (y in 0 until ivPhoto!!.height) {
+            for (x in 0 until ivPhoto!!.width) {
 
-                // Get original colors
+                // Getting Pixels
+                originalPixel = originalPixels[ivPhoto!!.width * y + x]
+                blurredPixel = blurredPixels[blurredPhoto!!.width * y + x]
+
+                // Getting original colors
                 red = originalPixel shr 16 and 0xff
                 green = originalPixel shr 8 and 0xff
                 blue = originalPixel and 0xff
 
-                // Get blurred colors
+                // Getting blurred colors
                 blurredRed = blurredPixel shr 16 and 0xff
                 blurredGreen = blurredPixel shr 8 and 0xff
                 blurredBlue = blurredPixel and 0xff
@@ -386,11 +384,10 @@ class UnsharpMaskingFragment : Fragment() {
                     }
                 }
 
-                unsharpPixel = alpha or (red shl 16) or (green shl 8) or blue
-                newBitmap.setPixel(i, j, unsharpPixel)
+                originalPixels[ivPhoto!!.width * y + x] = alpha or (red shl 16) or (green shl 8) or blue
             }
         }
 
-        return newBitmap
+        return Bitmap.createBitmap(originalPixels, ivPhoto!!.width, ivPhoto!!.height, Bitmap.Config.ARGB_8888)
     }
 }

@@ -21,6 +21,7 @@ class FiltersFragment : Fragment() {
     var ivPhoto: Bitmap? = null
     lateinit var names: Array<TextView>
 
+    val alpha = -0x1000000
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.filters_fragment, container, false)
@@ -150,7 +151,7 @@ class FiltersFragment : Fragment() {
             }
         }
 
-        activity!!.bConfirm!!.setOnClickListener(){
+        activity!!.bConfirm!!.setOnClickListener {
             ivPhoto = (activity!!.ivPhoto.drawable as BitmapDrawable).bitmap
 
             (activity as stateChangesInterface).stateOfConfirmBar(false)
@@ -160,7 +161,7 @@ class FiltersFragment : Fragment() {
             textSelectedOff()
         }
 
-        activity!!.bCancel!!.setOnClickListener(){
+        activity!!.bCancel!!.setOnClickListener {
             (activity as stateChangesInterface).changeIvPhoto(ivPhoto!!)
 
             (activity as stateChangesInterface).stateOfConfirmBar(false)
@@ -177,7 +178,7 @@ class FiltersFragment : Fragment() {
     }
 
 
-    private fun enabledButtons(boolean: Boolean){
+    private fun enabledButtons(boolean: Boolean) {
 
         // Блокируем/разблокируем кнопки фильтров
         for (i in 0 until llSelectFilters.childCount) {
@@ -194,7 +195,9 @@ class FiltersFragment : Fragment() {
         (activity as stateChangesInterface).stateOfProgressLoading(!boolean)
 
         // Смена цвета надписей для фильтров
-        for (i in names.indices) names[i].isEnabled = boolean
+        for (i in names.indices) {
+            names[i].isEnabled = boolean
+        }
     }
 
 
@@ -262,27 +265,97 @@ class FiltersFragment : Fragment() {
     }
 
 
-    //
-    // FILTERS //
-    private fun onNegativeFilter(bitmap: Bitmap) : Bitmap {
+
+              // <-- FILTERS ONLY --> //
+
+    private fun onRedFilter(bitmap: Bitmap) : Bitmap {
 
         val pixels = IntArray(bitmap.width * bitmap.height)
         bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
 
-        var oldPixel : Int
-        var r : Int
-        var g : Int
-        var b : Int
+        var oldPixel: Int
+        var r: Int
 
         for (y in 0 until bitmap.height) {
             for (x in 0 until bitmap.width) {
                 oldPixel = pixels[bitmap.width * y + x]
 
-                r = 255 - Color.red(oldPixel)
-                g = 255 - Color.green(oldPixel)
-                b = 255 - Color.blue(oldPixel)
+                r = 255 - oldPixel shr 16 and 0xff
 
-                pixels[bitmap.width * y + x] = Color.rgb(r, g ,b)
+                pixels[bitmap.width * y + x] = alpha or (r shl 16)
+            }
+        }
+
+
+        return Bitmap.createBitmap(pixels, bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
+    }
+
+
+    private fun onGreenFilter(bitmap: Bitmap) : Bitmap {
+
+        val pixels = IntArray(bitmap.width * bitmap.height)
+        bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
+
+        var oldPixel: Int
+        var g: Int
+
+        for (y in 0 until bitmap.height) {
+            for (x in 0 until bitmap.width) {
+                oldPixel = pixels[bitmap.width * y + x]
+
+                g = 255 - oldPixel shr 8 and 0xff
+
+                pixels[bitmap.width * y + x] = alpha or (g shl 8)
+            }
+        }
+
+
+        return Bitmap.createBitmap(pixels, bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
+    }
+
+
+    private fun onBlueFilter(bitmap: Bitmap) : Bitmap {
+
+        val pixels = IntArray(bitmap.width * bitmap.height)
+        bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
+
+        var oldPixel: Int
+        var b: Int
+
+        for (y in 0 until bitmap.height) {
+            for (x in 0 until bitmap.width) {
+                oldPixel = pixels[bitmap.width * y + x]
+
+                b = 255 - oldPixel and 0xff
+
+                pixels[bitmap.width * y + x] = alpha or b
+            }
+        }
+
+
+        return Bitmap.createBitmap(pixels, bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
+    }
+
+
+    private fun onNegativeFilter(bitmap: Bitmap) : Bitmap {
+
+        val pixels = IntArray(bitmap.width * bitmap.height)
+        bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
+
+        var oldPixel: Int
+        var r: Int
+        var g: Int
+        var b: Int
+
+        for (y in 0 until bitmap.height) {
+            for (x in 0 until bitmap.width) {
+                oldPixel = pixels[bitmap.width * y + x]
+
+                r = 255 - oldPixel shr 16 and 0xff
+                g = 255 - oldPixel shr 8 and 0xff
+                b = 255 - oldPixel and 0xff
+
+                pixels[bitmap.width * y + x] = alpha or (r shl 16) or (g shl 8) or b
             }
         }
 
@@ -296,10 +369,10 @@ class FiltersFragment : Fragment() {
         val pixels = IntArray(bitmap.width * bitmap.height)
         bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
 
-        var oldPixel : Int
-        var r : Int
-        var g : Int
-        var b : Int
+        var oldPixel: Int
+        var r: Int
+        var g: Int
+        var b: Int
 
         var red : Int
         var green : Int
@@ -309,9 +382,9 @@ class FiltersFragment : Fragment() {
             for (x in 0 until bitmap.width) {
                 oldPixel = pixels[bitmap.width * y + x]
 
-                r = Color.red(oldPixel)
-                g = Color.green(oldPixel)
-                b = Color.blue(oldPixel)
+                r = oldPixel shr 16 and 0xff
+                g = oldPixel shr 8 and 0xff
+                b = oldPixel and 0xff
 
                 red = (r * 0.393 + g * 0.769 + b * 0.189).toInt()
                 green = (r * 0.349 + g * 0.686 + b * 0.168).toInt()
@@ -321,7 +394,7 @@ class FiltersFragment : Fragment() {
                 green = if (green > 255) 255 else green
                 blue = if (blue > 255) 255 else blue
 
-                pixels[bitmap.width * y + x] = Color.rgb(red, green ,blue)
+                pixels[bitmap.width * y + x] = alpha or (red shl 16) or (green shl 8) or blue
             }
         }
 
@@ -334,23 +407,23 @@ class FiltersFragment : Fragment() {
         val pixels = IntArray(bitmap.width * bitmap.height)
         bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
 
-        var oldPixel : Int
-        var r : Int
-        var g : Int
-        var b : Int
+        var oldPixel: Int
+        var r: Int
+        var g: Int
+        var b: Int
 
-        var grey : Int
+        var gray : Int
 
         for (y in 0 until bitmap.height) {
             for (x in 0 until bitmap.width) {
                 oldPixel = pixels[bitmap.width * y + x]
 
-                r = Color.red(oldPixel)
-                g = Color.green(oldPixel)
-                b = Color.blue(oldPixel)
-                grey = (r * 0.2126 + g * 0.7152 + b * 0.0722).toInt()
+                r = oldPixel shr 16 and 0xff
+                g = oldPixel shr 8 and 0xff
+                b = oldPixel and 0xff
+                gray = (r * 0.2126 + g * 0.7152 + b * 0.0722).toInt()
 
-                pixels[bitmap.width * y + x] = Color.rgb(grey, grey ,grey)
+                pixels[bitmap.width * y + x] = alpha or (r shl 16) or (r shl 8) or r
             }
         }
 
@@ -363,22 +436,26 @@ class FiltersFragment : Fragment() {
         val pixels = IntArray(bitmap.width * bitmap.height)
         bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
 
-        var oldPixel : Int
-        var r : Int
-        var g : Int
-        var b : Int
+        var oldPixel: Int
+        var r: Int
+        var g: Int
+        var b: Int
 
-        val k : Double = 1.5
+        val k = 1.5
 
         for (y in 0 until bitmap.height) {
             for (x in 0 until bitmap.width) {
                 oldPixel = pixels[bitmap.width * y + x]
 
-                r = min(255, (Color.red(oldPixel) * k).toInt())
-                g = min(255, (Color.green(oldPixel) * k).toInt())
-                b = min(255, (Color.blue(oldPixel) * k).toInt())
+                r = oldPixel shr 16 and 0xff
+                g = oldPixel shr 8 and 0xff
+                b = oldPixel and 0xff
 
-                pixels[bitmap.width * y + x] = Color.rgb(r, g ,b)
+                r = min(255, (r * k).toInt())
+                g = min(255, (g * k).toInt())
+                b = min(255, (b * k).toInt())
+
+                pixels[bitmap.width * y + x] = alpha or (r shl 16) or (g shl 8) or b
             }
         }
 
@@ -391,10 +468,10 @@ class FiltersFragment : Fragment() {
         val pixels = IntArray(bitmap.width * bitmap.height)
         bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
 
-        var oldPixel : Int
-        var r : Int
-        var g : Int
-        var b : Int
+        var oldPixel: Int
+        var r: Int
+        var g: Int
+        var b: Int
 
         val k = 1.5
         var avg = 0.0
@@ -402,7 +479,12 @@ class FiltersFragment : Fragment() {
         for (y in 0 until bitmap.height) {
             for (x in 0 until bitmap.width) {
                 oldPixel = pixels[bitmap.width * y + x]
-                avg += Color.red(oldPixel) * 0.299 + Color.green(oldPixel) * 0.587 + Color.blue(oldPixel) * 0.114
+
+                r = oldPixel shr 16 and 0xff
+                g = oldPixel shr 8 and 0xff
+                b = oldPixel and 0xff
+
+                avg += r * 0.299 + g * 0.587 + b * 0.114
             }
         }
 
@@ -412,16 +494,18 @@ class FiltersFragment : Fragment() {
             for (x in 0 until bitmap.width) {
                 oldPixel = pixels[bitmap.width * y + x]
 
-                r = min(255, max(0, (avg + k * (Color.red(oldPixel) - avg)).toInt()))
-                g = min(255, max(0, (avg + k * (Color.green(oldPixel) - avg)).toInt()))
-                b = min(255, max(0, (avg + k * (Color.blue(oldPixel) - avg)).toInt()))
+                r = oldPixel shr 16 and 0xff
+                g = oldPixel shr 8 and 0xff
+                b = oldPixel and 0xff
 
-                pixels[bitmap.width * y + x] = Color.rgb(r, g ,b)
+                r = min(255, max(0, (avg + k * (r - avg)).toInt()))
+                g = min(255, max(0, (avg + k * (g - avg)).toInt()))
+                b = min(255, max(0, (avg + k * (b - avg)).toInt()))
+
+                pixels[bitmap.width * y + x] = alpha or (r shl 16) or (g shl 8) or b
             }
         }
 
         return Bitmap.createBitmap(pixels, bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
     }
-    // FILTERS //
-    //
 }

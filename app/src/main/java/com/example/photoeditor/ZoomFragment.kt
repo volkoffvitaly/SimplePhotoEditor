@@ -19,6 +19,8 @@ class ZoomFragment : Fragment() {
 
     var ivPhoto: Bitmap? = null
 
+    val alpha = -0x1000000
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.zoom_fragment, container, false)
     }
@@ -162,7 +164,7 @@ class ZoomFragment : Fragment() {
                 green = (a shr 8 and 0xff) * (1 - x_diff) * (1 - y_diff) + (b shr 8 and 0xff) * x_diff * (1 - y_diff) + (c shr 8 and 0xff) * y_diff * (1 - x_diff) + (d shr 8 and 0xff) * (x_diff * y_diff)
                 red = (a shr 16 and 0xff) * (1 - x_diff) * (1 - y_diff) + (b shr 16 and 0xff) * x_diff * (1 - y_diff) + (c shr 16 and 0xff) * y_diff * (1 - x_diff) + (d shr 16 and 0xff) * (x_diff * y_diff)
 
-                temp[offset++] = -0x1000000 or (red.toInt() shl 16 and 0xff0000) or (green.toInt() shl 8 and 0xff00) or blue.toInt()
+                temp[offset++] = alpha or (red.toInt() shl 16 and 0xff0000) or (green.toInt() shl 8 and 0xff00) or blue.toInt()
             }
         }
 

@@ -129,7 +129,7 @@ class RotateFragment : Fragment() {
     }
 
 
-    // Deprecated //
+      // Deprecated //
    /* private fun rotateImage(angle: Double) {
 
         val xCenter: Double = 0.5 * (ivPhoto!!.width - 1)
@@ -157,4 +157,5 @@ class RotateFragment : Fragment() {
 
         activity!!.ivPhoto!!.setImageBitmap(newBitmap)
     }*/
+       // Deprecated //
 }

@@ -41,7 +41,10 @@ class FiltersFragment : Fragment() {
             tBright,
             tNegative,
             tSepia,
-            tGray
+            tGray,
+            tRed,
+            tGreen,
+            tBlue
         )
 
         var tempBitmap : Bitmap
@@ -151,10 +154,73 @@ class FiltersFragment : Fragment() {
             }
         }
 
+        llRed.setOnClickListener() {
+            doAsync {
+                uiThread {
+                    textSelectedOff()
+                    tRed.isSelected = true
+
+                    showConfirmBar(true)
+
+                    enabledButtons(false)
+                }
+
+                tempBitmap = onRedFilter(ivPhoto!!)
+
+                uiThread {
+                    activity!!.ivPhoto!!.setImageBitmap(tempBitmap)
+
+                    enabledButtons(true)
+                }
+            }
+        }
+
+        llGreen.setOnClickListener() {
+            doAsync {
+                uiThread {
+                    textSelectedOff()
+                    tGreen.isSelected = true
+
+                    showConfirmBar(true)
+
+                    enabledButtons(false)
+                }
+
+                tempBitmap = onGreenFilter(ivPhoto!!)
+
+                uiThread {
+                    activity!!.ivPhoto!!.setImageBitmap(tempBitmap)
+
+                    enabledButtons(true)
+                }
+            }
+        }
+
+        llBlue.setOnClickListener() {
+            doAsync {
+                uiThread {
+                    textSelectedOff()
+                    tBlue.isSelected = true
+
+                    showConfirmBar(true)
+
+                    enabledButtons(false)
+                }
+
+                tempBitmap = onBlueFilter(ivPhoto!!)
+
+                uiThread {
+                    activity!!.ivPhoto!!.setImageBitmap(tempBitmap)
+
+                    enabledButtons(true)
+                }
+            }
+        }
+
         activity!!.bConfirm!!.setOnClickListener {
             ivPhoto = (activity!!.ivPhoto.drawable as BitmapDrawable).bitmap
 
-            (activity as stateChangesInterface).stateOfConfirmBar(false)
+            showConfirmBar(false)
             (activity as stateChangesInterface).stateOfTopBar(true)
 
             setPreview()
@@ -164,7 +230,7 @@ class FiltersFragment : Fragment() {
         activity!!.bCancel!!.setOnClickListener {
             (activity as stateChangesInterface).changeIvPhoto(ivPhoto!!)
 
-            (activity as stateChangesInterface).stateOfConfirmBar(false)
+            showConfirmBar(false)
             (activity as stateChangesInterface).stateOfTopBar(true)
 
             textSelectedOff()
@@ -262,6 +328,9 @@ class FiltersFragment : Fragment() {
         bNegative.setImageBitmap(onNegativeFilter(prevBitmap))
         bSepia.setImageBitmap(onSepiaFilter(prevBitmap))
         bGray.setImageBitmap(onGrayFilter(prevBitmap))
+        bRed.setImageBitmap(onRedFilter(prevBitmap))
+        bGreen.setImageBitmap(onGreenFilter(prevBitmap))
+        bBlue.setImageBitmap(onBlueFilter(prevBitmap))
     }
 
 

@@ -74,6 +74,7 @@ class RotateFragment : Fragment() {
             (activity as stateChangesInterface).stateOfTopBar(true)
 
             seekAngle.progress = 45
+            currentValue = 0
         }
 
         activity!!.bCancel!!.setOnClickListener(){
@@ -83,6 +84,7 @@ class RotateFragment : Fragment() {
             (activity as stateChangesInterface).stateOfTopBar(true)
 
             seekAngle.progress = 45
+            currentValue = 0
         }
     }
 

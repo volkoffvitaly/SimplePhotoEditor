@@ -18,6 +18,8 @@ import kotlin.math.sin
 
 class RotateFragment : Fragment() {
 
+    var currentValue = 0
+
     private var ivPhoto: Bitmap? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -31,49 +33,37 @@ class RotateFragment : Fragment() {
             ivPhoto = (activity!!.ivPhoto.drawable as BitmapDrawable).bitmap
         }
 
-        seekAngle.progress = 180
+        seekAngle.progress = 45
         textViewAngles.text = "0°"
+
+
+        bRightRotate.setOnClickListener {
+            currentValue += 90
+            currentValue %= 360
+            makeChanges(currentValue)
+        }
+
+        bLeftRotate.setOnClickListener {
+            currentValue -= 90
+            currentValue %= 360
+            makeChanges(currentValue)
+        }
 
         seekAngle.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
 
             override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
-                val temp = i - 180
+                val temp = i - 45
                 textViewAngles.text = "$temp°"
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar) {
-
+                currentValue -= seekAngle.progress - 45
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
-                if (seekAngle.progress != 180) {
-                    doAsync {
-                        uiThread {
-                            (activity as stateChangesInterface).stateOfConfirmBar(true)
-                            (activity as stateChangesInterface).stateOfConfirmBarButtons(false)
-                            (activity as stateChangesInterface).stateOfTopBar(false)
-                            (activity as stateChangesInterface).stateOfProgressLoading(true)
-
-                            seekAngle.isEnabled = false
-                        }
-
-                        val tempBitmap = rotateImage(seekAngle.progress.toDouble() - 180)
-
-                        uiThread {
-                            activity!!.ivPhoto!!.setImageBitmap(tempBitmap)
-
-                            (activity as stateChangesInterface).stateOfConfirmBarButtons(true)
-                            (activity as stateChangesInterface).stateOfProgressLoading(false)
-
-                            seekAngle.isEnabled = true
-                        }
-                    }
-                } else {
-                    activity!!.ivPhoto!!.setImageBitmap(ivPhoto)
-
-                    (activity as stateChangesInterface).stateOfConfirmBar(false)
-                    (activity as stateChangesInterface).stateOfTopBar(true)
-                }
+                currentValue += seekAngle.progress - 45
+                currentValue %= 360
+                makeChanges(currentValue)
             }
         })
 
@@ -83,7 +73,7 @@ class RotateFragment : Fragment() {
             (activity as stateChangesInterface).stateOfConfirmBar(false)
             (activity as stateChangesInterface).stateOfTopBar(true)
 
-            seekAngle.progress = 180
+            seekAngle.progress = 45
         }
 
         activity!!.bCancel!!.setOnClickListener(){
@@ -92,10 +82,42 @@ class RotateFragment : Fragment() {
             (activity as stateChangesInterface).stateOfConfirmBar(false)
             (activity as stateChangesInterface).stateOfTopBar(true)
 
-            seekAngle.progress = 180
+            seekAngle.progress = 45
         }
     }
 
+    private fun makeChanges(value: Int) {
+        if (value != 0) {
+            doAsync {
+                uiThread {
+                    (activity as stateChangesInterface).stateOfConfirmBar(true)
+                    (activity as stateChangesInterface).stateOfConfirmBarButtons(false)
+                    (activity as stateChangesInterface).stateOfTopBar(false)
+                    (activity as stateChangesInterface).stateOfProgressLoading(true)
+
+                    seekAngle.isEnabled = false
+                }
+
+                val tempBitmap = rotateImage(value.toDouble())
+
+                uiThread {
+                    activity!!.ivPhoto!!.setImageBitmap(tempBitmap)
+
+                    (activity as stateChangesInterface).stateOfConfirmBarButtons(true)
+                    (activity as stateChangesInterface).stateOfProgressLoading(false)
+
+                    seekAngle.isEnabled = true
+                    bLeftRotate.isEnabled = true
+                    bRightRotate.isEnabled = true
+                }
+            }
+        } else {
+            activity!!.ivPhoto!!.setImageBitmap(ivPhoto)
+
+            (activity as stateChangesInterface).stateOfConfirmBar(false)
+            (activity as stateChangesInterface).stateOfTopBar(true)
+        }
+    }
 
     private fun rotateImage(degrees: Double): Bitmap {
 

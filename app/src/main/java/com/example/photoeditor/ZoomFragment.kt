@@ -36,7 +36,7 @@ class ZoomFragment : Fragment() {
         seekZoom.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
 
             override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
-                val temp = 100 + i
+                val temp = 100 - i
                 textViewZoom.text = "$temp% of image"
             }
 

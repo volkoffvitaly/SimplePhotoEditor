@@ -8,8 +8,10 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Parcelable
 import android.provider.MediaStore
+import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.activity_editor.*
@@ -48,6 +50,7 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
         confirmBar.visibility = View.INVISIBLE
 
         ivPhoto.setImageURI(intent.getParcelableExtra<Parcelable>("Image") as Uri)
+        var currentBitmap = (ivPhoto.drawable as BitmapDrawable).bitmap
         //originalPhoto = (ivPhoto.drawable as BitmapDrawable).bitmap
         //States.states.add((ivPhoto.drawable as BitmapDrawable).bitmap)
 
@@ -81,6 +84,21 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
             }
 
             builder.create().show()
+        }
+
+        ivPhoto.setOnTouchListener { v, event ->
+            val action = event.action
+            when(action){
+                MotionEvent.ACTION_DOWN -> {
+                    currentBitmap = (ivPhoto.drawable as BitmapDrawable).bitmap
+                    ivPhoto.setImageURI(intent.getParcelableExtra<Parcelable>("Image") as Uri)
+                }
+
+                MotionEvent.ACTION_UP -> {
+                    ivPhoto.setImageBitmap(currentBitmap)
+                }
+            }
+            true
         }
 
         bUndo.setOnClickListener {
@@ -153,6 +171,7 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
         }
         // Bottom Bar
     }
+
 
     override fun onBackPressed(){
         val builder: android.app.AlertDialog.Builder = android.app.AlertDialog.Builder(this)

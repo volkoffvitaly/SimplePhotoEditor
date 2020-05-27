@@ -528,9 +528,9 @@ class FiltersFragment : Fragment() {
             for (x in 0 until bitmap.width) {
                 oldPixel = pixels[bitmap.width * y + x]
 
-                r = 255 - oldPixel shr 16 and 0xff
-                g = 255 - oldPixel shr 8 and 0xff
-                b = 255 - oldPixel and 0xff
+                r = 255 - (oldPixel shr 16 and 0xff)
+                g = 255 - (oldPixel shr 8 and 0xff)
+                b = 255 - (oldPixel and 0xff)
 
                 pixels[bitmap.width * y + x] = alpha or (r shl 16) or (g shl 8) or b
             }
@@ -600,7 +600,7 @@ class FiltersFragment : Fragment() {
                 b = oldPixel and 0xff
                 gray = (r * 0.2126 + g * 0.7152 + b * 0.0722).toInt()
 
-                pixels[bitmap.width * y + x] = alpha or (r shl 16) or (r shl 8) or r
+                pixels[bitmap.width * y + x] = alpha or (gray shl 16) or (gray shl 8) or gray
             }
         }
 

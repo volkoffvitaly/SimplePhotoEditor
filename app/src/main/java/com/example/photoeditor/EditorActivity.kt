@@ -87,17 +87,19 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
 
 
         bCompare.setOnTouchListener { v, event ->
-            val action = event.action
-            when(action){
+            when(event.action){
                 MotionEvent.ACTION_DOWN -> {
+                    bCompare.isSelected = true
                     currentBitmap = (ivPhoto.drawable as BitmapDrawable).bitmap
                     ivPhoto.setImageURI(intent.getParcelableExtra<Parcelable>("Image") as Uri)
                 }
 
                 MotionEvent.ACTION_UP -> {
+                    bCompare.isSelected = false
                     ivPhoto.setImageBitmap(currentBitmap)
                 }
             }
+
             true
         }
 
@@ -203,6 +205,8 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.fPlace, currentFragment)
         transaction.commit()
+
+        ivPhoto.isEnabled = (k == 5)
     }
 
 
@@ -222,7 +226,6 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
     override fun stateOfTopBar(boolean: Boolean) {
 
         // кнопки верхнего бара
-        bBack.isEnabled = boolean
         bUndo.isEnabled = boolean
         bRedo.isEnabled = boolean
         bCompare.isEnabled = boolean

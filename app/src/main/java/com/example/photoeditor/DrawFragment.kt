@@ -21,11 +21,7 @@ class DrawFragment  : Fragment() {
     private lateinit var canvas: Canvas
 
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.draw_fragment, container, false)
     }
 
@@ -40,11 +36,24 @@ class DrawFragment  : Fragment() {
         activity!!.ivPhoto.setOnTouchListener { v, event ->
             if (event.actionMasked == MotionEvent.ACTION_DOWN) {
 
-                var motionTouchEventX = event.x
-                var motionTouchEventY = event.y
+                val widthImageView = activity!!.ivPhoto.width.toFloat()
+                val heightImageView = activity!!.ivPhoto.height.toFloat()
+                val widthBitmap = (activity!!.ivPhoto.drawable as BitmapDrawable).bitmap.width.toFloat()
+                val heightBitmap = (activity!!.ivPhoto.drawable as BitmapDrawable).bitmap.height.toFloat()
 
-                motionTouchEventX *= (activity!!.ivPhoto.drawable as BitmapDrawable).bitmap.width.toFloat() / activity!!.ivPhoto.width.toFloat()
-                motionTouchEventY *= (activity!!.ivPhoto.drawable as BitmapDrawable).bitmap.height.toFloat() / activity!!.ivPhoto.height.toFloat()
+                val scaleFactor: Float
+
+                if (widthBitmap > heightBitmap) {
+                    scaleFactor = widthImageView / widthBitmap
+                }
+
+                else {
+                    scaleFactor = heightImageView / heightBitmap
+                }
+
+
+                val motionTouchEventX = (event.x - (widthImageView - scaleFactor * widthBitmap) / 2.0F) / scaleFactor
+                val motionTouchEventY = (event.y - (heightImageView - scaleFactor * heightBitmap) / 2.0F) / scaleFactor
 
                 sortedValues.add(motionTouchEventX to motionTouchEventY)
                 sortedValues.sortBy { it.first }
@@ -62,8 +71,13 @@ class DrawFragment  : Fragment() {
         bLinear.setOnClickListener {
             val paint = Paint(Paint.ANTI_ALIAS_FLAG)
             paint.color = Color.BLACK
+
+
+
             paint.strokeWidth = 5F
             for (i in 0 until sortedValues.size - 1) {
+                canvas.drawCircle(sortedValues[i].first, sortedValues[i].second, 10F, paint)
+
                 canvas.drawLine(
                     sortedValues[i].first,
                     sortedValues[i].second,

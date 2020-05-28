@@ -130,9 +130,9 @@ class UnsharpMaskingFragment : Fragment() {
             (activity as stateChangesInterface).stateOfConfirmBar(false)
             (activity as stateChangesInterface).stateOfTopBar(true)
 
-            seekAmount.progress = seekAmount.min
-            seekRadius.progress = seekRadius.min
-            seekThreshold.progress = seekThreshold.min
+            seekAmount.progress = 1
+            seekRadius.progress = 1
+            seekThreshold.progress = 1
 
             tAmount.isSelected = false
             tRadius.isSelected = false

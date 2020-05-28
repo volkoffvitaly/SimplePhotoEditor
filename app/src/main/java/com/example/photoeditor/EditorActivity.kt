@@ -177,19 +177,13 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
 
     override fun onBackPressed(){
         val builder: android.app.AlertDialog.Builder = android.app.AlertDialog.Builder(this)
-        builder.setTitle("Exit the edit window?")
-            .setMessage("Сurrent result will be lost")
-            .setCancelable(true)
+        builder.setTitle("Exit the edit window?").setMessage("Сurrent result will be lost").setCancelable(true)
 
-        builder.setPositiveButton(
-            "ok"
-        ) { dialog, which ->
-            finish() // Закрываем активиити
+        builder.setPositiveButton("ok") {
+                dialog, which -> finish() // Закрываем активиити
         }
-        builder.setNegativeButton(
-            "cancel"
-        ) { dialog, which ->
-            dialog.dismiss() // Отпускает диалоговое окно
+        builder.setNegativeButton("cancel") {
+                dialog, which -> dialog.dismiss() // Отпускает диалоговое окно
         }
 
         builder.create().show()

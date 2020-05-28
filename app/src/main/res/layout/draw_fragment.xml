@@ -7,16 +7,11 @@
     android:background="#191919"
     tools:context=".DrawFragment" >
 
-    <TextView
-        android:id="@+id/textView"
+    <Button
+        android:id="@+id/bLinear"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="sans-serif-thin"
-        android:text="In the coming updates... (x1)"
-        android:textColor="#FFFFFF"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:text="Button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

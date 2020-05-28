@@ -122,7 +122,7 @@
         android:layout_weight="1"
         android:background="@drawable/ic_back"
         android:backgroundTint="@color/color_for_buttons"
-        app:layout_constraintBottom_toTopOf="@id/ivPhoto"
+        app:layout_constraintBottom_toBottomOf="@id/vTopBar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -133,7 +133,7 @@
         android:layout_weight="1"
         android:background="@drawable/ic_save"
         android:backgroundTint="@color/color_for_buttons"
-        app:layout_constraintBottom_toTopOf="@id/ivPhoto"
+        app:layout_constraintBottom_toBottomOf="@id/vTopBar"
         app:layout_constraintEnd_toEndOf="@+id/vTopBar"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -144,7 +144,7 @@
         android:layout_weight="1"
         android:background="@drawable/ic_compare"
         android:backgroundTint="@color/color_for_buttons"
-        app:layout_constraintBottom_toTopOf="@id/ivPhoto"
+        app:layout_constraintBottom_toBottomOf="@id/vTopBar"
         app:layout_constraintEnd_toStartOf="@+id/bSave"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -155,7 +155,7 @@
         android:layout_weight="1"
         android:background="@drawable/ic_undo"
         android:backgroundTint="@color/color_for_buttons"
-        app:layout_constraintBottom_toTopOf="@id/ivPhoto"
+        app:layout_constraintBottom_toBottomOf="@id/vTopBar"
         app:layout_constraintEnd_toStartOf="@+id/bRedo"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -166,20 +166,25 @@
         android:layout_weight="1"
         android:background="@drawable/ic_redo"
         android:backgroundTint="@color/color_for_buttons"
-        app:layout_constraintBottom_toTopOf="@id/ivPhoto"
+        app:layout_constraintBottom_toBottomOf="@id/vTopBar"
         app:layout_constraintEnd_toStartOf="@+id/bCompare"
         app:layout_constraintTop_toTopOf="parent" />
+
+
 
     <ImageView
         android:id="@+id/ivPhoto"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
         android:background="#282828"
+        android:scaleType="fitCenter"
         app:layout_constraintBottom_toTopOf="@+id/fPlace"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/vTopBar"
-        app:srcCompat="@drawable/ic_launcher_background" />
+        app:srcCompat="@drawable/ic_launcher_background"
+        tools:ignore="MissingConstraints"/>
 
     <LinearLayout
         android:id="@+id/confirmBar"

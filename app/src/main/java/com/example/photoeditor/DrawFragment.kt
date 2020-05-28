@@ -43,7 +43,10 @@ class DrawFragment  : Fragment() {
 
                 val scaleFactor: Float
 
-                if (widthBitmap > heightBitmap) {
+                val scaleFactorW = widthBitmap / widthImageView
+                val scaleFactorH = heightBitmap / heightImageView
+
+                if (scaleFactorW > scaleFactorH) {
                     scaleFactor = widthImageView / widthBitmap
                 }
 
@@ -61,12 +64,13 @@ class DrawFragment  : Fragment() {
 
                 val paint = Paint(Paint.ANTI_ALIAS_FLAG)
                 paint.color = Color.BLACK
-                canvas.drawCircle(motionTouchEventX, motionTouchEventY, 10F, paint)
+                canvas.drawCircle(motionTouchEventX, motionTouchEventY, 20F, paint)
                 activity!!.ivPhoto.setImageBitmap(bitmap)
             }
 
             true
         }
+
 
         bLinear.setOnClickListener {
             val paint = Paint(Paint.ANTI_ALIAS_FLAG)

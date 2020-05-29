@@ -1,5 +1,6 @@
 package com.example.photoeditor
 
+
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
@@ -10,9 +11,9 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.graphics.red
 import kotlinx.android.synthetic.main.activity_editor.*
 import kotlin.math.sqrt
+
 
 class HealingFragment : Fragment() {
 
@@ -22,9 +23,11 @@ class HealingFragment : Fragment() {
     lateinit var pixels: IntArray
     var radius : Int = 50
 
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.healing_fragment, container, false)
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -73,48 +76,98 @@ class HealingFragment : Fragment() {
 
     }
 
-    private fun healing (x : Int, y : Int, bitmap: Bitmap) {
+    private fun healing (x: Int, y: Int, bitmap: Bitmap) {
 
-        //val oldPixel = bitmap.getPixel(x, y)
-
-        var r = 0
-        var g = 0
-        var b = 0
-        var count = 0
+        var redAverage = 0.0
+        var greenAverage = 0.0
+        var blueAverage = 0.0
+        var hits = 0.0
 
 
-        for (yTemp in (y-radius)..(y+radius)) {
-            if (yTemp < 0 || yTemp >= bitmap.height) continue
+        for (yTemp in (y - radius) until (y + radius)) {
+            if (yTemp < 0 || yTemp >= bitmap.height)
+                continue
 
-            for (xTemp in (x-radius)..(x+radius)) {
-                if (xTemp < 0 || xTemp >= bitmap.width) continue
-                if (sqrt((((xTemp - x) * (xTemp - x)) + ((yTemp - y) * (yTemp - y))).toDouble()).toInt() > radius) continue
+            for (xTemp in (x - radius) until (x + radius)) {
 
-                val oldPixel = orig.getPixel(xTemp, yTemp)
-                r += Color.red(oldPixel)
-                g += Color.green(oldPixel)
-                b += Color.blue(oldPixel)
-                count++
+                if (xTemp < 0 || xTemp >= bitmap.width) {
+                    continue
+                }
+                if (sqrt((((xTemp - x) * (xTemp - x)) + ((yTemp - y) * (yTemp - y))).toDouble()).toInt() > radius) {
+                    continue
+                }
+
+                val oldPixel = ivPhoto.getPixel(xTemp, yTemp)
+
+                redAverage += (oldPixel shr 16 and 0xff)
+                greenAverage += (oldPixel shr 8 and 0xff)
+                blueAverage += (oldPixel and 0xff)
+
+                hits++
             }
         }
 
-        if (count == 0) return
+        if (hits == 0.0)
+            return
 
-        r /= count
-        g /= count
-        b /= count
+        redAverage /= hits
+        greenAverage /= hits
+        blueAverage /= hits
 
-        for (yTemp in (y-radius)..(y+radius)) {
-            if (yTemp < 0 || yTemp >= bitmap.height) continue
+        var coef : Double
 
-            for (xTemp in (x-radius)..(x+radius)) {
-                if (xTemp < 0 || xTemp >= bitmap.width) continue
-                if (sqrt((((xTemp - x) * (xTemp - x)) + ((yTemp - y) * (yTemp - y))).toDouble()).toInt() > radius) continue
+        for (yTemp in (y - radius) until (y + radius)) {
 
-                val oldPixel = orig.getPixel(xTemp, yTemp)
-                val red = Color.red(oldPixel) + ((r - Color.red(oldPixel))*0.2).toInt()
-                val green = Color.green(oldPixel) + ((r - Color.green(oldPixel))*0.2).toInt()
-                val blue = Color.blue(oldPixel) + ((r - Color.blue(oldPixel))*0.2).toInt()
+            if (yTemp < 0 || yTemp >= bitmap.height)
+                continue
+
+            for (xTemp in (x - radius)..(x + radius)) {
+
+                if (xTemp < 0 || xTemp >= bitmap.width)
+                    continue
+                if (sqrt((((xTemp - x) * (xTemp - x)) + ((yTemp - y) * (yTemp - y))).toDouble()).toInt() >= radius)
+                    continue
+
+                coef = 1.0 - sqrt((((xTemp - x) * (xTemp - x)) + ((yTemp - y) * (yTemp - y))).toDouble()) / radius
+                coef *= 0.5
+
+                val oldPixel = ivPhoto.getPixel(xTemp, yTemp)
+                val red: Int
+                val green: Int
+                val blue: Int
+
+
+                if (redAverage > Color.red(oldPixel)) {
+                    red = Color.red(oldPixel) + ((redAverage - Color.red(oldPixel)) * coef).toInt()
+                }
+                else if (redAverage < Color.red(oldPixel)) {
+                    red = Color.red(oldPixel) - ((Color.red(oldPixel) - redAverage) * coef).toInt()
+                }
+                else {
+                    red = Color.red(oldPixel)
+                }
+
+
+                if (greenAverage > Color.green(oldPixel)){
+                    green = Color.green(oldPixel) + ((greenAverage - Color.green(oldPixel)) * coef).toInt()
+                }
+                else if (greenAverage < Color.green(oldPixel)) {
+                    green = Color.green(oldPixel) - ((Color.green(oldPixel) - greenAverage) * coef).toInt()
+                }
+                else {
+                    green = Color.green(oldPixel)
+                }
+
+
+                if (blueAverage > Color.blue(oldPixel)) {
+                    blue = Color.blue(oldPixel) + ((blueAverage - Color.blue(oldPixel)) * coef).toInt()
+                }
+                else if (blueAverage < Color.blue(oldPixel)) {
+                    blue = Color.blue(oldPixel) - ((Color.blue(oldPixel) - blueAverage) * coef).toInt()
+                }
+                else {
+                    blue = Color.blue(oldPixel)
+                }
 
                 ivPhoto.setPixel(xTemp, yTemp, Color.rgb(red, green, blue))
             }
@@ -123,5 +176,3 @@ class HealingFragment : Fragment() {
 
 
 }
-
-

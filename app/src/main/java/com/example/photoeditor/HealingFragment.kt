@@ -2,7 +2,6 @@ package com.example.photoeditor
 
 
 import android.graphics.Bitmap
-import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -10,18 +9,15 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_editor.*
 import kotlin.math.sqrt
 
 
 class HealingFragment : Fragment() {
 
-    lateinit var orig: Bitmap
-
-    lateinit var ivPhoto: Bitmap
-    lateinit var pixels: IntArray
-    var radius : Int = 50
+    private lateinit var ivPhoto: Bitmap
+    private var radius : Int = 50
+    private var amount: Double = 0.5
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -32,22 +28,18 @@ class HealingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        orig = (activity as stateChangesInterface).getIvPhoto()
         ivPhoto = (activity as stateChangesInterface).getIvPhoto()
         ivPhoto = ivPhoto.copy(Bitmap.Config.ARGB_8888, true)
 
-        pixels = IntArray(ivPhoto.width * ivPhoto.height)
-        ivPhoto.getPixels(pixels, 0, ivPhoto.width, 0, 0, ivPhoto.width, ivPhoto.height)
 
         activity!!.ivPhoto.setOnTouchListener { v, event ->
             if (event.action == MotionEvent.ACTION_MOVE) {
+                val scaleFactor: Float
 
                 val widthImageView = activity!!.ivPhoto.width.toFloat()
                 val heightImageView = activity!!.ivPhoto.height.toFloat()
                 val widthBitmap = (activity!!.ivPhoto.drawable as BitmapDrawable).bitmap.width.toFloat()
                 val heightBitmap = (activity!!.ivPhoto.drawable as BitmapDrawable).bitmap.height.toFloat()
-
-                val scaleFactor: Float
 
                 val scaleFactorW = widthBitmap / widthImageView
                 val scaleFactorH = heightBitmap / heightImageView
@@ -64,40 +56,40 @@ class HealingFragment : Fragment() {
                 val motionTouchEventX = (event.x - (widthImageView - scaleFactor * widthBitmap) / 2.0F) / scaleFactor
                 val motionTouchEventY = (event.y - (heightImageView - scaleFactor * heightBitmap) / 2.0F) / scaleFactor
 
-                healing(motionTouchEventX.toInt(), motionTouchEventY.toInt(), ivPhoto!!)
-
-                Toast.makeText(activity, "$motionTouchEventX, $motionTouchEventY", Toast.LENGTH_SHORT).show()
-
+                healing(motionTouchEventX.toInt(), motionTouchEventY.toInt(), ivPhoto)
                 activity!!.ivPhoto.setImageBitmap(ivPhoto)
             }
 
             true
         }
-
     }
 
-    private fun healing (x: Int, y: Int, bitmap: Bitmap) {
+    private fun healing (xCenter: Int, yCenter: Int, bitmap: Bitmap) {
 
+        var oldPixel: Int
         var redAverage = 0.0
         var greenAverage = 0.0
         var blueAverage = 0.0
-        var hits = 0.0
+        var hits = 0
 
 
-        for (yTemp in (y - radius) until (y + radius)) {
-            if (yTemp < 0 || yTemp >= bitmap.height)
+        for (y in (yCenter - radius) until (yCenter + radius)) {
+
+            if (y < 0 || y >= bitmap.height) {
                 continue
+            }
 
-            for (xTemp in (x - radius) until (x + radius)) {
+            for (x in (xCenter - radius) until (xCenter + radius)) {
 
-                if (xTemp < 0 || xTemp >= bitmap.width) {
+                if (x < 0 || x >= bitmap.width) {
                     continue
                 }
-                if (sqrt((((xTemp - x) * (xTemp - x)) + ((yTemp - y) * (yTemp - y))).toDouble()).toInt() > radius) {
+
+                if (sqrt((((x - xCenter) * (x - xCenter)) + ((y - yCenter) * (y - yCenter))).toDouble()).toInt() > radius) {
                     continue
                 }
 
-                val oldPixel = ivPhoto.getPixel(xTemp, yTemp)
+                oldPixel = ivPhoto.getPixel(x, y)
 
                 redAverage += (oldPixel shr 16 and 0xff)
                 greenAverage += (oldPixel shr 8 and 0xff)
@@ -107,72 +99,80 @@ class HealingFragment : Fragment() {
             }
         }
 
-        if (hits == 0.0)
+        if (hits == 0) {
             return
+        }
 
         redAverage /= hits
         greenAverage /= hits
         blueAverage /= hits
 
         var coef : Double
+        var red: Int
+        var green: Int
+        var blue: Int
 
-        for (yTemp in (y - radius) until (y + radius)) {
+        for (y in (yCenter - radius) until (yCenter + radius)) {
 
-            if (yTemp < 0 || yTemp >= bitmap.height)
+            if (y < 0 || y >= bitmap.height) {
                 continue
+            }
 
-            for (xTemp in (x - radius)..(x + radius)) {
+            for (x in (xCenter - radius) until (xCenter + radius)) {
 
-                if (xTemp < 0 || xTemp >= bitmap.width)
+                if (x < 0 || x >= bitmap.width) {
                     continue
-                if (sqrt((((xTemp - x) * (xTemp - x)) + ((yTemp - y) * (yTemp - y))).toDouble()).toInt() >= radius)
+                }
+
+                if (sqrt((((x - xCenter) * (x - xCenter)) + ((y - yCenter) * (y - yCenter))).toDouble()).toInt() >= radius) {
                     continue
-
-                coef = 1.0 - sqrt((((xTemp - x) * (xTemp - x)) + ((yTemp - y) * (yTemp - y))).toDouble()) / radius
-                coef *= 0.5
-
-                val oldPixel = ivPhoto.getPixel(xTemp, yTemp)
-                val red: Int
-                val green: Int
-                val blue: Int
-
-
-                if (redAverage > Color.red(oldPixel)) {
-                    red = Color.red(oldPixel) + ((redAverage - Color.red(oldPixel)) * coef).toInt()
-                }
-                else if (redAverage < Color.red(oldPixel)) {
-                    red = Color.red(oldPixel) - ((Color.red(oldPixel) - redAverage) * coef).toInt()
-                }
-                else {
-                    red = Color.red(oldPixel)
                 }
 
+                coef = (1.0 - sqrt((((x - xCenter) * (x - xCenter)) + ((y - yCenter) * (y - yCenter))).toDouble()) / radius) * amount
 
-                if (greenAverage > Color.green(oldPixel)){
-                    green = Color.green(oldPixel) + ((greenAverage - Color.green(oldPixel)) * coef).toInt()
+                oldPixel = ivPhoto.getPixel(x, y)
+                red = (oldPixel shr 16 and 0xff)
+                green = (oldPixel shr 8 and 0xff)
+                blue = (oldPixel and 0xff)
+
+
+                // Усреднение красного канала
+                if (redAverage > red) {
+                    red += ((redAverage - red) * coef).toInt()
                 }
-                else if (greenAverage < Color.green(oldPixel)) {
-                    green = Color.green(oldPixel) - ((Color.green(oldPixel) - greenAverage) * coef).toInt()
+                else if (redAverage < red) {
+                    red -= ((red - redAverage) * coef).toInt()
                 }
                 else {
-                    green = Color.green(oldPixel)
+                    red = red
                 }
 
 
-                if (blueAverage > Color.blue(oldPixel)) {
-                    blue = Color.blue(oldPixel) + ((blueAverage - Color.blue(oldPixel)) * coef).toInt()
+                // Усреднение зеленого канала
+                if (greenAverage > green){
+                    green += ((greenAverage - green) * coef).toInt()
                 }
-                else if (blueAverage < Color.blue(oldPixel)) {
-                    blue = Color.blue(oldPixel) - ((Color.blue(oldPixel) - blueAverage) * coef).toInt()
+                else if (greenAverage < green) {
+                    green -= ((green - greenAverage) * coef).toInt()
                 }
                 else {
-                    blue = Color.blue(oldPixel)
+                    green = green
                 }
 
-                ivPhoto.setPixel(xTemp, yTemp, Color.rgb(red, green, blue))
+
+                // Усреднение синего канала
+                if (blueAverage > blue) {
+                    blue += ((blueAverage - blue) * coef).toInt()
+                }
+                else if (blueAverage < blue) {
+                    blue -= ((blue - blueAverage) * coef).toInt()
+                }
+                else {
+                    blue = blue
+                }
+
+                ivPhoto.setPixel(x, y, ((-0x1000000) or (red shl 16) or (green shl 8) or blue))
             }
         }
     }
-
-
 }

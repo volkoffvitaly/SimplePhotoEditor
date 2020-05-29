@@ -1,8 +1,7 @@
 package com.example.photoeditor
 
+
 import android.graphics.Bitmap
-import android.graphics.Color
-import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,12 +15,13 @@ import org.jetbrains.anko.uiThread
 import kotlin.math.max
 import kotlin.math.min
 
+
 class FiltersFragment : Fragment() {
 
-    lateinit var ivPhoto: Bitmap
-    lateinit var names: Array<TextView>
+    private lateinit var ivPhoto: Bitmap
+    private lateinit var names: Array<TextView>
+    private val alpha = -0x1000000
 
-    val alpha = -0x1000000
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.filters_fragment, container, false)
@@ -277,11 +277,14 @@ class FiltersFragment : Fragment() {
     private fun setPreview(){
         val prevBitmap : Bitmap
 
-        var width : Int = 150
-        var height : Int = 150
+        var width = 150
+        var height = 150
+
         if (ivPhoto.width > ivPhoto.height) {
             width = ((ivPhoto.width.toDouble() / ivPhoto.height) * 150).toInt()
-        } else {
+        }
+
+        else {
             height = ((ivPhoto.height.toDouble() / ivPhoto.width) * 150).toInt()
         }
 

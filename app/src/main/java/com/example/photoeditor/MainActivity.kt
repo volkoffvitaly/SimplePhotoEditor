@@ -22,13 +22,11 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-    companion object {
-        val IMAGE: String = "Image"
-        val REQUEST_CAMERA: Int = 1
-        val REQUEST_GALLERY: Int = 2
-    }
+    private val IMAGE: String = "Image"
+    private val REQUEST_CAMERA: Int = 1
+    private val REQUEST_GALLERY: Int = 2
+    private lateinit var currentPhotoPath: String
 
-    lateinit var currentPhotoPath: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

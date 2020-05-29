@@ -2,7 +2,6 @@ package com.example.photoeditor
 
 import android.graphics.Bitmap
 import android.graphics.Matrix
-import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -18,9 +17,8 @@ import kotlin.math.sin
 
 class RotateFragment : Fragment() {
 
-    var currentValue = 0
-
-    lateinit var ivPhoto: Bitmap
+    private lateinit var ivPhoto: Bitmap
+    private var currentValue = 0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.rotate_fragment, container, false)
@@ -65,7 +63,7 @@ class RotateFragment : Fragment() {
             }
         })
 
-        activity!!.bConfirm!!.setOnClickListener(){
+        activity!!.bConfirm!!.setOnClickListener{
             ivPhoto = (activity as stateChangesInterface).getIvPhoto()
 
             (activity as stateChangesInterface).stateOfConfirmBar(false)
@@ -75,7 +73,7 @@ class RotateFragment : Fragment() {
             currentValue = 0
         }
 
-        activity!!.bCancel!!.setOnClickListener(){
+        activity!!.bCancel!!.setOnClickListener{
             (activity as stateChangesInterface).changeIvPhoto(ivPhoto)
 
             (activity as stateChangesInterface).stateOfConfirmBar(false)
@@ -111,7 +109,9 @@ class RotateFragment : Fragment() {
                     bRightRotate.isEnabled = true
                 }
             }
-        } else {
+        }
+
+        else {
             activity!!.ivPhoto!!.setImageBitmap(ivPhoto)
 
             (activity as stateChangesInterface).stateOfConfirmBar(false)

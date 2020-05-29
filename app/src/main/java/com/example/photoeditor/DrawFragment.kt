@@ -1,5 +1,6 @@
 package com.example.photoeditor
 
+
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
@@ -17,14 +18,14 @@ import kotlinx.android.synthetic.main.draw_fragment.*
 
 class DrawFragment  : Fragment() {
 
-
-    var sortedDots: MutableList<Pair<Float, Float>> = ArrayList()
     private lateinit var canvas: Canvas
+    private var sortedDots: MutableList<Pair<Float, Float>> = ArrayList()
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.draw_fragment, container, false)
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -91,60 +92,5 @@ class DrawFragment  : Fragment() {
             }
             activity!!.ivPhoto.setImageBitmap(bitmap)
         }
-
-        bCurved.setOnClickListener {
-            val paint = Paint(Paint.ANTI_ALIAS_FLAG)
-            paint.color = Color.BLACK
-            paint.strokeWidth = 5F
-
-
-            val left = sortedDots[0].first + 0.005F
-            val right = sortedDots[sortedDots.size - 1].first - 0.005F
-
-            var i = left
-
-            while (i < right) {
-                val y: Float = lagrange(i)
-                canvas.drawCircle(i, y, 5F, paint)
-
-                i += 0.0001F
-            }
-
-            activity!!.ivPhoto.setImageBitmap(bitmap)
-        }
     }
-
-    private fun lagrange(Xi: Float): Float {
-        var result = 0.0F
-
-        for (i in 0 until sortedDots.size) {
-            var P = 1.0F
-
-            for (j in 0 until sortedDots.size)
-                if (i != j) {
-                    P *= (Xi - sortedDots[j].first) / (sortedDots[i].first - sortedDots[j].second)
-                }
-
-            result += (P * sortedDots[i].second)
-
-        }
-
-        return result
-    }
-
-
-    /*public float lagrange(V mas[], int n, double _x){
-
-        float result = 0.0f;
-
-        for(int i = 0; i < n; i++){
-            double P = 1.0f;
-            for(int j = 0; j < n; j++)
-                if(i!= j)
-                    P *= (_x- mas[j].X)/(mas[i].X-mas[j].X);
-
-                result += P*mas[i].Y;
-        }
-        return result;
-    }*/
 }

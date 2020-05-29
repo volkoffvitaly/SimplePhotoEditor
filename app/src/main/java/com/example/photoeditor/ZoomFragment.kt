@@ -1,7 +1,6 @@
 package com.example.photoeditor
 
 import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,7 +8,6 @@ import android.view.ViewGroup
 import android.widget.SeekBar
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.activity_editor.*
-import kotlinx.android.synthetic.main.rotate_fragment.*
 import kotlinx.android.synthetic.main.zoom_fragment.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
@@ -17,9 +15,8 @@ import org.jetbrains.anko.uiThread
 
 class ZoomFragment : Fragment() {
 
-    lateinit var ivPhoto: Bitmap
-
-    val alpha = -0x1000000
+    private lateinit var ivPhoto: Bitmap
+    private val alpha = -0x1000000
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.zoom_fragment, container, false)

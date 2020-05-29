@@ -2,8 +2,6 @@ package com.example.photoeditor
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -19,10 +17,9 @@ import kotlin.math.abs
 
 class UnsharpMaskingFragment : Fragment() {
 
-    lateinit var ivPhoto: Bitmap
+    private lateinit var ivPhoto: Bitmap
     private var blurredPhoto: Bitmap? = null
-
-    val alpha = -0x1000000
+    private val alpha = -0x1000000
 
     //Parameters
     private var radius = 1
@@ -97,7 +94,7 @@ class UnsharpMaskingFragment : Fragment() {
         // seek bar of THRESHOLD
 
 
-        bApply.setOnClickListener() {
+        bApply.setOnClickListener {
             doAsync {
                 uiThread {
                     seekThreshold.isEnabled = false
@@ -121,7 +118,7 @@ class UnsharpMaskingFragment : Fragment() {
         }
 
         // Confirmation of changes
-        activity!!.bConfirm!!.setOnClickListener() {
+        activity!!.bConfirm!!.setOnClickListener {
             ivPhoto = (activity as stateChangesInterface).getIvPhoto()
 
             (activity as stateChangesInterface).stateOfConfirmBar(false)
@@ -144,7 +141,7 @@ class UnsharpMaskingFragment : Fragment() {
 
 
         // Revert changes
-        activity!!.bCancel!!.setOnClickListener() {
+        activity!!.bCancel!!.setOnClickListener {
             (activity as stateChangesInterface).changeIvPhoto(ivPhoto)
 
             (activity as stateChangesInterface).stateOfConfirmBar(false)

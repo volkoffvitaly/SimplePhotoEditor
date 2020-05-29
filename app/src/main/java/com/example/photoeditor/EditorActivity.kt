@@ -18,6 +18,7 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
+
 interface stateChangesInterface {
     fun stateOfTopBar(boolean: Boolean)
     fun stateOfConfirmBar(boolean: Boolean)
@@ -30,11 +31,6 @@ interface stateChangesInterface {
 
 class EditorActivity : AppCompatActivity(), stateChangesInterface {
 
-    //object States {
-    //    var states: MutableList<Bitmap> = ArrayList()
-    //}
-
-    //lateinit var originalPhoto: Bitmap
     lateinit var buttons: Array<Button>
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,8 +46,7 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
 
         ivPhoto.setImageURI(intent.getParcelableExtra<Parcelable>("Image") as Uri)
         var currentBitmap = (ivPhoto.drawable as BitmapDrawable).bitmap
-        //originalPhoto = (ivPhoto.drawable as BitmapDrawable).bitmap
-        //States.states.add((ivPhoto.drawable as BitmapDrawable).bitmap)
+
 
         buttons = arrayOf(
             bFilters,
@@ -79,6 +74,13 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
             builder.create().show()
         }
 
+        bUndo.setOnClickListener {
+            //
+        }
+
+        bRedo.setOnClickListener {
+            //
+        }
 
         bCompare.setOnTouchListener { v, event ->
             when(event.action){
@@ -95,21 +97,6 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
             }
 
             true
-        }
-
-        bUndo.setOnClickListener {
-            //if (1 < States.states.size) {
-            //    States.states.removeAt(States.states.size - 1)
-            //    ivPhoto.setImageBitmap(States.states[States.states.size - 1])
-            //}
-        }
-
-        bRedo.setOnClickListener {
-            //
-        }
-
-        bCompare.setOnClickListener {
-            //ivPhoto.setImageBitmap(originalPhoto)
         }
 
         bSave.setOnClickListener {

@@ -16,8 +16,8 @@ import kotlin.math.sqrt
 class HealingFragment : Fragment() {
 
     private lateinit var ivPhoto: Bitmap
-    private var radius : Int = 50
-    private var amount: Double = 0.5
+    private var radius : Int = 75 // От 1 до 150 (75 старт), после 150 до 300 или 400 только нажатия
+    private var strength: Int = 50 // От 1 до 100 (50 старт), перешел на Int, так как более корректно для Seekbar и юзера
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -56,7 +56,7 @@ class HealingFragment : Fragment() {
                 val motionTouchEventX = (event.x - (widthImageView - scaleFactor * widthBitmap) / 2.0F) / scaleFactor
                 val motionTouchEventY = (event.y - (heightImageView - scaleFactor * heightBitmap) / 2.0F) / scaleFactor
 
-                healing(motionTouchEventX.toInt(), motionTouchEventY.toInt(), ivPhoto)
+                ivPhoto = healing(motionTouchEventX.toInt(), motionTouchEventY.toInt(), ivPhoto)
                 activity!!.ivPhoto.setImageBitmap(ivPhoto)
             }
 
@@ -64,7 +64,10 @@ class HealingFragment : Fragment() {
         }
     }
 
-    private fun healing (xCenter: Int, yCenter: Int, bitmap: Bitmap) {
+    private fun healing (xCenter: Int, yCenter: Int, bitmap: Bitmap): Bitmap {
+
+        val pixels = IntArray(bitmap.width * bitmap.height)
+        bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
 
         var oldPixel: Int
         var redAverage = 0.0
@@ -89,7 +92,7 @@ class HealingFragment : Fragment() {
                     continue
                 }
 
-                oldPixel = ivPhoto.getPixel(x, y)
+                oldPixel = pixels[bitmap.width * y + x]
 
                 redAverage += (oldPixel shr 16 and 0xff)
                 greenAverage += (oldPixel shr 8 and 0xff)
@@ -99,9 +102,7 @@ class HealingFragment : Fragment() {
             }
         }
 
-        if (hits == 0) {
-            return
-        }
+
 
         redAverage /= hits
         greenAverage /= hits
@@ -128,9 +129,9 @@ class HealingFragment : Fragment() {
                     continue
                 }
 
-                coef = (1.0 - sqrt((((x - xCenter) * (x - xCenter)) + ((y - yCenter) * (y - yCenter))).toDouble()) / radius) * amount
+                coef = (1.0 - sqrt((((x - xCenter) * (x - xCenter)) + ((y - yCenter) * (y - yCenter))).toDouble()) / radius) * (strength.toDouble() / 100)
 
-                oldPixel = ivPhoto.getPixel(x, y)
+                oldPixel = pixels[bitmap.width * y + x]
                 red = (oldPixel shr 16 and 0xff)
                 green = (oldPixel shr 8 and 0xff)
                 blue = (oldPixel and 0xff)
@@ -143,9 +144,6 @@ class HealingFragment : Fragment() {
                 else if (redAverage < red) {
                     red -= ((red - redAverage) * coef).toInt()
                 }
-                else {
-                    red = red
-                }
 
 
                 // Усреднение зеленого канала
@@ -154,9 +152,6 @@ class HealingFragment : Fragment() {
                 }
                 else if (greenAverage < green) {
                     green -= ((green - greenAverage) * coef).toInt()
-                }
-                else {
-                    green = green
                 }
 
 
@@ -167,12 +162,11 @@ class HealingFragment : Fragment() {
                 else if (blueAverage < blue) {
                     blue -= ((blue - blueAverage) * coef).toInt()
                 }
-                else {
-                    blue = blue
-                }
 
-                ivPhoto.setPixel(x, y, ((-0x1000000) or (red shl 16) or (green shl 8) or blue))
+                pixels[bitmap.width * y + x] = (-0x1000000) or (red shl 16) or (green shl 8) or blue
             }
         }
+
+        return Bitmap.createBitmap(pixels, bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
     }
 }

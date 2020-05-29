@@ -7,9 +7,11 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Parcelable
 import android.provider.MediaStore
+import android.util.LruCache
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.activity_editor.*
@@ -26,12 +28,31 @@ interface stateChangesInterface {
     fun stateOfProgressLoading(boolean: Boolean)
     fun changeIvPhoto(bitmap: Bitmap)
     fun getIvPhoto() : Bitmap
+    fun addBitmapToMemoryCache(bitmap: Bitmap?)
 }
 
 
 class EditorActivity : AppCompatActivity(), stateChangesInterface {
 
+    private val REQUEST_FILTERS: Int = 0
+    private val REQUEST_ROTATE: Int = 1
+    private val REQUEST_ZOOM: Int = 2
+    private val REQUEST_UNSHARPMASKING: Int = 3
+    private val REQUEST_DROW: Int = 4
+    private val REQUEST_HEALING: Int = 5
+    private val REQUEST_FILTRATION: Int = 6
+    private val REQUEST_SEGMENTATION: Int = 7
+
+    var CURRENT_FRAGMENT = REQUEST_FILTERS
+
     lateinit var buttons: Array<Button>
+
+    private lateinit var memoryCache: LruCache<String, Bitmap>
+    var maxElements = 5
+    var currentKey = -1
+    var countOfKeys = -1
+
+    private var keys : MutableList<String> = ArrayList(maxElements)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,16 +66,32 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
         confirmBar.visibility = View.INVISIBLE
 
         ivPhoto.setImageURI(intent.getParcelableExtra<Parcelable>("Image") as Uri)
-        var currentBitmap = (ivPhoto.drawable as BitmapDrawable).bitmap
+
+        val maxMemory = (Runtime.getRuntime().maxMemory() / 1024).toInt()
+        val cacheSize = maxMemory / 8
+        memoryCache = object : LruCache<String, Bitmap>(cacheSize) {
+
+            /*override fun sizeOf(key: String, bitmap: Bitmap): Int {
+                // The cache size will be measured in kilobytes rather than
+                // number of items.
+                return 8
+            }*/
+        }
+
+        memoryCache.put("original", (ivPhoto.drawable as BitmapDrawable).bitmap)
+        addBitmapToMemoryCache((ivPhoto.drawable as BitmapDrawable).bitmap)
+
+        bUndo.isEnabled = false
+
 
 
         buttons = arrayOf(
             bFilters,
             bRotate,
             bZoom,
-            bHealing,
             bUnsharpMasking,
             bDraw,
+            bHealing,
             bFiltration,
             bSegmentation
         )
@@ -75,24 +112,42 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
         }
 
         bUndo.setOnClickListener {
-            //
-        }
 
-        bRedo.setOnClickListener {
-            //
+            memoryCache.remove(keys[currentKey])
+            if (currentKey == 0) currentKey = maxElements
+
+            currentKey--
+
+            countOfKeys--
+
+            ivPhoto.setImageBitmap(getBitmapFromMemCache(keys[currentKey]))
+
+            if (countOfKeys == 0) bUndo.isEnabled = false
+
+
+            when(CURRENT_FRAGMENT){
+                REQUEST_FILTERS -> bFilters.callOnClick()
+                REQUEST_ROTATE -> bRotate.callOnClick()
+                REQUEST_ZOOM -> bZoom.callOnClick()
+                REQUEST_UNSHARPMASKING -> bUnsharpMasking.callOnClick()
+                REQUEST_DROW -> bDraw.callOnClick()
+                REQUEST_HEALING -> bHealing.callOnClick()
+                REQUEST_FILTRATION -> bFiltration.callOnClick()
+                REQUEST_SEGMENTATION -> bSegmentation.callOnClick()
+            }
+
         }
 
         bCompare.setOnTouchListener { v, event ->
             when(event.action){
                 MotionEvent.ACTION_DOWN -> {
                     bCompare.isSelected = true
-                    currentBitmap = (ivPhoto.drawable as BitmapDrawable).bitmap
-                    ivPhoto.setImageURI(intent.getParcelableExtra<Parcelable>("Image") as Uri)
+                    ivPhoto.setImageBitmap(getBitmapFromMemCache("original"))
                 }
 
                 MotionEvent.ACTION_UP -> {
                     bCompare.isSelected = false
-                    ivPhoto.setImageBitmap(currentBitmap)
+                    ivPhoto.setImageBitmap(getBitmapFromMemCache(keys[currentKey]))
                 }
             }
 
@@ -122,35 +177,35 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
 
         // Bottom Bar
         bFilters.setOnClickListener {
-            change(0, FiltersFragment())
+            change(REQUEST_FILTERS, FiltersFragment())
         }
 
         bRotate.setOnClickListener {
-            change(1, RotateFragment())
+            change(REQUEST_ROTATE, RotateFragment())
         }
 
         bZoom.setOnClickListener {
-            change(2, ZoomFragment())
-        }
-
-        bHealing.setOnClickListener {
-            change(3, HealingFragment())
+            change(REQUEST_ZOOM, ZoomFragment())
         }
 
         bUnsharpMasking.setOnClickListener {
-            change(4, UnsharpMaskingFragment())
+            change(REQUEST_UNSHARPMASKING, UnsharpMaskingFragment())
         }
 
         bDraw.setOnClickListener {
-            change(5, DrawFragment())
+            change(REQUEST_DROW, DrawFragment())
+        }
+
+        bHealing.setOnClickListener {
+            change(REQUEST_HEALING, HealingFragment())
         }
 
         bFiltration.setOnClickListener {
-            change(6, FiltrationFragment())
+            change(REQUEST_FILTRATION, FiltrationFragment())
         }
 
         bSegmentation.setOnClickListener {
-            change(7, SegmentationFragment())
+            change(REQUEST_SEGMENTATION, SegmentationFragment())
         }
         // Bottom Bar
     }
@@ -181,7 +236,9 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
         transaction.replace(R.id.fPlace, currentFragment)
         transaction.commit()
 
-        ivPhoto.isEnabled = (k == 5 || k == 3)
+        CURRENT_FRAGMENT = k
+
+        ivPhoto.isEnabled = (k == REQUEST_DROW || k == REQUEST_HEALING)
     }
 
 
@@ -202,7 +259,6 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
 
         // кнопки верхнего бара
         bUndo.isEnabled = boolean
-        bRedo.isEnabled = boolean
         bCompare.isEnabled = boolean
         bSave.isEnabled = boolean
 
@@ -243,5 +299,37 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
 
     override fun getIvPhoto() : Bitmap {
         return (ivPhoto.drawable as BitmapDrawable).bitmap
+    }
+
+
+    override fun addBitmapToMemoryCache(bitmap: Bitmap?) {
+        val key = creatKey()
+        keys.add(key)
+        currentKey++
+        if (countOfKeys < maxElements - 1) countOfKeys++
+
+        if (currentKey == maxElements) {
+            memoryCache.remove(keys[0])
+            keys[0] = key
+            currentKey = 0
+        } else {
+            memoryCache.remove(keys[currentKey])
+            keys[currentKey] = key
+        }
+
+        if (getBitmapFromMemCache(key) == null) {
+            memoryCache.put(key, bitmap)
+        }
+
+        if (countOfKeys > 0) bUndo.isEnabled = true
+    }
+
+    fun getBitmapFromMemCache(key: String?): Bitmap? {
+        return memoryCache.get(key)
+    }
+
+    fun creatKey () : String {
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        return "IMG_$timeStamp"
     }
 }

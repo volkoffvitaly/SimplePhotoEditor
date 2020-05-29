@@ -81,6 +81,8 @@ class ZoomFragment : Fragment() {
             (activity as stateChangesInterface).stateOfTopBar(true)
 
             seekZoom.progress = 0
+
+            (activity as stateChangesInterface).addBitmapToMemoryCache(ivPhoto)
         }
 
         activity!!.bCancel!!.setOnClickListener(){

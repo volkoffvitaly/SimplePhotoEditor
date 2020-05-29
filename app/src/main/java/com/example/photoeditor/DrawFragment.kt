@@ -18,8 +18,15 @@ import kotlinx.android.synthetic.main.draw_fragment.*
 
 class DrawFragment  : Fragment() {
 
+    // Возможные наборы:
+    // strWidth = 20.0F, radius = 40.0F - big
+    // strWidth = 10.0F, radius = 20.0F - big
     private lateinit var canvas: Canvas
+    private var paint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private var strWidth = 50.0F // 1..20
+    private var radius = 100.0F // 1..100
     private var sortedDots: MutableList<Pair<Float, Float>> = ArrayList()
+
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -30,10 +37,18 @@ class DrawFragment  : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         var bitmap = (activity!!.ivPhoto.drawable as BitmapDrawable).bitmap
         bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
 
+
         canvas = Canvas(bitmap)
+        paint.color = Color.BLACK // установка цвета в коде должно быть здесь
+        //paint.color = Color.WHITE   Смену можно реализовать по кнопкам. (дефолт будет черный)
+        //paint.color = Color.RED
+        //paint.color = Color.GREEN
+        //paint.color = Color.BLUE
+        //paint.color = Color.YELLOW
 
         activity!!.ivPhoto.setOnTouchListener { v, event ->
             if (event.actionMasked == MotionEvent.ACTION_DOWN) {
@@ -63,10 +78,7 @@ class DrawFragment  : Fragment() {
                 sortedDots.add(motionTouchEventX to motionTouchEventY)
                 sortedDots.sortBy { it.first }
 
-
-                val paint = Paint(Paint.ANTI_ALIAS_FLAG)
-                paint.color = Color.BLACK
-                canvas.drawCircle(motionTouchEventX, motionTouchEventY, 20F, paint)
+                canvas.drawCircle(motionTouchEventX, motionTouchEventY, radius, paint)
                 activity!!.ivPhoto.setImageBitmap(bitmap)
             }
 
@@ -74,13 +86,14 @@ class DrawFragment  : Fragment() {
         }
 
         bLinear.setOnClickListener {
-            val paint = Paint(Paint.ANTI_ALIAS_FLAG)
-            paint.color = Color.BLACK
-            paint.strokeWidth = 5F
+            //
+            // Здесь нужно ставить битмап, с которым мы пришли в этот фрагмент!!!!!
+            //
+            paint.strokeWidth = strWidth
 
 
             for (i in 0 until sortedDots.size - 1) {
-                canvas.drawCircle(sortedDots[i].first, sortedDots[i].second, 10F, paint)
+                canvas.drawCircle(sortedDots[i].first, sortedDots[i].second, radius, paint)
 
                 canvas.drawLine(
                     sortedDots[i].first,
@@ -90,6 +103,7 @@ class DrawFragment  : Fragment() {
                     paint
                 )
             }
+
             activity!!.ivPhoto.setImageBitmap(bitmap)
         }
     }

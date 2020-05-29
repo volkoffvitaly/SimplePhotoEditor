@@ -225,6 +225,8 @@ class FiltersFragment : Fragment() {
 
             setPreview()
             textSelectedOff()
+
+            (activity as stateChangesInterface).addBitmapToMemoryCache(ivPhoto)
         }
 
         activity!!.bCancel!!.setOnClickListener {
@@ -275,6 +277,7 @@ class FiltersFragment : Fragment() {
 
 
     private fun setPreview(){
+
         val prevBitmap : Bitmap
 
         var width = 150

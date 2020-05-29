@@ -71,6 +71,8 @@ class RotateFragment : Fragment() {
 
             seekAngle.progress = 45
             currentValue = 0
+
+            (activity as stateChangesInterface).addBitmapToMemoryCache(ivPhoto)
         }
 
         activity!!.bCancel!!.setOnClickListener{

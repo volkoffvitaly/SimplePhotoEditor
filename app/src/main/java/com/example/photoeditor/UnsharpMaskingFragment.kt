@@ -136,6 +136,8 @@ class UnsharpMaskingFragment : Fragment() {
             seekThreshold.isEnabled = true
             seekAmount.isEnabled = true
             seekRadius.isEnabled = true
+
+            (activity as stateChangesInterface).addBitmapToMemoryCache(ivPhoto)
         }
         // Confirmation of changes
 

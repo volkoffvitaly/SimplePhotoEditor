@@ -1,7 +1,6 @@
 package com.example.photoeditor
 
 
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri

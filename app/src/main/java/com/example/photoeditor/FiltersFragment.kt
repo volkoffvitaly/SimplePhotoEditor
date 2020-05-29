@@ -18,7 +18,7 @@ import kotlin.math.min
 
 class FiltersFragment : Fragment() {
 
-    var ivPhoto: Bitmap? = null
+    lateinit var ivPhoto: Bitmap
     lateinit var names: Array<TextView>
 
     val alpha = -0x1000000
@@ -31,8 +31,8 @@ class FiltersFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (ivPhoto == null)
-            ivPhoto = (activity!!.ivPhoto.drawable as BitmapDrawable).bitmap
+
+        ivPhoto = (activity as stateChangesInterface).getIvPhoto()
 
         setPreview()
 
@@ -60,10 +60,10 @@ class FiltersFragment : Fragment() {
                     enabledButtons(false)
                 }
 
-                tempBitmap = onBrightFilter(ivPhoto!!)
+                tempBitmap = onBrightFilter(ivPhoto)
 
                 uiThread {
-                    activity!!.ivPhoto!!.setImageBitmap(tempBitmap)
+                    (activity as stateChangesInterface).changeIvPhoto(tempBitmap)
 
                     enabledButtons(true)
                 }
@@ -81,10 +81,10 @@ class FiltersFragment : Fragment() {
                     enabledButtons(false)
                 }
 
-                tempBitmap = onContrastFilter(ivPhoto!!)
+                tempBitmap = onContrastFilter(ivPhoto)
 
                 uiThread {
-                    activity!!.ivPhoto!!.setImageBitmap(tempBitmap)
+                    (activity as stateChangesInterface).changeIvPhoto(tempBitmap)
 
                     enabledButtons(true)
                 }
@@ -102,10 +102,10 @@ class FiltersFragment : Fragment() {
                     enabledButtons(false)
                 }
 
-                tempBitmap = onNegativeFilter(ivPhoto!!)
+                tempBitmap = onNegativeFilter(ivPhoto)
 
                 uiThread {
-                    activity!!.ivPhoto!!.setImageBitmap(tempBitmap)
+                    (activity as stateChangesInterface).changeIvPhoto(tempBitmap)
 
                     enabledButtons(true)
                 }
@@ -123,10 +123,10 @@ class FiltersFragment : Fragment() {
                     enabledButtons(false)
                 }
 
-                tempBitmap = onSepiaFilter(ivPhoto!!)
+                tempBitmap = onSepiaFilter(ivPhoto)
 
                 uiThread {
-                    activity!!.ivPhoto!!.setImageBitmap(tempBitmap)
+                    (activity as stateChangesInterface).changeIvPhoto(tempBitmap)
 
                     enabledButtons(true)
                 }
@@ -144,10 +144,10 @@ class FiltersFragment : Fragment() {
                     enabledButtons(false)
                 }
 
-                tempBitmap = onGrayFilter(ivPhoto!!)
+                tempBitmap = onGrayFilter(ivPhoto)
 
                 uiThread {
-                    activity!!.ivPhoto!!.setImageBitmap(tempBitmap)
+                    (activity as stateChangesInterface).changeIvPhoto(tempBitmap)
 
                     enabledButtons(true)
                 }
@@ -165,10 +165,10 @@ class FiltersFragment : Fragment() {
                     enabledButtons(false)
                 }
 
-                tempBitmap = onRedFilter(ivPhoto!!)
+                tempBitmap = onRedFilter(ivPhoto)
 
                 uiThread {
-                    activity!!.ivPhoto!!.setImageBitmap(tempBitmap)
+                    (activity as stateChangesInterface).changeIvPhoto(tempBitmap)
 
                     enabledButtons(true)
                 }
@@ -186,10 +186,10 @@ class FiltersFragment : Fragment() {
                     enabledButtons(false)
                 }
 
-                tempBitmap = onGreenFilter(ivPhoto!!)
+                tempBitmap = onGreenFilter(ivPhoto)
 
                 uiThread {
-                    activity!!.ivPhoto!!.setImageBitmap(tempBitmap)
+                    (activity as stateChangesInterface).changeIvPhoto(tempBitmap)
 
                     enabledButtons(true)
                 }
@@ -207,10 +207,10 @@ class FiltersFragment : Fragment() {
                     enabledButtons(false)
                 }
 
-                tempBitmap = onBlueFilter(ivPhoto!!)
+                tempBitmap = onBlueFilter(ivPhoto)
 
                 uiThread {
-                    activity!!.ivPhoto!!.setImageBitmap(tempBitmap)
+                    (activity as stateChangesInterface).changeIvPhoto(tempBitmap)
 
                     enabledButtons(true)
                 }
@@ -218,7 +218,7 @@ class FiltersFragment : Fragment() {
         }
 
         activity!!.bConfirm!!.setOnClickListener {
-            ivPhoto = (activity!!.ivPhoto.drawable as BitmapDrawable).bitmap
+            ivPhoto = (activity as stateChangesInterface).getIvPhoto()
 
             showConfirmBar(false)
             (activity as stateChangesInterface).stateOfTopBar(true)
@@ -228,7 +228,7 @@ class FiltersFragment : Fragment() {
         }
 
         activity!!.bCancel!!.setOnClickListener {
-            (activity as stateChangesInterface).changeIvPhoto(ivPhoto!!)
+            (activity as stateChangesInterface).changeIvPhoto(ivPhoto)
 
             showConfirmBar(false)
             (activity as stateChangesInterface).stateOfTopBar(true)
@@ -279,13 +279,13 @@ class FiltersFragment : Fragment() {
 
         var width : Int = 150
         var height : Int = 150
-        if (ivPhoto!!.width > ivPhoto!!.height) {
-            width = ((ivPhoto!!.width.toDouble() / ivPhoto!!.height) * 150).toInt()
+        if (ivPhoto.width > ivPhoto.height) {
+            width = ((ivPhoto.width.toDouble() / ivPhoto.height) * 150).toInt()
         } else {
-            height = ((ivPhoto!!.height.toDouble() / ivPhoto!!.width) * 150).toInt()
+            height = ((ivPhoto.height.toDouble() / ivPhoto.width) * 150).toInt()
         }
 
-        prevBitmap = Bitmap.createScaledBitmap(ivPhoto!!, width, height, false)
+        prevBitmap = Bitmap.createScaledBitmap(ivPhoto, width, height, false)
 
         bContrast.setImageBitmap(onContrastFilter(prevBitmap))
         bBright.setImageBitmap(onBrightFilter(prevBitmap))

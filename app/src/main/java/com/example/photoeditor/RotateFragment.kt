@@ -20,7 +20,7 @@ class RotateFragment : Fragment() {
 
     var currentValue = 0
 
-    private var ivPhoto: Bitmap? = null
+    lateinit var ivPhoto: Bitmap
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.rotate_fragment, container, false)
@@ -29,9 +29,7 @@ class RotateFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (ivPhoto == null) {
-            ivPhoto = (activity!!.ivPhoto.drawable as BitmapDrawable).bitmap
-        }
+        ivPhoto = (activity as stateChangesInterface).getIvPhoto()
 
         seekAngle.progress = 45
         textViewAngles.text = "0°"
@@ -68,7 +66,7 @@ class RotateFragment : Fragment() {
         })
 
         activity!!.bConfirm!!.setOnClickListener(){
-            ivPhoto = (activity!!.ivPhoto.drawable as BitmapDrawable).bitmap
+            ivPhoto = (activity as stateChangesInterface).getIvPhoto()
 
             (activity as stateChangesInterface).stateOfConfirmBar(false)
             (activity as stateChangesInterface).stateOfTopBar(true)
@@ -78,7 +76,7 @@ class RotateFragment : Fragment() {
         }
 
         activity!!.bCancel!!.setOnClickListener(){
-            (activity as stateChangesInterface).changeIvPhoto(ivPhoto!!)
+            (activity as stateChangesInterface).changeIvPhoto(ivPhoto)
 
             (activity as stateChangesInterface).stateOfConfirmBar(false)
             (activity as stateChangesInterface).stateOfTopBar(true)
@@ -103,7 +101,7 @@ class RotateFragment : Fragment() {
                 val tempBitmap = rotateImage(value.toDouble())
 
                 uiThread {
-                    activity!!.ivPhoto!!.setImageBitmap(tempBitmap)
+                    (activity as stateChangesInterface).changeIvPhoto(tempBitmap)
 
                     (activity as stateChangesInterface).stateOfConfirmBarButtons(true)
                     (activity as stateChangesInterface).stateOfProgressLoading(false)
@@ -123,18 +121,18 @@ class RotateFragment : Fragment() {
 
     private fun rotateImage(degrees: Double): Bitmap {
 
-        val radians = (degrees  * Math.PI) / 180.0
+        val radians = (degrees * Math.PI) / 180.0
         val rotatedMatrix = Matrix()
 
         val rotateArr: FloatArray = floatArrayOf(
             // First stroke //
             cos(radians).toFloat(),
             -sin(radians).toFloat(),
-            ivPhoto!!.width.toFloat() / 2,
+            ivPhoto.width.toFloat() / 2,
             // Second stroke //
             sin(radians).toFloat(),
             cos(radians).toFloat(),
-            ivPhoto!!.height.toFloat() / 2,
+            ivPhoto.height.toFloat() / 2,
             // Third stroke //
             0.0f,
             0.0f,
@@ -145,9 +143,9 @@ class RotateFragment : Fragment() {
 
 
         return Bitmap.createBitmap(
-            ivPhoto!!,
+            ivPhoto,
             0, 0,
-            ivPhoto!!.width, ivPhoto!!.height,
+            ivPhoto.width, ivPhoto.height,
             rotatedMatrix, false
         )
     }

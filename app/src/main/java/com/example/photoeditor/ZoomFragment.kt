@@ -17,7 +17,7 @@ import org.jetbrains.anko.uiThread
 
 class ZoomFragment : Fragment() {
 
-    var ivPhoto: Bitmap? = null
+    lateinit var ivPhoto: Bitmap
 
     val alpha = -0x1000000
 
@@ -28,9 +28,8 @@ class ZoomFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (ivPhoto == null) {
-            ivPhoto = (activity!!.ivPhoto.drawable as BitmapDrawable).bitmap
-        }
+        ivPhoto = (activity as stateChangesInterface).getIvPhoto()
+
         textViewZoom.text = "100% of image"
 
         seekZoom.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -61,7 +60,7 @@ class ZoomFragment : Fragment() {
                         val resizedBitmap = bilinearResize(zoomedBitmap, 100.0 / (100 - seekZoom.progress))
 
                         uiThread {
-                            activity!!.ivPhoto!!.setImageBitmap(resizedBitmap)
+                            (activity as stateChangesInterface).changeIvPhoto(resizedBitmap)
 
                             (activity as stateChangesInterface).stateOfConfirmBarButtons(true)
                             (activity as stateChangesInterface).stateOfProgressLoading(false)
@@ -70,7 +69,7 @@ class ZoomFragment : Fragment() {
                         }
                     }
                 } else {
-                    activity!!.ivPhoto!!.setImageBitmap(ivPhoto)
+                    (activity as stateChangesInterface).changeIvPhoto(ivPhoto)
 
                     (activity as stateChangesInterface).stateOfConfirmBar(false)
                     (activity as stateChangesInterface).stateOfTopBar(true)
@@ -79,7 +78,7 @@ class ZoomFragment : Fragment() {
         })
 
         activity!!.bConfirm!!.setOnClickListener(){
-            ivPhoto = (activity!!.ivPhoto.drawable as BitmapDrawable).bitmap
+            ivPhoto = (activity as stateChangesInterface).getIvPhoto()
 
             (activity as stateChangesInterface).stateOfConfirmBar(false)
             (activity as stateChangesInterface).stateOfTopBar(true)
@@ -88,7 +87,7 @@ class ZoomFragment : Fragment() {
         }
 
         activity!!.bCancel!!.setOnClickListener(){
-            (activity as stateChangesInterface).changeIvPhoto(ivPhoto!!)
+            (activity as stateChangesInterface).changeIvPhoto(ivPhoto)
 
             (activity as stateChangesInterface).stateOfConfirmBar(false)
             (activity as stateChangesInterface).stateOfTopBar(true)
@@ -100,21 +99,21 @@ class ZoomFragment : Fragment() {
 
 
     private fun zoom(percentage: Int): Bitmap {
-        val newWidth = (ivPhoto!!.width * percentage / 100)
-        val newHeight = (ivPhoto!!.height * percentage / 100)
+        val newWidth = (ivPhoto.width * percentage / 100)
+        val newHeight = (ivPhoto.height * percentage / 100)
 
-        val oldPixels = IntArray(ivPhoto!!.width * ivPhoto!!.height)
-        ivPhoto!!.getPixels(oldPixels, 0, ivPhoto!!.width, 0, 0, ivPhoto!!.width, ivPhoto!!.height)
+        val oldPixels = IntArray(ivPhoto.width * ivPhoto.height)
+        ivPhoto.getPixels(oldPixels, 0, ivPhoto.width, 0, 0, ivPhoto.width, ivPhoto.height)
 
         var offset = 0
         val newPixels = IntArray(newWidth * newHeight)
 
-        val startX: Int = (ivPhoto!!.width - newWidth) / 2
-        val startY: Int = (ivPhoto!!.height - newHeight) / 2
+        val startX: Int = (ivPhoto.width - newWidth) / 2
+        val startY: Int = (ivPhoto.height - newHeight) / 2
 
         for (y in 0 until newHeight){
             for (x in 0 until newWidth){
-                newPixels[offset++] = oldPixels[ivPhoto!!.width * (startY + y) + (startX + x)]
+                newPixels[offset++] = oldPixels[ivPhoto.width * (startY + y) + (startX + x)]
             }
         }
 

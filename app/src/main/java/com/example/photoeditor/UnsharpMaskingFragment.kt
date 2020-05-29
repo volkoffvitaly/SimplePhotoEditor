@@ -19,7 +19,7 @@ import kotlin.math.abs
 
 class UnsharpMaskingFragment : Fragment() {
 
-    private var ivPhoto: Bitmap? = null
+    lateinit var ivPhoto: Bitmap
     private var blurredPhoto: Bitmap? = null
 
     val alpha = -0x1000000
@@ -38,10 +38,7 @@ class UnsharpMaskingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (ivPhoto == null) {
-            ivPhoto = (activity!!.ivPhoto.drawable as BitmapDrawable).bitmap
-            //EditorActivity.States.states.add(ivPhoto!!)
-        }
+        ivPhoto = (activity as stateChangesInterface).getIvPhoto()
 
 
         tRadius.text = "Radius: 1"
@@ -125,7 +122,7 @@ class UnsharpMaskingFragment : Fragment() {
 
         // Confirmation of changes
         activity!!.bConfirm!!.setOnClickListener() {
-            ivPhoto = (activity!!.ivPhoto.drawable as BitmapDrawable).bitmap
+            ivPhoto = (activity as stateChangesInterface).getIvPhoto()
 
             (activity as stateChangesInterface).stateOfConfirmBar(false)
             (activity as stateChangesInterface).stateOfTopBar(true)
@@ -148,7 +145,7 @@ class UnsharpMaskingFragment : Fragment() {
 
         // Revert changes
         activity!!.bCancel!!.setOnClickListener() {
-            (activity as stateChangesInterface).changeIvPhoto(ivPhoto!!)
+            (activity as stateChangesInterface).changeIvPhoto(ivPhoto)
 
             (activity as stateChangesInterface).stateOfConfirmBar(false)
             (activity as stateChangesInterface).stateOfTopBar(true)
@@ -320,7 +317,7 @@ class UnsharpMaskingFragment : Fragment() {
 
     private fun unsharpMasking(): Bitmap {
 
-        blurredPhoto = boxBlur(ivPhoto!!)
+        blurredPhoto = boxBlur(ivPhoto)
 
         var red: Int
         var green: Int
@@ -331,8 +328,8 @@ class UnsharpMaskingFragment : Fragment() {
 
 
         var originalPixel: Int
-        val originalPixels = IntArray(ivPhoto!!.width * ivPhoto!!.height)
-        ivPhoto!!.getPixels(originalPixels, 0, ivPhoto!!.width, 0, 0, ivPhoto!!.width, ivPhoto!!.height)
+        val originalPixels = IntArray(ivPhoto.width * ivPhoto.height)
+        ivPhoto.getPixels(originalPixels, 0, ivPhoto.width, 0, 0, ivPhoto.width, ivPhoto.height)
 
 
         var blurredPixel: Int
@@ -340,11 +337,11 @@ class UnsharpMaskingFragment : Fragment() {
         blurredPhoto!!.getPixels(blurredPixels, 0, blurredPhoto!!.width, 0, 0, blurredPhoto!!.width, blurredPhoto!!.height)
 
 
-        for (y in 0 until ivPhoto!!.height) {
-            for (x in 0 until ivPhoto!!.width) {
+        for (y in 0 until ivPhoto.height) {
+            for (x in 0 until ivPhoto.width) {
 
                 // Getting Pixels
-                originalPixel = originalPixels[ivPhoto!!.width * y + x]
+                originalPixel = originalPixels[ivPhoto.width * y + x]
                 blurredPixel = blurredPixels[blurredPhoto!!.width * y + x]
 
                 // Getting original colors
@@ -384,10 +381,10 @@ class UnsharpMaskingFragment : Fragment() {
                     }
                 }
 
-                originalPixels[ivPhoto!!.width * y + x] = alpha or (red shl 16) or (green shl 8) or blue
+                originalPixels[ivPhoto.width * y + x] = alpha or (red shl 16) or (green shl 8) or blue
             }
         }
 
-        return Bitmap.createBitmap(originalPixels, ivPhoto!!.width, ivPhoto!!.height, Bitmap.Config.ARGB_8888)
+        return Bitmap.createBitmap(originalPixels, ivPhoto.width, ivPhoto.height, Bitmap.Config.ARGB_8888)
     }
 }

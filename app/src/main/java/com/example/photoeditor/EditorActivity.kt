@@ -258,7 +258,8 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
     override fun stateOfTopBar(boolean: Boolean) {
 
         // кнопки верхнего бара
-        bUndo.isEnabled = boolean
+
+        bUndo.isEnabled = (boolean && (countOfKeys > 0))
         bCompare.isEnabled = boolean
         bSave.isEnabled = boolean
 

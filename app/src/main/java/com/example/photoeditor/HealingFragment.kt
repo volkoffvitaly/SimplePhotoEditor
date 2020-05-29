@@ -9,13 +9,17 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SeekBar
 import kotlinx.android.synthetic.main.activity_editor.*
+import kotlinx.android.synthetic.main.healing_fragment.*
 import kotlin.math.sqrt
 
 
 class HealingFragment : Fragment() {
 
     private lateinit var ivPhoto: Bitmap
+    private lateinit var originalIvPhoto: Bitmap
+
     private var radius : Int = 75 // От 1 до 150 (75 старт), после 150 до 300 или 400 только нажатия
     private var strength: Int = 50 // От 1 до 100 (50 старт), перешел на Int, так как более корректно для Seekbar и юзера
 
@@ -28,12 +32,52 @@ class HealingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        originalIvPhoto = (activity as stateChangesInterface).getIvPhoto()
         ivPhoto = (activity as stateChangesInterface).getIvPhoto()
         ivPhoto = ivPhoto.copy(Bitmap.Config.ARGB_8888, true)
 
+        tHealingRadius.text = "Raduis: ${seekHealingRadius.progress}px"
+        tHealingStrength.text = "Strength: ${seekHealingStrength.progress}%"
+
+
+        seekHealingRadius.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+
+            override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
+                tHealingRadius.text = "Raduis: ${i}px"
+                tHealingRadius.isSelected = true
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar) {}
+
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                tHealingRadius.isSelected = false
+                radius = seekHealingRadius.progress
+            }
+        })
+
+        seekHealingStrength.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+
+            override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
+                tHealingStrength.text = "Strength: ${i}%"
+                tHealingStrength.isSelected = true
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar) {}
+
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                tHealingStrength.isSelected = false
+                strength = seekHealingStrength.progress
+            }
+        })
+
 
         activity!!.ivPhoto.setOnTouchListener { v, event ->
-            if (event.action == MotionEvent.ACTION_MOVE) {
+
+            if (event.action == MotionEvent.ACTION_MOVE || event.action == MotionEvent.ACTION_DOWN) {
+
+                (activity as stateChangesInterface).stateOfTopBar(false)
+                (activity as stateChangesInterface).stateOfConfirmBar(true)
+
                 val scaleFactor: Float
 
                 val widthImageView = activity!!.ivPhoto.width.toFloat()
@@ -61,6 +105,26 @@ class HealingFragment : Fragment() {
             }
 
             true
+        }
+
+        activity!!.bConfirm!!.setOnClickListener {
+            originalIvPhoto = (activity as stateChangesInterface).getIvPhoto()
+
+            (activity as stateChangesInterface).stateOfConfirmBar(false)
+            (activity as stateChangesInterface).stateOfTopBar(true)
+
+            (activity as stateChangesInterface).addBitmapToMemoryCache(ivPhoto)
+        }
+        // Confirmation of changes
+
+
+        // Revert changes
+        activity!!.bCancel!!.setOnClickListener {
+            (activity as stateChangesInterface).changeIvPhoto(originalIvPhoto)
+            ivPhoto = originalIvPhoto
+
+            (activity as stateChangesInterface).stateOfConfirmBar(false)
+            (activity as stateChangesInterface).stateOfTopBar(true)
         }
     }
 

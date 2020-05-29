@@ -40,8 +40,6 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
     private val REQUEST_UNSHARPMASKING: Int = 3
     private val REQUEST_DROW: Int = 4
     private val REQUEST_HEALING: Int = 5
-    private val REQUEST_FILTRATION: Int = 6
-    private val REQUEST_SEGMENTATION: Int = 7
 
     var CURRENT_FRAGMENT = REQUEST_FILTERS
 
@@ -91,9 +89,7 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
             bZoom,
             bUnsharpMasking,
             bDraw,
-            bHealing,
-            bFiltration,
-            bSegmentation
+            bHealing
         )
 
         // Top Bar
@@ -132,8 +128,6 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
                 REQUEST_UNSHARPMASKING -> bUnsharpMasking.callOnClick()
                 REQUEST_DROW -> bDraw.callOnClick()
                 REQUEST_HEALING -> bHealing.callOnClick()
-                REQUEST_FILTRATION -> bFiltration.callOnClick()
-                REQUEST_SEGMENTATION -> bSegmentation.callOnClick()
             }
 
         }
@@ -198,14 +192,6 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
 
         bHealing.setOnClickListener {
             change(REQUEST_HEALING, HealingFragment())
-        }
-
-        bFiltration.setOnClickListener {
-            change(REQUEST_FILTRATION, FiltrationFragment())
-        }
-
-        bSegmentation.setOnClickListener {
-            change(REQUEST_SEGMENTATION, SegmentationFragment())
         }
         // Bottom Bar
     }

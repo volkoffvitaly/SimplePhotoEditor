@@ -22,9 +22,10 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-    private val IMAGE: String = "Image"
-    private val REQUEST_CAMERA: Int = 1
-    private val REQUEST_GALLERY: Int = 2
+    private val IMAGE = "Image"
+    private val REQUEST_CAMERA = 1
+    private val REQUEST_GALLERY = 2
+
     private lateinit var currentPhotoPath: String
 
 
@@ -33,17 +34,23 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         bTakeANewPhoto.setOnClickListener {
-            if (checkPermissions())
+            if (checkPermissions()) {
                 takeANewPhoto()
-            else
+            }
+
+            else {
                 requestPermissions()
+            }
         }
 
         bPickFromGallery.setOnClickListener {
-            if (checkPermissions())
+            if (checkPermissions()) {
                 pickFromGallery()
-            else
+            }
+
+            else {
                 requestPermissions()
+            }
         }
     }
 
@@ -106,10 +113,9 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
     private fun createImageFile(): File {
         // Classic title of the file with timestamp
-        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
         val imageFileName = "IMG_$timeStamp"
 
         // Picking a directory to save and creating the file
@@ -130,7 +136,9 @@ class MainActivity : AppCompatActivity() {
             val pathToImage = FileProvider.getUriForFile(this, "com.example.android.fileprovider", createImageFile())
             intent.putExtra(MediaStore.EXTRA_OUTPUT, pathToImage)
             startActivityForResult(intent, REQUEST_CAMERA)
-        } catch (e: IOException) {
+        }
+
+        catch (e: IOException) {
             toast("Error...")
         }
     }

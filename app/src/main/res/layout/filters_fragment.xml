@@ -39,6 +39,7 @@
                     android:id="@+id/bBright"
                     android:layout_width="70dp"
                     android:layout_height="70dp"
+                    android:scaleType="centerCrop"
                     android:src="@mipmap/ic_launcher" />
 
                 <TextView
@@ -64,6 +65,7 @@
                     android:id="@+id/bContrast"
                     android:layout_width="70dp"
                     android:layout_height="70dp"
+                    android:scaleType="centerCrop"
                     android:src="@mipmap/ic_launcher" />
 
                 <TextView
@@ -89,6 +91,7 @@
                     android:id="@+id/bSepia"
                     android:layout_width="70dp"
                     android:layout_height="70dp"
+                    android:scaleType="centerCrop"
                     android:src="@mipmap/ic_launcher" />
 
                 <TextView
@@ -115,6 +118,7 @@
                     android:id="@+id/bGray"
                     android:layout_width="70dp"
                     android:layout_height="70dp"
+                    android:scaleType="centerCrop"
                     android:src="@mipmap/ic_launcher" />
 
                 <TextView
@@ -140,6 +144,7 @@
                     android:id="@+id/bNegative"
                     android:layout_width="70dp"
                     android:layout_height="70dp"
+                    android:scaleType="centerCrop"
                     android:src="@mipmap/ic_launcher" />
 
                 <TextView
@@ -166,6 +171,7 @@
                     android:id="@+id/bRed"
                     android:layout_width="70dp"
                     android:layout_height="70dp"
+                    android:scaleType="centerCrop"
                     android:src="@mipmap/ic_launcher" />
 
                 <TextView
@@ -191,6 +197,7 @@
                     android:id="@+id/bGreen"
                     android:layout_width="70dp"
                     android:layout_height="70dp"
+                    android:scaleType="centerCrop"
                     android:src="@mipmap/ic_launcher" />
 
                 <TextView
@@ -216,6 +223,7 @@
                     android:id="@+id/bBlue"
                     android:layout_width="70dp"
                     android:layout_height="70dp"
+                    android:scaleType="centerCrop"
                     android:src="@mipmap/ic_launcher" />
 
                 <TextView

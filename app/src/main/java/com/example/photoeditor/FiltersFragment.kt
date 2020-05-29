@@ -275,53 +275,17 @@ class FiltersFragment : Fragment() {
 
 
     private fun setPreview(){
-        val yStart : Int
-        val xStart : Int
-        val step : Int
         val prevBitmap : Bitmap
-        val sizeOfSide : Int
 
-
-        if (ivPhoto!!.width <= 150 || ivPhoto!!.height <= 150) {
-            if (ivPhoto!!.width > ivPhoto!!.height) {
-                xStart = (ivPhoto!!.width - ivPhoto!!.height) / 2
-                sizeOfSide = ivPhoto!!.height
-                yStart = 0
-            }
-
-            else {
-                yStart = (ivPhoto!!.height - ivPhoto!!.width) / 2
-                sizeOfSide = ivPhoto!!.width
-                xStart = 0
-            }
-
-            step = 1
+        var width : Int = 150
+        var height : Int = 150
+        if (ivPhoto!!.width > ivPhoto!!.height) {
+            width = ((ivPhoto!!.width.toDouble() / ivPhoto!!.height) * 150).toInt()
+        } else {
+            height = ((ivPhoto!!.height.toDouble() / ivPhoto!!.width) * 150).toInt()
         }
 
-        else {
-            if (ivPhoto!!.width > ivPhoto!!.height) {
-                xStart = (ivPhoto!!.width - ivPhoto!!.height) / 2
-                step = ivPhoto!!.height / 150
-                yStart = 0
-            }
-
-            else {
-                yStart = (ivPhoto!!.height - ivPhoto!!.width) / 2
-                step = ivPhoto!!.width / 150
-                xStart = 0
-            }
-
-            sizeOfSide = 150
-        }
-
-
-        prevBitmap = Bitmap.createBitmap(sizeOfSide, sizeOfSide, Bitmap.Config.ARGB_8888)
-
-        for (y in 0 until prevBitmap.height){
-            for (x in 0 until prevBitmap.width){
-                prevBitmap.setPixel(x, y, ivPhoto!!.getPixel(x * step + xStart, y * step + yStart))
-            }
-        }
+        prevBitmap = Bitmap.createScaledBitmap(ivPhoto!!, width, height, false)
 
         bContrast.setImageBitmap(onContrastFilter(prevBitmap))
         bBright.setImageBitmap(onBrightFilter(prevBitmap))

@@ -25,6 +25,7 @@ interface stateChangesInterface {
     fun stateOfConfirmBarButtons(boolean: Boolean)
     fun stateOfProgressLoading(boolean: Boolean)
     fun changeIvPhoto(bitmap: Bitmap)
+    fun getIvPhoto() : Bitmap
 }
 
 
@@ -67,19 +68,13 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
         // Top Bar
         bBack.setOnClickListener {
             val builder: android.app.AlertDialog.Builder = android.app.AlertDialog.Builder(this)
-            builder.setTitle("Exit the edit window?")
-                    .setMessage("Сurrent result will be lost")
-                    .setCancelable(true)
+            builder.setTitle("Exit the edit window?").setMessage("Сurrent result will be lost").setCancelable(true)
 
-            builder.setPositiveButton(
-                "ok"
-            ) { dialog, which ->
-                finish() // Закрываем активиити
+            builder.setPositiveButton("ok") {
+                    dialog, which -> finish() // Закрываем активиити
             }
-            builder.setNegativeButton(
-                "cancel"
-            ) { dialog, which ->
-                dialog.dismiss() // Отпускает диалоговое окно
+            builder.setNegativeButton("cancel") {
+                    dialog, which -> dialog.dismiss() // Отпускает диалоговое окно
             }
 
             builder.create().show()
@@ -200,7 +195,7 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
         transaction.replace(R.id.fPlace, currentFragment)
         transaction.commit()
 
-        ivPhoto.isEnabled = (k == 5)
+        ivPhoto.isEnabled = (k == 5 || k == 3)
     }
 
 
@@ -258,5 +253,9 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
 
     override fun changeIvPhoto(bitmap: Bitmap) {
         ivPhoto.setImageBitmap(bitmap)
+    }
+
+    override fun getIvPhoto() : Bitmap {
+        return (ivPhoto.drawable as BitmapDrawable).bitmap
     }
 }

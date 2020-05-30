@@ -142,11 +142,12 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
 
             if (currentKey == maxElements - 1) {
                 ivPhoto.setImageBitmap(getBitmapFromMemCache(keys[0]))
+                currentKey = 0
             } else {
                 ivPhoto.setImageBitmap(getBitmapFromMemCache(keys[currentKey + 1]))
+                currentKey++
             }
-
-            currentKey++
+            
             countOfKeys++
 
             if (countOfKeys - countOfAvaibleKeys == 0) bRedo.isEnabled = false

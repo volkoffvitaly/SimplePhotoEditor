@@ -147,7 +147,7 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
                 ivPhoto.setImageBitmap(getBitmapFromMemCache(keys[currentKey + 1]))
                 currentKey++
             }
-            
+
             countOfKeys++
 
             if (countOfKeys - countOfAvaibleKeys == 0) bRedo.isEnabled = false
@@ -324,7 +324,7 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
         bRedo.isEnabled = false
 
         for (i in 1..(countOfAvaibleKeys - countOfKeys)) {
-            if (currentKey + i == maxElements - 1) {
+            if (currentKey + i >= maxElements - 1) {
                 memoryCache.remove(keys[0])
             } else {
                 memoryCache.remove(keys[currentKey + i])

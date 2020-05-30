@@ -40,6 +40,9 @@ class MainActivity : AppCompatActivity() {
 
             else {
                 requestPermissions()
+                Thread.sleep(5000)
+
+                takeANewPhoto()
             }
         }
 
@@ -50,6 +53,9 @@ class MainActivity : AppCompatActivity() {
 
             else {
                 requestPermissions()
+                Thread.sleep(5000)
+
+                pickFromGallery()
             }
         }
     }
@@ -130,23 +136,27 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun takeANewPhoto() {
-        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        if (checkPermissions()) {
+            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
 
-        try {
-            val pathToImage = FileProvider.getUriForFile(this, "com.example.android.fileprovider", createImageFile())
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, pathToImage)
-            startActivityForResult(intent, REQUEST_CAMERA)
-        }
+            try {
+                val pathToImage = FileProvider.getUriForFile(this, "com.example.android.fileprovider", createImageFile())
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, pathToImage)
+                startActivityForResult(intent, REQUEST_CAMERA)
+            }
 
-        catch (e: IOException) {
-            toast("Error...")
+            catch (e: IOException) {
+                toast("Error...")
+            }
         }
     }
 
 
     private fun pickFromGallery() {
-        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        intent.type = "image/*"
-        startActivityForResult(intent, REQUEST_GALLERY)
+        if (checkPermissions()) {
+            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            intent.type = "image/*"
+            startActivityForResult(intent, REQUEST_GALLERY)
+        }
     }
 }

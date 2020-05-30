@@ -44,10 +44,32 @@ class FiltersFragment : Fragment() {
             tGray,
             tRed,
             tGreen,
-            tBlue
+            tBlue,
+            tBlackAndWhite
         )
 
         var tempBitmap : Bitmap
+
+        llBlackAndWhite.setOnClickListener() {
+            doAsync {
+                uiThread {
+                    textSelectedOff()
+                    tBlackAndWhite.isSelected = true
+
+                    showConfirmBar(true)
+
+                    enabledButtons(false)
+                }
+
+                tempBitmap = onBlackAndWhiteFilter(ivPhoto)
+
+                uiThread {
+                    (activity as stateChangesInterface).changeIvPhoto(tempBitmap)
+
+                    enabledButtons(true)
+                }
+            }
+        }
 
         llBright.setOnClickListener() {
             doAsync {
@@ -240,7 +262,6 @@ class FiltersFragment : Fragment() {
     }
 
 
-
     private fun showConfirmBar(boolean: Boolean) {
         (activity as stateChangesInterface).stateOfConfirmBar(boolean)
     }
@@ -295,6 +316,7 @@ class FiltersFragment : Fragment() {
 
         bContrast.setImageBitmap(onContrastFilter(prevBitmap))
         bBright.setImageBitmap(onBrightFilter(prevBitmap))
+        bBlackAndWhite.setImageBitmap(onBlackAndWhiteFilter(prevBitmap))
         bNegative.setImageBitmap(onNegativeFilter(prevBitmap))
         bSepia.setImageBitmap(onSepiaFilter(prevBitmap))
         bGray.setImageBitmap(onGrayFilter(prevBitmap))
@@ -386,6 +408,43 @@ class FiltersFragment : Fragment() {
                 b = if (b > 255) 255 else b
 
                 pixels[bitmap.width * y + x] = alpha or (r shl 16) or (g shl 8) or b
+            }
+        }
+
+
+        return Bitmap.createBitmap(pixels, bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
+    }
+
+    private fun onBlackAndWhiteFilter(bitmap: Bitmap) : Bitmap {
+
+        val pixels = IntArray(bitmap.width * bitmap.height)
+        bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
+
+        val separator = 255 / 2 * 3
+
+        var oldPixel: Int
+
+        var total: Int
+        var r: Int
+        var g: Int
+        var b: Int
+
+        for (y in 0 until bitmap.height) {
+            for (x in 0 until bitmap.width) {
+                oldPixel = pixels[bitmap.width * y + x]
+
+                r = oldPixel shr 16 and 0xff
+                g = oldPixel shr 8 and 0xff
+                b = oldPixel and 0xff
+                total = r + g + b
+
+                if (total > separator) {
+                    pixels[bitmap.width * y + x] = -0x1111111
+                }
+
+                else {
+                    pixels[bitmap.width * y + x] = -0x1000000
+                }
             }
         }
 

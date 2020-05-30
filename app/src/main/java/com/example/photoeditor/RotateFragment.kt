@@ -15,10 +15,12 @@ import org.jetbrains.anko.uiThread
 import kotlin.math.cos
 import kotlin.math.sin
 
+
 class RotateFragment : Fragment() {
 
     private lateinit var ivPhoto: Bitmap
     private var currentValue = 0
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.rotate_fragment, container, false)
@@ -36,13 +38,15 @@ class RotateFragment : Fragment() {
         bRightRotate.setOnClickListener {
             currentValue += 90
             currentValue %= 360
-            makeChanges(currentValue)
+
+            makeChanges(currentValue) // Rotate
         }
 
         bLeftRotate.setOnClickListener {
             currentValue -= 90
             currentValue %= 360
-            makeChanges(currentValue)
+
+            makeChanges(currentValue) // Rotate
         }
 
         seekAngle.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -59,7 +63,8 @@ class RotateFragment : Fragment() {
             override fun onStopTrackingTouch(seekBar: SeekBar) {
                 currentValue += seekAngle.progress - 45
                 currentValue %= 360
-                makeChanges(currentValue)
+
+                makeChanges(currentValue) // Rotate
             }
         })
 
@@ -85,6 +90,8 @@ class RotateFragment : Fragment() {
             currentValue = 0
         }
     }
+
+
 
     private fun makeChanges(value: Int) {
         if (value != 0) {
@@ -121,21 +128,22 @@ class RotateFragment : Fragment() {
         }
     }
 
+
     private fun rotateImage(degrees: Double): Bitmap {
 
         val radians = (degrees * Math.PI) / 180.0
         val rotatedMatrix = Matrix()
 
         val rotateArr: FloatArray = floatArrayOf(
-            // First stroke //
+            // First stroke of Matrix //
             cos(radians).toFloat(),
             -sin(radians).toFloat(),
             ivPhoto.width.toFloat() / 2,
-            // Second stroke //
+            // Second stroke of Matrix //
             sin(radians).toFloat(),
             cos(radians).toFloat(),
             ivPhoto.height.toFloat() / 2,
-            // Third stroke //
+            // Third stroke of Matrix//
             0.0f,
             0.0f,
             1.0f
@@ -153,33 +161,33 @@ class RotateFragment : Fragment() {
     }
 
 
-      // Deprecated //
-   /* private fun rotateImage(angle: Double) {
+    // Deprecated Method //
+    /* private fun rotateImage(angle: Double) {
 
-        val xCenter: Double = 0.5 * (ivPhoto!!.width - 1)
-        val yCenter: Double = 0.5 * (ivPhoto!!.height - 1)
-        val sinAngle: Double = sin(Math.toRadians(angle))
-        val cosAngle: Double = cos(Math.toRadians(angle))
-
-
-        val newBitmap = Bitmap.createBitmap(ivPhoto!!.width, ivPhoto!!.height, Bitmap.Config.ARGB_8888)
+         val xCenter: Double = 0.5 * (ivPhoto!!.width - 1)
+         val yCenter: Double = 0.5 * (ivPhoto!!.height - 1)
+         val sinAngle: Double = sin(Math.toRadians(angle))
+         val cosAngle: Double = cos(Math.toRadians(angle))
 
 
-        for (y in 0 until ivPhoto!!.height) {
-            for (x in 0 until ivPhoto!!.width) {
+         val newBitmap = Bitmap.createBitmap(ivPhoto!!.width, ivPhoto!!.height, Bitmap.Config.ARGB_8888)
 
-                val a = x - xCenter
-                val b = y - yCenter
 
-                val xNew = (a * cosAngle - b * sinAngle + xCenter).toInt()
-                val yNew = (a * sinAngle + b * cosAngle + yCenter).toInt()
+         for (y in 0 until ivPhoto!!.height) {
+             for (x in 0 until ivPhoto!!.width) {
 
-                if (0 <= xNew && xNew < ivPhoto!!.width && 0 <= yNew && yNew < ivPhoto!!.height)
-                    newBitmap.setPixel(x, y, ivPhoto!!.getPixel(xNew, yNew))
-            }
-        }
+                 val a = x - xCenter
+                 val b = y - yCenter
 
-        activity!!.ivPhoto!!.setImageBitmap(newBitmap)
-    }*/
-       // Deprecated //
+                 val xNew = (a * cosAngle - b * sinAngle + xCenter).toInt()
+                 val yNew = (a * sinAngle + b * cosAngle + yCenter).toInt()
+
+                 if (0 <= xNew && xNew < ivPhoto!!.width && 0 <= yNew && yNew < ivPhoto!!.height)
+                     newBitmap.setPixel(x, y, ivPhoto!!.getPixel(xNew, yNew))
+             }
+         }
+
+         activity!!.ivPhoto!!.setImageBitmap(newBitmap)
+     }*/
+    // Deprecated Method //
 }

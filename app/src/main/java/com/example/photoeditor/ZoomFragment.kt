@@ -16,11 +16,12 @@ import org.jetbrains.anko.uiThread
 class ZoomFragment : Fragment() {
 
     private lateinit var ivPhoto: Bitmap
-    private val alpha = -0x1000000
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.zoom_fragment, container, false)
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -65,7 +66,9 @@ class ZoomFragment : Fragment() {
                             seekZoom.isEnabled = true
                         }
                     }
-                } else {
+                }
+
+                else {
                     (activity as stateChangesInterface).changeIvPhoto(ivPhoto)
 
                     (activity as stateChangesInterface).stateOfConfirmBar(false)
@@ -124,45 +127,48 @@ class ZoomFragment : Fragment() {
         val pixels = IntArray(bitmap.width * bitmap.height)
         bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
 
-
         val w2 = (bitmap.width * k).toInt()
         val h2 = (bitmap.height * k).toInt()
         val temp = IntArray(w2 * h2)
 
-
+        var index: Int
         var a: Int
         var b: Int
         var c: Int
         var d: Int
+
+        val xRatio = (bitmap.width - 1).toFloat() / w2
+        val yRatio = (bitmap.height - 1).toFloat() / h2
         var x: Int
         var y: Int
-        var index: Int
-        val x_ratio = (bitmap.width - 1).toFloat() / w2
-        val y_ratio = (bitmap.height - 1).toFloat() / h2
-        var x_diff: Float
-        var y_diff: Float
+        var xNew: Float
+        var yNew: Float
+
         var blue: Float
         var red: Float
         var green: Float
+
         var offset = 0
 
         for (i in 0 until h2) {
             for (j in 0 until w2) {
-                x = (x_ratio * j).toInt()
-                y = (y_ratio * i).toInt()
-                x_diff = x_ratio * j - x
-                y_diff = y_ratio * i - y
+                x = (xRatio * j).toInt()
+                y = (yRatio * i).toInt()
+
+                xNew = xRatio * j - x
+                yNew = yRatio * i - y
+
                 index = y * bitmap.width + x
                 a = pixels[index]
                 b = pixels[index + 1]
                 c = pixels[index + bitmap.width]
                 d = pixels[index + bitmap.width + 1]
 
-                blue = (a and 0xff) * (1 - x_diff) * (1 - y_diff) + (b and 0xff) * x_diff * (1 - y_diff) + (c and 0xff) * y_diff * (1 - x_diff) + (d and 0xff) * (x_diff * y_diff)
-                green = (a shr 8 and 0xff) * (1 - x_diff) * (1 - y_diff) + (b shr 8 and 0xff) * x_diff * (1 - y_diff) + (c shr 8 and 0xff) * y_diff * (1 - x_diff) + (d shr 8 and 0xff) * (x_diff * y_diff)
-                red = (a shr 16 and 0xff) * (1 - x_diff) * (1 - y_diff) + (b shr 16 and 0xff) * x_diff * (1 - y_diff) + (c shr 16 and 0xff) * y_diff * (1 - x_diff) + (d shr 16 and 0xff) * (x_diff * y_diff)
+                blue = (a and 0xff) * (1 - xNew) * (1 - yNew) + (b and 0xff) * xNew * (1 - yNew) + (c and 0xff) * yNew * (1 - xNew) + (d and 0xff) * (xNew * yNew)
+                green = (a shr 8 and 0xff) * (1 - xNew) * (1 - yNew) + (b shr 8 and 0xff) * xNew * (1 - yNew) + (c shr 8 and 0xff) * yNew * (1 - xNew) + (d shr 8 and 0xff) * (xNew * yNew)
+                red = (a shr 16 and 0xff) * (1 - xNew) * (1 - yNew) + (b shr 16 and 0xff) * xNew * (1 - yNew) + (c shr 16 and 0xff) * yNew * (1 - xNew) + (d shr 16 and 0xff) * (xNew * yNew)
 
-                temp[offset++] = alpha or (red.toInt() shl 16 and 0xff0000) or (green.toInt() shl 8 and 0xff00) or blue.toInt()
+                temp[offset++] = (-0x1000000) or (red.toInt() shl 16 and 0xff0000) or (green.toInt() shl 8 and 0xff00) or blue.toInt()
             }
         }
 

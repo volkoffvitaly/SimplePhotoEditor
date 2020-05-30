@@ -55,4 +55,24 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tLeft"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="-45°"
+        android:textColor="#FFFFFF"
+        app:layout_constraintStart_toEndOf="@+id/bLeftRotate"
+        app:layout_constraintTop_toTopOf="@+id/textViewAngles" />
+
+    <TextView
+        android:id="@+id/tRight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="45°"
+        android:textColor="#FFFFFF"
+        app:layout_constraintEnd_toStartOf="@+id/bRightRotate"
+        app:layout_constraintTop_toTopOf="@+id/textViewAngles" />
 </androidx.constraintlayout.widget.ConstraintLayout>

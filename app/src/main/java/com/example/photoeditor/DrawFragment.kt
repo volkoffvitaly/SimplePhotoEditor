@@ -1,16 +1,14 @@
 package com.example.photoeditor
 
 
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
+import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SeekBar
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.activity_editor.*
 import kotlinx.android.synthetic.main.draw_fragment.*
@@ -18,15 +16,11 @@ import kotlinx.android.synthetic.main.draw_fragment.*
 
 class DrawFragment  : Fragment() {
 
-    // Возможные наборы:
-    // strWidth = 20.0F, radius = 40.0F - big
-    // strWidth = 10.0F, radius = 20.0F - big
-    private lateinit var canvas: Canvas
     private var paint = Paint(Paint.ANTI_ALIAS_FLAG)
-    private var strWidth = 50.0F // 1..20
-    private var radius = 100.0F // 1..100
+    private var radius = 50.0F // 1..100
     private var sortedDots: MutableList<Pair<Float, Float>> = ArrayList()
 
+    lateinit var indicators : Array<View>
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -38,20 +32,78 @@ class DrawFragment  : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
 
-        var bitmap = (activity!!.ivPhoto.drawable as BitmapDrawable).bitmap
-        bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
+        var originalIvPhoto = (activity as stateChangesInterface).getIvPhoto()
+        originalIvPhoto = originalIvPhoto.copy(Bitmap.Config.ARGB_8888, true)
+        var bitmap = originalIvPhoto.copy(Bitmap.Config.ARGB_8888, true)
+
+        tThickness.text = "Thickness: ${seekThickness.progress}%"
+
+        paint.color = Color.BLACK
+
+        indicators = arrayOf(
+            vBlackColor,
+            vWhiteColor,
+            vRedColor,
+            vGreenColor,
+            vBlueColor,
+            vYellowColor
+        )
+
+        vBlackColor.visibility = View.VISIBLE
 
 
-        canvas = Canvas(bitmap)
-        paint.color = Color.BLACK // установка цвета в коде должно быть здесь
-        //paint.color = Color.WHITE   Смену можно реализовать по кнопкам. (дефолт будет черный)
-        //paint.color = Color.RED
-        //paint.color = Color.GREEN
-        //paint.color = Color.BLUE
-        //paint.color = Color.YELLOW
+        bBlackColor.setOnClickListener() {
+            paint.color = Color.BLACK
+            changeIndicator(0)
+        }
+
+        bWhiteColor.setOnClickListener() {
+            paint.color = Color.WHITE
+            changeIndicator(1)
+        }
+
+        bRedColor.setOnClickListener() {
+            paint.color = Color.RED
+            changeIndicator(2)
+        }
+
+        bGreenColor.setOnClickListener() {
+            paint.color = Color.GREEN
+            changeIndicator(3)
+        }
+
+        bBlueColor.setOnClickListener() {
+            paint.color = Color.BLUE
+            changeIndicator(4)
+        }
+
+        bYellowColor.setOnClickListener() {
+            paint.color = Color.YELLOW
+            changeIndicator(5)
+        }
+
+        seekThickness.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+
+            override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
+                tThickness.text = "Thickness: ${i}%"
+                tThickness.isSelected = true
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar) {}
+
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                tThickness.isSelected = false
+                radius = seekThickness.progress * 1.0f
+            }
+        })
 
         activity!!.ivPhoto.setOnTouchListener { v, event ->
-            if (event.actionMasked == MotionEvent.ACTION_DOWN) {
+            if (event.actionMasked == MotionEvent.ACTION_DOWN || event.actionMasked == MotionEvent.ACTION_MOVE) {
+
+                (activity as stateChangesInterface).stateOfTopBar(false)
+                (activity as stateChangesInterface).stateOfConfirmBar(true)
+
+                var canvas = Canvas(bitmap)
 
                 val widthImageView = activity!!.ivPhoto.width.toFloat()
                 val heightImageView = activity!!.ivPhoto.height.toFloat()
@@ -79,32 +131,41 @@ class DrawFragment  : Fragment() {
                 sortedDots.sortBy { it.first }
 
                 canvas.drawCircle(motionTouchEventX, motionTouchEventY, radius, paint)
-                activity!!.ivPhoto.setImageBitmap(bitmap)
+                (activity as stateChangesInterface).changeIvPhoto(bitmap)
             }
 
             true
         }
 
-        bLinear.setOnClickListener {
-            //
-            // Здесь нужно ставить битмап, с которым мы пришли в этот фрагмент!!!!!
-            //
-            paint.strokeWidth = strWidth
+        activity!!.bConfirm!!.setOnClickListener {
+            originalIvPhoto = (activity as stateChangesInterface).getIvPhoto()
+            originalIvPhoto = originalIvPhoto.copy(Bitmap.Config.ARGB_8888, true)
+
+            (activity as stateChangesInterface).stateOfConfirmBar(false)
+            (activity as stateChangesInterface).stateOfTopBar(true)
+
+            (activity as stateChangesInterface).addBitmapToMemoryCache(originalIvPhoto)
+        }
+        // Confirmation of changes
 
 
-            for (i in 0 until sortedDots.size - 1) {
-                canvas.drawCircle(sortedDots[i].first, sortedDots[i].second, radius, paint)
+        // Revert changes
+        activity!!.bCancel!!.setOnClickListener {
+            (activity as stateChangesInterface).changeIvPhoto(originalIvPhoto)
+            bitmap = originalIvPhoto.copy(Bitmap.Config.ARGB_8888, true)
 
-                canvas.drawLine(
-                    sortedDots[i].first,
-                    sortedDots[i].second,
-                    sortedDots[i + 1].first,
-                    sortedDots[i + 1].second,
-                    paint
-                )
+            (activity as stateChangesInterface).stateOfConfirmBar(false)
+            (activity as stateChangesInterface).stateOfTopBar(true)
+        }
+    }
+
+    private fun changeIndicator (k : Int) {
+        for (i in indicators.indices) {
+            if (k == i) {
+                indicators[i].visibility = View.VISIBLE
+            } else {
+                indicators[i].visibility = View.INVISIBLE
             }
-
-            activity!!.ivPhoto.setImageBitmap(bitmap)
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.example.photoeditor
 
-
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
@@ -20,8 +19,9 @@ class HealingFragment : Fragment() {
     private lateinit var ivPhoto: Bitmap
     private lateinit var originalIvPhoto: Bitmap
 
-    private var radius : Int = 75 // От 1 до 150 (75 старт), после 150 до 300 или 400 только нажатия
-    private var strength: Int = 50 // От 1 до 100 (50 старт), перешел на Int, так как более корректно для Seekbar и юзера
+    //Parameters
+    private var radius : Int = 75
+    private var strength: Int = 50
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -115,10 +115,7 @@ class HealingFragment : Fragment() {
 
             (activity as stateChangesInterface).addBitmapToMemoryCache(ivPhoto)
         }
-        // Confirmation of changes
 
-
-        // Revert changes
         activity!!.bCancel!!.setOnClickListener {
             (activity as stateChangesInterface).changeIvPhoto(originalIvPhoto)
             ivPhoto = originalIvPhoto
@@ -128,7 +125,9 @@ class HealingFragment : Fragment() {
         }
     }
 
-    private fun healing (xCenter: Int, yCenter: Int, bitmap: Bitmap): Bitmap {
+
+
+    private fun healing(xCenter: Int, yCenter: Int, bitmap: Bitmap): Bitmap {
 
         val pixels = IntArray(bitmap.width * bitmap.height)
         bitmap.getPixels(pixels, 0, bitmap.width, 0, 0, bitmap.width, bitmap.height)
@@ -165,7 +164,6 @@ class HealingFragment : Fragment() {
                 hits++
             }
         }
-
 
 
         redAverage /= hits
@@ -209,7 +207,6 @@ class HealingFragment : Fragment() {
                     red -= ((red - redAverage) * coef).toInt()
                 }
 
-
                 // Усреднение зеленого канала
                 if (greenAverage > green){
                     green += ((greenAverage - green) * coef).toInt()
@@ -217,7 +214,6 @@ class HealingFragment : Fragment() {
                 else if (greenAverage < green) {
                     green -= ((green - greenAverage) * coef).toInt()
                 }
-
 
                 // Усреднение синего канала
                 if (blueAverage > blue) {

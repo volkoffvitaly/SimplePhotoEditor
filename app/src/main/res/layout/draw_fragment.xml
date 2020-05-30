@@ -7,12 +7,173 @@
     android:background="#191919"
     tools:context=".DrawFragment" >
 
-    <Button
-        android:id="@+id/bLinear"
-        android:layout_width="wrap_content"
+    <SeekBar
+        android:id="@+id/seekThickness"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Linear"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="24dp"
+        android:max="100"
+        android:min="1"
+        android:progress="50"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/tThickness"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="tThickness"
+        android:textColor="@color/color_for_buttons"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/seekThickness" />
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:scrollbars="none"
+        app:layout_constraintTop_toBottomOf="@+id/tThickness">
+
+
+        <LinearLayout
+            android:id="@+id/llColors"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@+id/seekThickness">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/bBlackColor"
+                    android:layout_width="70dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:backgroundTint="#000000" />
+
+                <View
+                    android:id="@+id/vBlackColor"
+                    android:layout_width="match_parent"
+                    android:layout_height="6dp"
+                    android:visibility="invisible"
+                    android:background="@color/colorAccent"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/bWhiteColor"
+                    android:layout_width="70dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:backgroundTint="#FFFFFF" />
+
+                <View
+                    android:id="@+id/vWhiteColor"
+                    android:layout_width="match_parent"
+                    android:layout_height="6dp"
+                    android:visibility="invisible"
+                    android:background="@color/colorAccent"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/bRedColor"
+                    android:layout_width="70dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:backgroundTint="#FF0000" />
+
+                <View
+                    android:id="@+id/vRedColor"
+                    android:layout_width="match_parent"
+                    android:layout_height="6dp"
+                    android:visibility="invisible"
+                    android:background="@color/colorAccent"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/bGreenColor"
+                    android:layout_width="70dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:backgroundTint="#00FF00" />
+
+                <View
+                    android:id="@+id/vGreenColor"
+                    android:layout_width="match_parent"
+                    android:layout_height="6dp"
+                    android:visibility="invisible"
+                    android:background="@color/colorAccent"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/bBlueColor"
+                    android:layout_width="70dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:backgroundTint="#0000FF" />
+
+                <View
+                    android:id="@+id/vBlueColor"
+                    android:layout_width="match_parent"
+                    android:layout_height="6dp"
+                    android:visibility="invisible"
+                    android:background="@color/colorAccent"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/bYellowColor"
+                    android:layout_width="70dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:backgroundTint="#FFD300" />
+
+                <View
+                    android:id="@+id/vYellowColor"
+                    android:layout_width="match_parent"
+                    android:layout_height="6dp"
+                    android:visibility="invisible"
+                    android:background="@color/colorAccent"/>
+            </LinearLayout>
+
+        </LinearLayout>
+    </HorizontalScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

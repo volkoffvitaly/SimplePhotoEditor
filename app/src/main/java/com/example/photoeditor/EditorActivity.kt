@@ -46,12 +46,13 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
     lateinit var buttons: Array<Button>
 
     private lateinit var memoryCache: LruCache<String, Bitmap>
-    var maxElements = 5
-    var currentKey = -1
-    var countOfKeys = -1
-    var countOfAvaibleKeys = -1
 
-    var countOfOperation = 0
+    var maxKeys = 5                 // максимально кол-во хранимых состояний
+    var currentKey = -1             // номер текущего ключа
+    var countOfKeys = -1            // номер ключа, который используется в ivPhoto
+    var countOfAvaibleKeys = -1     // кол-во доступных на данный момент ключей
+
+    var countOfOperation = 0        // кол-во принятых операций
 
     private var keys : MutableList<String> = mutableListOf(" ", " ", " ", " ", " ")
 
@@ -70,14 +71,7 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
 
         val maxMemory = (Runtime.getRuntime().maxMemory() / 1024).toInt()
         val cacheSize = maxMemory / 8
-        memoryCache = object : LruCache<String, Bitmap>(cacheSize) {
-
-            /*override fun sizeOf(key: String, bitmap: Bitmap): Int {
-                // The cache size will be measured in kilobytes rather than
-                // number of items.
-                return 8
-            }*/
-        }
+        memoryCache = object : LruCache<String, Bitmap>(cacheSize) {}
 
         memoryCache.put("original", (ivPhoto.drawable as BitmapDrawable).bitmap)
         addBitmapToMemoryCache((ivPhoto.drawable as BitmapDrawable).bitmap)
@@ -115,10 +109,9 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
 
             bRedo.isEnabled = true
 
-            if (currentKey == 0) currentKey = maxElements
+            if (currentKey == 0) currentKey = maxKeys
 
             currentKey--
-
             countOfKeys--
 
             ivPhoto.setImageBitmap(getBitmapFromMemCache(keys[currentKey]))
@@ -134,13 +127,12 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
                 REQUEST_DROW -> bDraw.callOnClick()
                 REQUEST_HEALING -> bHealing.callOnClick()
             }
-
         }
 
         bRedo.setOnClickListener {
             bUndo.isEnabled = true
 
-            if (currentKey == maxElements - 1) {
+            if (currentKey == maxKeys - 1) {
                 ivPhoto.setImageBitmap(getBitmapFromMemCache(keys[0]))
                 currentKey = 0
             } else {
@@ -241,6 +233,7 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
         builder.create().show()
     }
 
+    // Смена фрагментов
     private fun change(k: Int, currentFragment: Fragment) {
         // Changing buttons
         for (i in buttons.indices) {
@@ -270,6 +263,7 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
             toast("Error...")
         }
     }
+
 
     override fun stateOfTopBar(boolean: Boolean) {
 
@@ -315,7 +309,7 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
         ivPhoto.setImageBitmap(bitmap)
     }
 
-    override fun getIvPhoto() : Bitmap {
+    override fun getIvPhoto(): Bitmap {
         return (ivPhoto.drawable as BitmapDrawable).bitmap
     }
 
@@ -324,7 +318,7 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
         bRedo.isEnabled = false
 
         for (i in 1..(countOfAvaibleKeys - countOfKeys)) {
-            if (currentKey + i >= maxElements - 1) {
+            if (currentKey + i >= maxKeys - 1) {
                 memoryCache.remove(keys[0])
             } else {
                 memoryCache.remove(keys[currentKey + i])
@@ -337,10 +331,10 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
         countOfOperation++
 
         currentKey++
-        if (countOfKeys < maxElements - 1) countOfKeys++
-        if (countOfAvaibleKeys < maxElements - 1) countOfAvaibleKeys++
+        if (countOfKeys < maxKeys - 1) countOfKeys++
+        if (countOfAvaibleKeys < maxKeys - 1) countOfAvaibleKeys++
 
-        if (currentKey == maxElements) {
+        if (currentKey == maxKeys) {
             memoryCache.remove(keys[0])
             keys[0] = key
             currentKey = 0

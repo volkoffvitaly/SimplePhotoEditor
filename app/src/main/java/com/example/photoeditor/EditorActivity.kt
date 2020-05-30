@@ -49,8 +49,11 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
     var maxElements = 5
     var currentKey = -1
     var countOfKeys = -1
+    var countOfAvaibleKeys = -1
 
-    private var keys : MutableList<String> = ArrayList(maxElements)
+    var countOfOperation = 0
+
+    private var keys : MutableList<String> = mutableListOf(" ", " ", " ", " ", " ")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,6 +83,7 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
         addBitmapToMemoryCache((ivPhoto.drawable as BitmapDrawable).bitmap)
 
         bUndo.isEnabled = false
+        bRedo.isEnabled = false
 
 
 
@@ -109,7 +113,8 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
 
         bUndo.setOnClickListener {
 
-            memoryCache.remove(keys[currentKey])
+            bRedo.isEnabled = true
+
             if (currentKey == 0) currentKey = maxElements
 
             currentKey--
@@ -130,6 +135,30 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
                 REQUEST_HEALING -> bHealing.callOnClick()
             }
 
+        }
+
+        bRedo.setOnClickListener {
+            bUndo.isEnabled = true
+
+            if (currentKey == maxElements - 1) {
+                ivPhoto.setImageBitmap(getBitmapFromMemCache(keys[0]))
+            } else {
+                ivPhoto.setImageBitmap(getBitmapFromMemCache(keys[currentKey + 1]))
+            }
+
+            currentKey++
+            countOfKeys++
+
+            if (countOfKeys - countOfAvaibleKeys == 0) bRedo.isEnabled = false
+
+            when(CURRENT_FRAGMENT){
+                REQUEST_FILTERS -> bFilters.callOnClick()
+                REQUEST_ROTATE -> bRotate.callOnClick()
+                REQUEST_ZOOM -> bZoom.callOnClick()
+                REQUEST_UNSHARPMASKING -> bUnsharpMasking.callOnClick()
+                REQUEST_DROW -> bDraw.callOnClick()
+                REQUEST_HEALING -> bHealing.callOnClick()
+            }
         }
 
         bCompare.setOnTouchListener { v, event ->
@@ -230,7 +259,7 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
 
     private fun saveImageToGallery(bitmap:Bitmap) {
         // Classic title of the file with timestamp
-        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss"+"").format(Date())
         val imageFileName = "IMG_$timeStamp"
 
         try {
@@ -246,6 +275,7 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
         // кнопки верхнего бара
 
         bUndo.isEnabled = (boolean && (countOfKeys > 0))
+        bRedo.isEnabled = (boolean && (countOfAvaibleKeys - countOfKeys > 0))
         bCompare.isEnabled = boolean
         bSave.isEnabled = boolean
 
@@ -290,10 +320,24 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
 
 
     override fun addBitmapToMemoryCache(bitmap: Bitmap?) {
+        bRedo.isEnabled = false
+
+        for (i in 1..(countOfAvaibleKeys - countOfKeys)) {
+            if (currentKey + i == maxElements - 1) {
+                memoryCache.remove(keys[0])
+            } else {
+                memoryCache.remove(keys[currentKey + i])
+            }
+        }
+        countOfAvaibleKeys = countOfKeys
+
         val key = creatKey()
-        keys.add(key)
+
+        countOfOperation++
+
         currentKey++
         if (countOfKeys < maxElements - 1) countOfKeys++
+        if (countOfAvaibleKeys < maxElements - 1) countOfAvaibleKeys++
 
         if (currentKey == maxElements) {
             memoryCache.remove(keys[0])
@@ -316,7 +360,7 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
     }
 
     fun creatKey () : String {
-        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-        return "IMG_$timeStamp"
+        val stamp: String = "$countOfOperation"
+        return "IMG_$stamp"
     }
 }

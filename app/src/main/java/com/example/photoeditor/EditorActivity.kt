@@ -40,21 +40,27 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
     private val REQUEST_UNSHARPMASKING: Int = 3
     private val REQUEST_DROW: Int = 4
     private val REQUEST_HEALING: Int = 5
+    private var CURRENT_FRAGMENT = REQUEST_FILTERS
 
-    var CURRENT_FRAGMENT = REQUEST_FILTERS
-
-    lateinit var buttons: Array<Button>
-
+    private lateinit var buttons: Array<Button>
     private lateinit var memoryCache: LruCache<String, Bitmap>
 
-    var maxKeys = 5                 // максимально кол-во хранимых состояний
-    var currentKey = -1             // номер текущего ключа
-    var countOfKeys = -1            // номер ключа, который используется в ivPhoto
-    var countOfAvaibleKeys = -1     // кол-во доступных на данный момент ключей
-
-    var countOfOperation = 0        // кол-во принятых операций
+    private var maxKeys = 5                 // максимально кол-во хранимых состояний
+    private var currentKey = -1             // номер текущего ключа
+    private var countOfKeys = -1            // номер ключа, который используется в ivPhoto
+    private var countOfAvailableKeys = -1     // кол-во доступных на данный момент ключей
+    private var countOfOperation = 0        // кол-во принятых операций
 
     private var keys : MutableList<String> = mutableListOf(" ", " ", " ", " ", " ")
+
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        for (i in 0 until maxKeys) {
+            memoryCache.remove(keys[i])
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -98,6 +104,7 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
             builder.setPositiveButton("ok") {
                     dialog, which -> finish() // Закрываем активиити
             }
+
             builder.setNegativeButton("cancel") {
                     dialog, which -> dialog.dismiss() // Отпускает диалоговое окно
             }
@@ -109,17 +116,20 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
 
             bRedo.isEnabled = true
 
-            if (currentKey == 0) currentKey = maxKeys
+            if (currentKey == 0) {
+                currentKey = maxKeys
+            }
 
             currentKey--
             countOfKeys--
 
             ivPhoto.setImageBitmap(getBitmapFromMemCache(keys[currentKey]))
 
-            if (countOfKeys == 0) bUndo.isEnabled = false
+            if (countOfKeys == 0) {
+                bUndo.isEnabled = false
+            }
 
-
-            when(CURRENT_FRAGMENT){
+            when(CURRENT_FRAGMENT) {
                 REQUEST_FILTERS -> bFilters.callOnClick()
                 REQUEST_ROTATE -> bRotate.callOnClick()
                 REQUEST_ZOOM -> bZoom.callOnClick()
@@ -135,16 +145,20 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
             if (currentKey == maxKeys - 1) {
                 ivPhoto.setImageBitmap(getBitmapFromMemCache(keys[0]))
                 currentKey = 0
-            } else {
+            }
+
+            else {
                 ivPhoto.setImageBitmap(getBitmapFromMemCache(keys[currentKey + 1]))
                 currentKey++
             }
 
             countOfKeys++
 
-            if (countOfKeys - countOfAvaibleKeys == 0) bRedo.isEnabled = false
+            if (countOfKeys - countOfAvailableKeys == 0) {
+                bRedo.isEnabled = false
+            }
 
-            when(CURRENT_FRAGMENT){
+            when(CURRENT_FRAGMENT) {
                 REQUEST_FILTERS -> bFilters.callOnClick()
                 REQUEST_ROTATE -> bRotate.callOnClick()
                 REQUEST_ZOOM -> bZoom.callOnClick()
@@ -172,18 +186,13 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
 
         bSave.setOnClickListener {
             val builder: android.app.AlertDialog.Builder = android.app.AlertDialog.Builder(this)
-            builder.setTitle("Save image?")
-                .setCancelable(true)
+            builder.setTitle("Save image?").setCancelable(true)
 
-            builder.setPositiveButton(
-                "ok"
-            ) { dialog, which ->
-                saveImageToGallery((ivPhoto.drawable as BitmapDrawable).bitmap)
+            builder.setPositiveButton("ok") {
+                    dialog, which -> saveImageToGallery((ivPhoto.drawable as BitmapDrawable).bitmap)
             }
-            builder.setNegativeButton(
-                "cancel"
-            ) { dialog, which ->
-                dialog.dismiss() // Отпускает диалоговое окно
+            builder.setNegativeButton("cancel") {
+                    dialog, which -> dialog.dismiss() // Отпускает диалоговое окно
             }
 
             builder.create().show()
@@ -259,7 +268,9 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
         try {
             MediaStore.Images.Media.insertImage(contentResolver, bitmap, imageFileName, "Image of $title")
             toast("Successful")
-        } catch (e: IOException) {
+        }
+
+        catch (e: IOException) {
             toast("Error...")
         }
     }
@@ -268,12 +279,10 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
     override fun stateOfTopBar(boolean: Boolean) {
 
         // кнопки верхнего бара
-
         bUndo.isEnabled = (boolean && (countOfKeys > 0))
-        bRedo.isEnabled = (boolean && (countOfAvaibleKeys - countOfKeys > 0))
+        bRedo.isEnabled = (boolean && (countOfAvailableKeys - countOfKeys > 0))
         bCompare.isEnabled = boolean
         bSave.isEnabled = boolean
-
     }
 
     override fun stateOfConfirmBarButtons(boolean: Boolean) {
@@ -289,7 +298,9 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
         // показ confirmBar'а
         if (boolean){
             confirmBar.visibility = View.VISIBLE
-        } else {
+        }
+
+        else {
             confirmBar.visibility = View.INVISIBLE
         }
     }
@@ -299,7 +310,9 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
         // состояние анимации загрузки
         if (boolean){
             progressLoading.visibility = View.VISIBLE
-        } else {
+        }
+
+        else {
             progressLoading.visibility = View.INVISIBLE
         }
 
@@ -317,28 +330,38 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
     override fun addBitmapToMemoryCache(bitmap: Bitmap?) {
         bRedo.isEnabled = false
 
-        for (i in 1..(countOfAvaibleKeys - countOfKeys)) {
+        for (i in 1..(countOfAvailableKeys - countOfKeys)) {
             if (currentKey + i >= maxKeys - 1) {
                 memoryCache.remove(keys[0])
-            } else {
+            }
+
+            else {
                 memoryCache.remove(keys[currentKey + i])
             }
         }
-        countOfAvaibleKeys = countOfKeys
 
-        val key = creatKey()
+        countOfAvailableKeys = countOfKeys
+
+        val key = createKey()
 
         countOfOperation++
 
         currentKey++
-        if (countOfKeys < maxKeys - 1) countOfKeys++
-        if (countOfAvaibleKeys < maxKeys - 1) countOfAvaibleKeys++
+        if (countOfKeys < maxKeys - 1) {
+            countOfKeys++
+        }
+
+        if (countOfAvailableKeys < maxKeys - 1) {
+            countOfAvailableKeys++
+        }
 
         if (currentKey == maxKeys) {
             memoryCache.remove(keys[0])
             keys[0] = key
             currentKey = 0
-        } else {
+        }
+
+        else {
             memoryCache.remove(keys[currentKey])
             keys[currentKey] = key
         }
@@ -347,14 +370,16 @@ class EditorActivity : AppCompatActivity(), stateChangesInterface {
             memoryCache.put(key, bitmap)
         }
 
-        if (countOfKeys > 0) bUndo.isEnabled = true
+        if (countOfKeys > 0) {
+            bUndo.isEnabled = true
+        }
     }
 
-    fun getBitmapFromMemCache(key: String?): Bitmap? {
+    private fun getBitmapFromMemCache(key: String?): Bitmap? {
         return memoryCache.get(key)
     }
 
-    fun creatKey () : String {
+    private fun createKey () : String {
         val stamp: String = "$countOfOperation"
         return "IMG_$stamp"
     }
